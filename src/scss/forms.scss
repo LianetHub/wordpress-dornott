@@ -1,0 +1,171 @@
+@use "sass:color";
+@use "sass:math";
+@use "mixins" as *;
+@use "variables" as *;
+@use "fonts";
+@use "icons";
+@use "ui";
+
+.form {
+	// .form__fields
+	&__fields {
+		display: flex;
+		flex-direction: column;
+		gap: rem(20);
+	}
+	// .form__field
+	&__field {
+	}
+	// .form__label
+	&__label {
+		font-size: 1.3125rem;
+		margin-bottom: rem(10);
+	}
+	// .form__control
+	&__control {
+		text-overflow: ellipsis;
+		transition: border-color 0.3s ease 0s, color 0.3s ease 0s;
+		width: 100%;
+		border-radius: 0.3125rem;
+		border: rem(1) solid #000;
+		font-size: 1rem;
+		font-weight: 600;
+		padding: 0.62rem 1.81rem;
+
+		&::placeholder {
+			opacity: 1;
+			color: #a4a4a4;
+		}
+		&:hover,
+		&:focus {
+			border-color: $accent;
+		}
+		&:disabled {
+			background: #ddd;
+			border-color: #ddd;
+		}
+		&.wpcf7-not-valid {
+			background: #fff1ed;
+		}
+	}
+
+	&__submit {
+		position: relative;
+		margin-top: 2.5rem;
+		margin-inline: auto;
+		cursor: pointer;
+		&:has(input:disabled) {
+			pointer-events: none;
+			cursor: default;
+			opacity: 0.5;
+		}
+		& input {
+			background: transparent;
+			color: inherit;
+			cursor: pointer;
+			font-weight: 900;
+		}
+		.wpcf7-spinner {
+			display: none;
+		}
+	}
+}
+.wpcf7-form {
+	&:has(.wpcf7-submit[disabled]) {
+		.form__submit {
+			cursor: not-allowed;
+			opacity: 0.7;
+		}
+	}
+	&.submitting {
+		.form__submit {
+			pointer-events: none;
+		}
+		.wpcf7-submit {
+			color: transparent;
+		}
+		.wpcf7-spinner {
+			opacity: 1;
+			visibility: visible;
+			display: block;
+			background: transparent;
+			opacity: 1;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin: 0;
+			transform: translate(-50%, -50%);
+			&::before {
+				display: none;
+			}
+			&::after {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 20px;
+				height: 20px;
+				border: 3px solid currentColor;
+				border-bottom-color: transparent;
+				border-radius: 50%;
+				transform-origin: center;
+				animation: rotation 1s linear infinite;
+				z-index: 3;
+			}
+			@keyframes rotation {
+				0% {
+					transform: translate(-50%, -50%) rotate(0deg);
+				}
+				100% {
+					transform: translate(-50%, -50%) rotate(360deg);
+				}
+			}
+		}
+	}
+}
+
+.wpcf7-response-output {
+	display: none !important;
+}
+.wpcf7-not-valid-tip {
+	margin-top: 0.25em;
+}
+
+.btn {
+	position: relative;
+	z-index: 1;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	user-select: none;
+	transition: all 0.3s ease;
+	font-size: 1.3125rem;
+	font-weight: 900;
+	border-radius: 0.3125rem;
+	border: rem(2) solid;
+	padding: rem(14) rem(30);
+
+	&.btn-primary {
+		border-color: #da0937;
+		background: #da0937;
+		box-shadow: 0 rem(4) rem(4) 0 rgba(0, 0, 0, 0.25);
+		color: #fff;
+		&:hover {
+			background: $white;
+			color: #da0937;
+			box-shadow: 0 rem(4) rem(4) 0 rgba(0, 0, 0, 0.25) inset;
+		}
+	}
+
+	&:disabled,
+	&[aria-disabled="true"] {
+		cursor: default;
+		color: $white;
+		pointer-events: none;
+	}
+	&:active {
+		transform: scale(0.985);
+	}
+}

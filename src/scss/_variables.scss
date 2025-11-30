@@ -1,0 +1,33 @@
+@use "sass:color";
+@use "sass:math";
+@use "mixins" as *;
+
+// Шрифты
+
+$fontfamily: "Mulish" !default;
+$font-unbounded: "Unbounded" !default;
+
+// Шрифты
+
+$md1: 1199.98px !default;
+$md2: 991.98px !default;
+$md3: 799.98px !default;
+$md4: 575.98px !default;
+
+// ПЕРЕМЕННЫЕ
+$minWidth: 320; // Минимальная ширина страницы
+$maxWidth: 1920; // Ширина макета
+$maxWidthContainer: rem(1170); // Максимальная ширина ограничивающего контейнера
+$containerPadding: 30;
+
+$white: #f1f1f1;
+$dark: #523b50;
+$accent: #da0937;
+
+// Z-Index
+$ui-index-1: 1; // Для наполняющих элементов в общем потоке
+$ui-index-2: 2; // Для наполняющих элементов в общем потоке
+$ui-index-3: 3; // Для масок
+$ui-index-4: 4; // Для сайдбаров
+$ui-index-5: 5; // Для модалок
+$ui-index-6: 6; // Для элементов, перекрывающих все

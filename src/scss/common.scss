@@ -1,0 +1,102 @@
+@use "sass:color";
+@use "sass:math";
+@use "mixins" as *;
+@use "variables" as *;
+@use "fonts";
+@use "icons";
+
+html {
+	scrollbar-gutter: stable;
+}
+
+body {
+	font-family: $fontfamily, sans-serif;
+	font-size: 1rem;
+	min-width: 320px;
+	min-height: 100%;
+	line-height: normal;
+	background: $white;
+	color: $dark;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	&.lock-mobile-menu {
+		overflow: hidden;
+		.wrapper {
+			&::before {
+				opacity: 1;
+				visibility: visible;
+				pointer-events: all;
+			}
+		}
+	}
+}
+// ==================ОБОЛОЧКА==============================
+.wrapper {
+	position: relative;
+	width: 100%;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow-x: clip;
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba($color: $dark, $alpha: 0.45);
+		backdrop-filter: blur(0.125rem);
+		-webkit-backdrop-filter: blur(0.125rem);
+		z-index: 5;
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transition: opacity 0.3s ease, visibility 0.3s ease;
+		cursor: pointer;
+	}
+}
+
+//================== ОБОЛОЧКА==================================
+
+//=============== ОСНОВНАЯ СЕТКА===============================
+
+// Отзывчивая
+.container {
+	margin: 0 auto;
+	max-width: 100%;
+	padding: 0 rem(10);
+	@media (min-width: $md4) {
+		box-sizing: content-box;
+		max-width: rem(540);
+		padding: 0 rem(16);
+	}
+	@media (min-width: $md3) {
+		max-width: rem(768);
+	}
+	@media (min-width: $md2) {
+		max-width: rem(960);
+	}
+	@media (min-width: $md1) {
+		max-width: rem(1170);
+	}
+}
+
+//=============== ОСНОВНАЯ СЕТКА===============================
+
+// =======================ОСНОВНОЙ БЛОК==================
+.main {
+	flex: 1 1 auto;
+	width: 100%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	& > * {
+		padding: rem(25) 0;
+		@media (min-width: $md2) {
+			padding: rem(50) 0;
+		}
+	}
+}
+// ========================================================

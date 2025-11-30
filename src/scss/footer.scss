@@ -1,0 +1,116 @@
+@use "sass:color";
+@use "sass:math";
+@use "mixins" as *;
+@use "variables" as *;
+@use "fonts";
+@use "icons";
+
+.footer {
+	padding: 0 0 3.62rem;
+	// .footer__content
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: 2.25rem;
+		align-items: center;
+		@media (min-width: $md3) {
+			align-items: stretch;
+			gap: 0;
+		}
+	}
+	// .footer__menu
+	&__menu {
+		@media (min-width: $md3) {
+			padding: rem(30) 0 rem(40);
+			border-bottom: rem(1) solid #2b565e;
+		}
+	}
+	// .footer__bottom
+	&__bottom {
+		display: contents;
+		@media (min-width: $md4) {
+			margin-top: rem(20);
+			display: flex;
+			gap: rem(50);
+			align-items: center;
+			flex-direction: column;
+		}
+		@media (min-width: $md3) {
+			flex-direction: row;
+		}
+	}
+	.custom-logo-link {
+		max-width: rem(362);
+		margin-right: auto;
+		margin-left: auto;
+		order: -1;
+		@media (min-width: $md3) {
+			margin-left: 0;
+		}
+	}
+	// .footer__side
+	&__side {
+		display: flex;
+		align-items: center;
+		flex-direction: column-reverse;
+		gap: rem(30);
+		@media (min-width: $md3) {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+		@media (min-width: $md1) {
+			align-items: center;
+			flex-direction: row;
+			gap: rem(60);
+		}
+	}
+	// .footer__contacts
+	&__contacts {
+		font-size: 1.3125rem;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.625rem;
+	}
+	// .footer__contacts-title
+	&__contacts-title {
+	}
+	// .footer__phone
+	&__phone {
+		display: flex;
+		align-items: center;
+		gap: rem(10);
+		transition: color 0.3s ease;
+		&::before {
+			width: 1.25rem;
+			height: 1.25rem;
+		}
+		@media (any-hover: hover) {
+			&:hover {
+				color: $accent;
+			}
+		}
+	}
+	// .footer__email
+	&__email {
+		@extend .footer__phone;
+	}
+	// .footer__callback
+	&__callback {
+		.form__submit {
+			margin-top: 2.19rem;
+		}
+		.form__control {
+			background: #ebebeb;
+			border-color: #ebebeb;
+			box-shadow: 0 rem(4) rem(4) 0 rgba(0, 0, 0, 0.25) inset;
+		}
+		order: 1;
+		@media (min-width: $md3) {
+			order: 0;
+		}
+		@media (min-width: $md1) {
+			flex: 0 0 rem(350);
+		}
+	}
+}

@@ -1,0 +1,59 @@
+@use "sass:color";
+@use "sass:math";
+@use "mixins" as *;
+@use "variables" as *;
+@use "fonts";
+@use "icons";
+
+.breadcrumbs {
+	display: none;
+	@media (min-width: $md4) {
+		display: block;
+	}
+	padding: 0 !important;
+	.page-template-front-page & {
+		display: none;
+	}
+
+	.icon-home {
+		width: rem(40);
+		height: rem(40);
+		flex-shrink: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		& span {
+			display: none;
+		}
+	}
+	&__body {
+		font-size: 1.3125rem;
+		& > span {
+			display: flex;
+			flex-wrap: wrap;
+			gap: rem(20);
+			& > span {
+				display: flex;
+				align-items: center;
+				gap: rem(20);
+				&::before {
+					order: 1;
+					font-size: rem(14);
+				}
+				&:not(.breadcrumb_last) {
+					&::before {
+						@extend %ic, .icon-arrow;
+					}
+				}
+			}
+		}
+		& a {
+			transition: color 0.3s ease;
+			@media (any-hover: hover) {
+				&:hover {
+					color: $accent;
+				}
+			}
+		}
+	}
+}

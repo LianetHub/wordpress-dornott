@@ -1,0 +1,60 @@
+@use "sass:color";
+@use "sass:math";
+@use "mixins" as *;
+@use "variables" as *;
+@use "fonts";
+@use "icons";
+
+.fancybox__container {
+	max-width: 100% !important;
+	padding: 0 !important;
+}
+
+.fancybox__slide {
+	padding: 0;
+	@media (min-width: $md4) {
+		padding: 1.25rem;
+	}
+}
+
+.fancybox__backdrop {
+	background: rgba(0, 0, 0, 0.01);
+	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px);
+}
+
+.fancybox__content {
+	color: inherit;
+	background: none;
+	padding: 0;
+}
+
+.fancybox__content :focus:not(.carousel__button.is-close) {
+	outline: none;
+}
+
+.popup {
+	display: none;
+	width: 100%;
+	background: #f4f8f4;
+	color: $dark;
+	max-width: rem(1100);
+	padding: 2rem 1rem;
+	border-radius: 1rem;
+	overflow-x: hidden;
+	@media (min-width: $md4) {
+		border-radius: 1.875rem;
+		padding: 4.56rem 1.56rem;
+	}
+	// .popup__form
+	&__form {
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 5rem;
+			@media (min-width: $md4) {
+				gap: 10.44rem;
+			}
+		}
+	}
+}
