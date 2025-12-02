@@ -26,6 +26,10 @@
 	white-space: nowrap;
 }
 
+.color-accent {
+	color: $accent;
+}
+
 .custom-logo-link {
 	display: inline-block;
 	max-width: rem(220);
@@ -70,7 +74,7 @@
 // Стилизация скролла
 
 $scrollbarColor: $accent;
-$scrollbarHover: $accent;
+$scrollbarHover: color.adjust($accent, $lightness: -10%);
 
 ::-webkit-scrollbar {
 	width: rem(8);

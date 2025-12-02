@@ -4,8 +4,9 @@
 
 // Шрифты
 
-$fontfamily: "Mulish" !default;
-$font-unbounded: "Unbounded" !default;
+$fontfamily: "PTSans" !default;
+$font-comfortaa: "Comfortaa" !default;
+$font-arimo: "Arimo" !default;
 
 // Шрифты
 
@@ -20,9 +21,9 @@ $maxWidth: 1920; // Ширина макета
 $maxWidthContainer: rem(1170); // Максимальная ширина ограничивающего контейнера
 $containerPadding: 30;
 
-$white: #f1f1f1;
-$dark: #523b50;
-$accent: #da0937;
+$white: #ffffff;
+$dark: #483a2e;
+$accent: #ffbb4e;
 
 // Z-Index
 $ui-index-1: 1; // Для наполняющих элементов в общем потоке
