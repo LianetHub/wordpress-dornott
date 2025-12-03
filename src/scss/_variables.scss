@@ -10,15 +10,18 @@ $font-arimo: "Arimo" !default;
 
 // Шрифты
 
-$md1: 1199.98px !default;
-$md2: 991.98px !default;
-$md3: 799.98px !default;
-$md4: 575.98px !default;
+$md0: 1661.98px !default;
+$md1: 1399.98px !default;
+$md2: 1199.98px !default;
+$md3: 991.98px !default;
+$md4: 767.98px !default;
+$md5: 575.98px !default;
+$md6: 389.98px !default;
 
 // ПЕРЕМЕННЫЕ
 $minWidth: 320; // Минимальная ширина страницы
 $maxWidth: 1920; // Ширина макета
-$maxWidthContainer: rem(1170); // Максимальная ширина ограничивающего контейнера
+$maxWidthContainer: rem(1632); // Максимальная ширина ограничивающего контейнера
 $containerPadding: 30;
 
 $white: #ffffff;

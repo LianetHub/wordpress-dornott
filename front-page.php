@@ -6,29 +6,68 @@
             <div class="hero__offer">
                 <div class="hero__offer-slider swiper">
                     <div class="swiper-wrapper">
-                        <div class="hero__offer-slide swiper-slide">
-                            <h1 class="hero__offer-title title-lg">Компания Dornott</h1>
-                            <p class="hero__offer-description">Производитель пледов и аксессуаров из органического кашемира премиального качества</p>
-                            <a href="" class="hero__offer-btn btn btn-primary icon-chevron-right">в каталог</a>
-                        </div>
-                        <div class="hero__offer-slide swiper-slide">
-                            <div class="hero__offer-title title-lg">Скидка до <span class="color-accent">50%</span> на все новые пледы</div>
-                            <p class="hero__offer-description">Производитель пледов и аксессуаров из органического кашемира премиального качества</p>
-                            <a href="" class="hero__offer-btn btn btn-primary icon-chevron-right">в каталог</a>
-                        </div>
+                        <?php if (have_rows('hero_slides')) : ?>
+                            <?php while (have_rows('hero_slides')) : the_row(); ?>
+
+                                <?php
+                                $button_group = get_sub_field('btn');
+                                if (!$button_group) {
+                                    $button_group = get_sub_field('hero_button_btn');
+                                }
+                                ?>
+
+                                <div class="hero__offer-slide swiper-slide">
+                                    <?php if (get_sub_field('title')) : ?>
+                                        <h1 class="hero__offer-title title-lg">
+                                            <?php the_sub_field('title'); ?>
+                                        </h1>
+                                    <?php endif; ?>
+
+                                    <?php if (get_sub_field('description')) : ?>
+                                        <p class="hero__offer-description">
+                                            <?php the_sub_field('description'); ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                    <?php
+                                    if ($button_group) {
+                                        get_template_part('templates/components/button', null, [
+                                            'data'  => $button_group,
+                                            'class' => 'hero__offer-btn',
+                                            'type'  => 'primary',
+                                            'icon'  => 'chevron-right'
+                                        ]);
+                                    }
+                                    ?>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
-                <div class="hero__offer-footer">
-                    Dornott - производитель премиум аксессуаров из органического кашемира
-                </div>
+
+                <?php if (get_field('hero_footer_text')) : ?>
+                    <div class="hero__offer-footer">
+                        <?php echo esc_html(get_field('hero_footer_text')); ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
+
     <div class="hero__images swiper">
         <div class="swiper-wrapper">
-            <div class="hero__image swiper-slide">
-
-            </div>
+            <?php if (have_rows('hero_slides')) : ?>
+                <?php while (have_rows('hero_slides')) : the_row(); ?>
+                    <?php $image = get_sub_field('image'); ?>
+                    <?php if ($image) : ?>
+                        <div class="hero__image swiper-slide">
+                            <img src="<?php echo esc_url($image['url']); ?>"
+                                alt="<?php echo esc_attr($image['alt']); ?>"
+                                class="cover-image">
+                        </div>
+                    <?php endif; ?>
+                <?php endwhile; ?>
+            <?php endif; ?>
         </div>
         <div class="hero__controls">
             <button type="button" class="hero__prev swiper-button-prev"></button>

@@ -7,7 +7,7 @@
 
 //============ МОДУЛИ ====================
 // @use "modules/popup";
-@use "modules/breadcrumbs";
+// @use "modules/breadcrumbs";
 // @import "modules/select";
 // @import "modules/pagination";
 // @import "modules/phone-input";
@@ -15,7 +15,27 @@
 //============ МОДУЛИ ====================
 
 .title {
-	font-size: 1.75rem;
+	font-family: $font-comfortaa;
+	font-size: 3.5rem;
+	font-weight: 600;
+	line-height: 120%;
+	letter-spacing: em(-0.12, 4);
+}
+
+.title-lg {
+	font-family: $font-comfortaa;
+	font-size: 4rem;
+	font-weight: 600;
+	line-height: 120%;
+	letter-spacing: em(-0.12, 4);
+}
+
+.title-sm {
+	font-family: $font-comfortaa;
+	font-size: 2rem;
+	font-weight: 600;
+	line-height: 120%;
+	letter-spacing: em(-0.12, 4);
 }
 
 .text-center {

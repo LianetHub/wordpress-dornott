@@ -70,6 +70,7 @@
 		}
 	}
 }
+
 .wpcf7-form {
 	&:has(.wpcf7-submit[disabled]) {
 		.form__submit {
@@ -138,24 +139,39 @@
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
+	gap: rem(6);
 	text-align: center;
 	user-select: none;
 	transition: all 0.3s ease;
-	font-size: 1.3125rem;
-	font-weight: 900;
-	border-radius: 0.3125rem;
+	font-family: $font-comfortaa;
+	font-size: 0.875rem;
+	font-weight: 700;
+	line-height: 140%;
+	text-transform: uppercase;
 	border: rem(2) solid;
-	padding: rem(14) rem(30);
+	padding: 0.75rem 0.875rem;
+
+	&::before {
+		width: 1.125rem;
+		height: 1.125rem;
+		flex-shrink: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		order: 1;
+	}
 
 	&.btn-primary {
-		border-color: #da0937;
-		background: #da0937;
-		box-shadow: 0 rem(4) rem(4) 0 rgba(0, 0, 0, 0.25);
-		color: #fff;
-		&:hover {
-			background: $white;
-			color: #da0937;
-			box-shadow: 0 rem(4) rem(4) 0 rgba(0, 0, 0, 0.25) inset;
+		border-color: #efcb92;
+		background: #efcb92;
+		box-shadow: rem(5) rem(5) rem(10) 0 rgba(227, 184, 115, 0.3);
+		color: #000;
+		@media (any-hover: hover) {
+			&:hover {
+				background: #e2c08b;
+				border-color: #e2c08b;
+				box-shadow: none;
+			}
 		}
 	}
 
