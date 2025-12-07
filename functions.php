@@ -2,6 +2,7 @@
 
 require_once('includes/admin-custom.php');
 require_once('includes/acf-custom.php');
+require_once('includes/woocommerce-custom.php');
 
 // =========================================================================
 // 1. CONSTANTS
@@ -88,53 +89,6 @@ add_filter('upload_mimes', 'allow_svg_uploads');
 // }
 
 // add_action('init', 'register_services_post_type');
-
-
-
-
-
-
-
-// Declare WooCommerce theme support
-
-// add_action('after_setup_theme', function () {
-// 	add_theme_support('woocommerce');
-// });
-
-
-// add_filter('woocommerce_register_post_type_shop_order', fn($args) => array_merge($args, ['public' => false, 'show_ui' => false]));
-// add_filter('woocommerce_register_post_type_shop_coupon', fn($args) => array_merge($args, ['public' => false, 'show_ui' => false]));
-// add_filter('woocommerce_register_post_type_shop_order_refund', fn($args) => array_merge($args, ['public' => false, 'show_ui' => false]));
-
-
-// add_filter('woocommerce_get_settings_pages', function ($settings) {
-// 	if (is_array($settings)) {
-// 		foreach ($settings as $key => $page) {
-// 			if (isset($page->id) && in_array($page->id, ['checkout', 'account'], true)) {
-// 				unset($settings[$key]);
-// 			}
-// 		}
-// 	}
-// 	return $settings;
-// });
-
-// add_action('wp_enqueue_scripts', function () {
-// 	if (!(is_shop() || is_product_category() || is_product())) {
-// 		wp_dequeue_style('woocommerce-general');
-// 		wp_dequeue_style('woocommerce-layout');
-// 		wp_dequeue_style('woocommerce-smallscreen');
-// 		wp_dequeue_script('wc-cart-fragments');
-// 		wp_dequeue_script('woocommerce');
-// 		wp_dequeue_script('wc-add-to-cart');
-// 	}
-// }, 99);
-
-
-// add_action('admin_menu', function () {
-// 	remove_menu_page('edit.php?post_type=shop_order');
-// 	remove_menu_page('edit.php?post_type=shop_coupon');
-// });
-
 
 
 

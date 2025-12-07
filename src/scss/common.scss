@@ -158,3 +158,17 @@ body {
 	&__next {
 	}
 }
+
+.catalog {
+	// .catalog__title
+	&__title {
+	}
+	// .catalog__subtitle
+	&__subtitle {
+	}
+	// .catalog__grid
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
