@@ -20,9 +20,10 @@
 </head>
 
 <body <?php body_class(); ?>>
+    <?php require_once(TEMPLATE_PATH . '_preloader.php'); ?>
     <div class="wrapper">
         <header class="header">
-            <div class="container">
+            <div class="container container--fluid">
                 <?php require_once(TEMPLATE_PATH . '_header-main.php'); ?>
             </div>
         </header>
