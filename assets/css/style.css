@@ -466,10 +466,6 @@
           transform: scale(0.985);
 }
 
-.header {
-  display: none !important;
-}
-
 .header__top {
   display: -webkit-box;
   display: -ms-flexbox;

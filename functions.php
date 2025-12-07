@@ -53,45 +53,117 @@ add_filter('upload_mimes', 'allow_svg_uploads');
 
 
 // Register navigation menus
-// function register_custom_menus()
-// {
-// 	register_nav_menus(array(
-// 		'main_menu' => 'Главное меню'
-// 	));
-// }
-// add_action('after_setup_theme', 'register_custom_menus');
+function register_custom_menus()
+{
+	register_nav_menus(array(
+		'general_menu' => ' Меню'
+	));
+}
+add_action('after_setup_theme', 'register_custom_menus');
+
+class Dornott_Menu_Walker extends Walker_Nav_Menu
+{
+
+	public function start_lvl(&$output, $depth = 0, $args = null)
+	{
+		$indent = str_repeat("\t", $depth);
+		$output .= "\n$indent<ul class=\"submenu__list\">\n";
+	}
+
+	public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0)
+	{
+		$indent = ($depth) ? str_repeat("\t", $depth) : '';
+
+		$classes = empty($item->classes) ? array() : (array) $item->classes;
+		$classes[] = 'menu__item';
+
+		$class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item, $args, $depth));
+		$class_names = $class_names ? ' class="' . esc_attr($class_names) . '"' : '';
+
+		$output .= $indent . '<li' . $class_names . '>';
+
+		$atts = array();
+		$atts['title']  = ! empty($item->attr_title) ? $item->attr_title : '';
+		$atts['target'] = ! empty($item->target)     ? $item->target     : '';
+		$atts['rel']    = ! empty($item->xfn)        ? $item->xfn        : '';
+		$atts['href']   = ! empty($item->url)        ? $item->url        : '';
+		$atts['class']  = 'menu__link';
+
+		$atts = apply_filters('nav_menu_link_attributes', $atts, $item, $args, $depth);
+
+		$attributes = '';
+		foreach ($atts as $attr => $value) {
+			if (! empty($value)) {
+				$value = ('href' === $attr) ? esc_url($value) : esc_attr($value);
+				$attributes .= ' ' . $attr . '="' . $value . '"';
+			}
+		}
+
+		$title = apply_filters('the_title', $item->title, $item->ID);
+		$title = apply_filters('nav_menu_item_title', $title, $item, $args, $depth);
+
+		$item_output = $args->before;
+		$item_output .= '<a' . $attributes . '>';
+		$item_output .= $args->link_before . $title . $args->link_after;
+		$item_output .= '</a>';
+		$item_output .= $args->after;
+
+		$output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
+	}
+}
+
+function append_contacts_to_nav($items, $args)
+{
+	if ($args->theme_location === 'general_menu') {
+
+		ob_start();
+		get_template_part('templates/components/menu', 'contacts-block');
+		$contacts_item = ob_get_clean();
+
+		$items .= $contacts_item;
+	}
+	return $items;
+}
+add_filter('wp_nav_menu_items', 'append_contacts_to_nav', 10, 2);
 
 
+// убираем с фронта ненужную инфу в хедере
+remove_action('wp_head', 'wp_generator');
+remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+remove_action('wp_head', 'rel_canonical');
 
-// Enable Custom Logo feature
-// function  custom_logo_setup()
-// {
-// 	add_theme_support('custom-logo', array(
-// 		'height'      => 50,
-// 		'width'       => 362,
-// 		'flex-height' => true,
-// 		'flex-width'  => true,
-// 		'header-text' => array('site-title', 'site-description'),
-// 	));
-// }
-// add_action('after_setup_theme', 'custom_logo_setup');
+remove_action('wp_head', 'feed_links_extra', 3);
+remove_action('wp_head', 'feed_links', 2);
+remove_action('wp_head', 'rsd_link');
+remove_action('wp_head', 'wlwmanifest_link');
+remove_action('wp_head', 'index_rel_link');
+remove_action('wp_head', 'start_post_rel_link', 10, 0);
+remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0);
+remove_action('wp_head', 'parent_post_rel_link', 10, 0);
+
+// Выключаем xmlrpc, ибо дыра
+add_filter('xmlrpc_enabled', '__return_false');
 
 
-// ACF Page Settins
-// if (function_exists('acf_add_options_page')) {
-// 	acf_add_options_page(array(
-// 		'page_title'    => 'Общие поля для всего сайта',
-// 		'menu_title'    => 'Настройки темы',
-// 		'menu_slug'     => 'site-global-settings',
-// 		'capability'    => 'edit_posts',
-// 		'redirect'      => false
-// 	));
-// }
+// Убираем из панели админки лого вп и обновления
+function remove_admin_bar_links()
+{
+	global $wp_admin_bar;
+	$wp_admin_bar->remove_menu('wp-logo');
+	$wp_admin_bar->remove_menu('updates');
+}
+add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 
-// add_action('init', 'register_services_post_type');
+//фикс ошибок микроразметки
+add_filter('disable_wpseo_json_ld_search', '__return_true');
 
 
 
 // СF7 Settings
 
 add_filter('wpcf7_autop_or_not', '__return_false');
+
+function currentYear()
+{
+	return date('Y');
+}

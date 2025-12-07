@@ -1,40 +1,34 @@
 <?php
-$phone = get_field('phone', 'option');
-$email = get_field('email', 'option');
+$option_page = 'option';
+
+$logo = get_field('logo', $option_page);
+
 ?>
 
 <div class="header__top">
-    <?php if (has_custom_logo()) { ?>
-        <?php the_custom_logo(); ?>
-    <?php } ?>
-
-    <?php if ($phone || $email): ?>
-        <div class="header__contacts">
-            <?php if ($phone): ?>
-                <a href="tel:<?php echo preg_replace('/\D+/', '', $phone); ?>" class="header__phone">
-                    <?php echo esc_html($phone); ?>
-                </a>
-            <?php endif; ?>
-
-            <?php if ($email): ?>
-                <a href="mailto:<?php echo esc_attr($email); ?>" class="header__email">
-                    <?php echo esc_html($email); ?>
-                </a>
-            <?php endif; ?>
-        </div>
+    <?php if ($logo): ?>
+        <a href="#" class="header__logo">
+            <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+        </a>
     <?php endif; ?>
-    <button type="button" aria-label="Открыть меню" class="header__menu-toggler icon-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
+    <nav aria-label="Меню" class="header__menu menu">
+        <?php
+        wp_nav_menu(array(
+            'theme_location' => 'general_menu',
+            'container'      => false,
+            'menu_class'     => 'menu__list',
+            'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+            'walker'         => new Dornott_Menu_Walker()
+        ));
+        ?>
+    </nav>
+    <div class="header__actions">
+        <a href="#callback" data-fancybox aria-label="Обратная связь" class="header__action icon-phone-incoming"></a>
+        <a href="#cart" data-fancybox aria-label="Корзина" class="header__action icon-cart"></a>
+        <button type="button" aria-label="Открыть меню" class="header__menu-toggler icon-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
 </div>
-<nav aria-label="Меню" class="header__menu menu">
-    <?php
-    wp_nav_menu([
-        'theme_location' => 'main_menu',
-        'container'      => false,
-        'menu_class'     => 'menu__list',
-    ]);
-    ?>
-</nav>

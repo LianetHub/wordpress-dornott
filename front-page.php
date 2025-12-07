@@ -306,7 +306,7 @@
     $steps_title = get_field('order_steps_title');
     $steps_items = get_field('order_steps_items');
     $order_terms_group = get_field('order_terms');
-    $terms_title = $order_terms_group['order_terms_title'] ?? '';
+    $terms_title = $order_terms_group['order_terms_title'];
     $terms_button = $order_terms_group['order_terms_button_btn'] ?? null;
 ?>
     <section id="steps" class="steps">
@@ -582,13 +582,13 @@
     $form_caption = $contacts_form_group['title'];
     $form_text = $contacts_form_group['subtitle'];
 
-    $global_address = get_field('address', 'option') ?? '';
-    $global_hours = get_field('working_hours', 'option') ?? '';
-    $global_phone = get_field('phone', 'option') ?? '';
-    $global_email = get_field('email', 'option') ?? '';
-    $global_map_coords = get_field('coords', 'option') ?? '';
-    $global_telegram = get_field('telegram_url', 'option') ?? '';
-    $global_whatsapp = get_field('whatsapp_url', 'option') ?? '';
+    $address = get_field('address', 'option') ?? '';
+    $hours = get_field('worktime', 'option') ?? '';
+    $phone = get_field('tel', 'option') ?? '';
+    $email = get_field('email', 'option') ?? '';
+    $map_coords = get_field('coords', 'option') ?? '';
+    $telegram = get_field('telegram_url', 'option') ?? '';
+    $whatsapp = get_field('whatsapp_url', 'option') ?? '';
 ?>
     <section id="contacts" class="contacts">
         <div class="container">
@@ -608,83 +608,70 @@
                     </div>
                     <div class="contacts__form-fields">
                         <label class="contacts__form-field contacts__form-field--large form__field">
-                            <input type="text" name="name" data-required class="form__control" placeholder="">
-                            <span class="form__field-placeholder">Ваше имя</span>
+                            <input type="text" name="name" data-required class="form__control" placeholder="Ваше имя">
                         </label>
                         <label class="contacts__form-field form__field">
-                            <input type="tel" name="phone" data-required class="form__control" placeholder="">
-                            <span class="form__field-placeholder">Телефон</span>
-                        </label>
-                        <label class="contacts__form-field form__field">
-                            <input type="email" name="email" data-required class="form__control" placeholder="">
-                            <span class="form__field-placeholder">Email</span>
+                            <input type="tel" name="phone" data-required class="form__control" placeholder="Телефон">
                         </label>
                         <label class="contacts__form-field contacts__form-field--large form__field">
-                            <textarea name="message" class="form__control" placeholder=""></textarea>
-                            <span class="form__field-placeholder">Ваш вопрос или предложение...</span>
+                            <textarea name="message" class="form__control" placeholder="Ваш вопрос или предложение..."></textarea>
                         </label>
                         <label class="form__file contacts__form-field--large">
                             <input type="file" name="file" class="form__file-input" hidden>
                             <span class="form__file-btn icon-clip">Прикрепить (до 10 мб.)</span>
                         </label>
                     </div>
-                    <label class="form__checkbox">
-                        <input type="checkbox" name="agree" data-required class="form__checkbox-input" hidden>
-                        <span class="form__checkbox-text">
-                            Нажимая кнопку, вы соглашаетесь с
-                            <a href="#privacy-policy" data-fancybox>
-                                политикой конфиденциальности сайта
-                            </a>
-                        </span>
-                    </label>
                     <button type="submit" class="form__btn btn btn-primary">Отправить</button>
+                    <div class="form__policy">
+                        <?php echo wp_kses_post($privacy_txt) ?>
+                    </div>
                 </form>
 
                 <div class="contacts__map">
-                    <?php if ($global_map_coords): ?>
+                    <?php if ($map_coords): ?>
                         <div class="contacts__map-header">
-                            <div id="map" class="contacts__map-block" data-coords="<?php echo esc_attr($global_map_coords); ?>"></div>
+                            <div id="map" class="contacts__map-block" data-coords="<?php echo esc_attr($map_coords); ?>"></div>
                         </div>
                     <?php endif; ?>
                     <ul class="contacts__list">
-                        <?php if ($global_address): ?>
+                        <?php if ($address): ?>
                             <li class="contacts__list-item">
                                 <div class="contacts__caption">Адрес</div>
-                                <address class="contacts__text"><?php echo esc_html($global_address); ?></address>
+                                <address class="contacts__text"><?php echo esc_html($address); ?></address>
                             </li>
                         <?php endif; ?>
 
-                        <?php if ($global_hours): ?>
+                        <?php if ($hours): ?>
                             <li class="contacts__list-item">
                                 <div class="contacts__caption">Режим работы</div>
-                                <div class="contacts__text"><?php echo esc_html($global_hours); ?></div>
+                                <div class="contacts__text"><?php echo esc_html($hours); ?></div>
                             </li>
                         <?php endif; ?>
 
-                        <?php if ($global_phone || $global_telegram || $global_whatsapp): ?>
+                        <?php if ($phone || $telegram || $whatsapp): ?>
                             <li class="contacts__list-item">
                                 <div class="contacts__caption">Телефон</div>
-                                <?php if ($global_phone): ?>
-                                    <a href="tel:<?php echo esc_attr(preg_replace('/[^\d\+]/', '', $global_phone)); ?>" class="contacts__link"><?php echo esc_html($global_phone); ?></a>
+                                <?php if ($phone): ?>
+                                    <a href="tel:<?php echo esc_attr(preg_replace('/[^\d\+]/', '', $phone)); ?>" class="contacts__link"><?php echo esc_html($phone); ?></a>
                                 <?php endif; ?>
 
-                                <?php if ($global_telegram || $global_whatsapp): ?>
+                                <?php if ($telegram || $whatsapp): ?>
                                     <div class="contacts__socials socials">
-                                        <?php if ($global_telegram): ?>
-                                            <a href="<?php echo esc_url($global_telegram); ?>" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
+                                        <?php if ($telegram): ?>
+                                            <a href="<?php echo esc_url($telegram); ?>" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
                                         <?php endif; ?>
-                                        <?php if ($global_whatsapp): ?>
-                                            <a href="<?php echo esc_url($global_whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
+                                        <?php if ($whatsapp): ?>
+                                            <a href="<?php echo esc_url($whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
                                         <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
                             </li>
                         <?php endif; ?>
 
-                        <?php if ($global_email): ?>
+                        <?php if ($email): ?>
                             <li class="contacts__list-item">
                                 <div class="contacts__caption">Email</div>
-                                <a href="mailto:<?php echo esc_attr($global_email); ?>" class="contacts__link"><?php echo esc_html($global_email); ?></a>
+                                <a href="mailto:<?php echo esc_attr($email); ?>" class="contacts__link"><?php echo esc_html($email); ?></a>
                             </li>
                         <?php endif; ?>
                     </ul>

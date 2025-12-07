@@ -1,84 +1,124 @@
 </main>
+<?php
+$option_page = 'option';
+
+$white_logo = get_field('white_logo', $option_page);
+$copy_text = get_field('copy', $option_page);
+$requisites = get_field('requisites', $option_page);
+
+// Контакты
+$phone = get_field('tel', $option_page);
+$email = get_field('email', $option_page);
+
+// Соцсети
+$social_telegram = get_field('telegram', $option_page);
+$social_whatsapp = get_field('whatsapp', $option_page);
+$social_youtube = get_field('youtube', $option_page);
+$social_rutube = get_field('rutube', $option_page);
+$social_vk = get_field('vk', $option_page);
+
+// Политики
+$privacy_policy =  get_field('privacy_policy', $option_page);
+$data_protection =  get_field('data_protection_policy', $option_page);
+$payment_delivery =  get_field('payment_and_delivery_policy', $option_page);
+
+// Кнопка
+$footer_button_full = get_field('footer_btn', $option_page);
+$footer_button_data = $footer_button_full['btn'] ?? null;
+?>
+
 <footer class="footer">
     <div class="footer__top">
         <div class="container">
             <div class="footer__side">
-                <a href="/" class="footer__logo">
-                    <img src="@img/logo.svg" alt="Логотип «DORNOTT»">
-                </a>
-                <div class="footer__reqs">
-                    ИП БРОДА СЕРГЕЙ БОРИСОВИЧ / «DORNOTT» <br>
-                    ИНН: 246309499122, ОГРН: 322774600738028
-                </div>
+                <?php if ($white_logo): ?>
+                    <a href="#hero" class="footer__logo">
+                        <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($requisites): ?>
+                    <div class="footer__reqs">
+                        <?php echo $requisites; ?>
+                    </div>
+                <?php endif; ?>
             </div>
-            <nav aria-label="Меню в подвале" class="footer__menu">
-                <ul class="menu__list">
-                    <li class="menu__item">
-                        <a href="#" class="menu__link">Главная</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="#" class="menu__link">О Dornott</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="#" class="menu__link">Каталог</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="" class="menu__link">Подарочная карта</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="" class="menu__link">Как сделать заказ?</a>
-                    </li>
-                    <li class="menu__item ">
-                        <a href="" class="menu__link">Отзывы</a>
-                    </li>
-                    <li class="menu__item menu__item--parent">
-                        <button type="button" class="menu__btn icon-chevron-down">Контакты</button>
-                        <!-- <div class="submenu">
-                            <ul class="submenu__list">
-                                <li class="submenu__contacts">
-                                    <div class="submenu__contacts-block">
-                                        <div class="submenu__contacts-caption">Телефон:</div>
-                                        <a href="tel:+79251398515" class="submenu__contacts-phone">+7 (925) 139-85-15</a>
-                                        <a href="mailto:info@d-ocean.su" class="submenu__contacts-mail">info@d-ocean.su</a>
-                                    </div>
-                                    <div class="submenu__contacts-block">
-                                        <div class="submenu__contacts-caption">Мессенджеры:</div>
-                                        <div class="submenu__contacts-socials socials">
-                                            <a href="" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
-                                            <a href="" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="submenu__item"><a href="contacts.html" class="submenu__link icon-chevron-right">Контакты</a></li>
-                            </ul>
-                        </div> -->
-                    </li>
-                </ul>
-                <ul class="footer__policies">
-                    <li class="footer__policy">
-                        <a href="" class="footer__policy-link">Политика конфиденциальности</a>
-                    </li>
-                    <li class="footer__policy">
-                        <a href="" class="footer__policy-link">Защита данных</a>
-                    </li>
-                    <li class="footer__policy">
-                        <a href="" class="footer__policy-link">Cookies</a>
-                    </li>
-                </ul>
+
+            <nav aria-label="Меню" class="menu">
+                <?php
+                wp_nav_menu(array(
+                    'theme_location' => 'general_menu',
+                    'container'      => false,
+                    'menu_class'     => 'menu__list',
+                    'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                    'walker'         => new Dornott_Menu_Walker()
+                ));
+                ?>
+                <?php if ($privacy_policy || $data_protection || $payment_delivery): ?>
+                    <ul class="footer__policies">
+                        <?php if ($privacy_policy): ?>
+                            <li class="footer__policy">
+                                <a href="#privacy-policy" data-fancybox class="footer__policy-link">Политика конфиденциальности</a>
+                            </li>
+                        <?php endif; ?>
+
+
+                        <?php if ($data_protection): ?>
+                            <li class="footer__policy">
+                                <a href="#data-protection" data-fancybox class="footer__policy-link">Защита данных</a>
+                            </li>
+                        <?php endif; ?>
+
+
+                        <?php if ($payment_delivery): ?>
+                            <li class="footer__policy">
+                                <a href="#payment-and-delivery" data-fancybox class="footer__policy-link">Оплата и доставка</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                <?php endif; ?>
             </nav>
-            <a href="" class="footer__callback btn btn-primary icon-phone-incoming">заказать звонок</a>
+
+            <?php
+
+            if ($footer_button_data) {
+                get_template_part('templates/components/button', null, [
+                    'data'  => $footer_button_data,
+                    'class' => 'footer__callback',
+                    'type'  => 'primary',
+                    'icon'  => 'phone-incoming'
+                ]);
+            }
+            ?>
         </div>
     </div>
+
     <div class="footer__bottom">
         <div class="container">
-            <div class="footer__copy">© 2020-2025 DORNOTT | Все права защищены</div>
+            <?php if ($copy_text): ?>
+                <div class="footer__copy">
+                    © 2020-<?php echo currentYear(); ?> <?php echo $copy_text; ?>
+                </div>
+            <?php endif; ?>
+
             <div class="footer__socials socials">
-                <a href="" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
-                <a href="" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
-                <a href="" aria-label="Следите за нами в Youtube" class="socials__link icon-youtube"></a>
-                <a href="" aria-label="Следите за нами в Rutube" class="socials__link icon-rutube"></a>
-                <a href="" aria-label="Следите за нами в VK" class="socials__link icon-vk"></a>
+                <?php if ($social_telegram): ?>
+                    <a href="<?php echo esc_url($social_telegram); ?>" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
+                <?php endif; ?>
+                <?php if ($social_whatsapp): ?>
+                    <a href="<?php echo esc_url($social_whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
+                <?php endif; ?>
+                <?php if ($social_youtube): ?>
+                    <a href="<?php echo esc_url($social_youtube); ?>" aria-label="Следите за нами в Youtube" class="socials__link icon-youtube"></a>
+                <?php endif; ?>
+                <?php if ($social_rutube): ?>
+                    <a href="<?php echo esc_url($social_rutube); ?>" aria-label="Следите за нами в Rutube" class="socials__link icon-rutube"></a>
+                <?php endif; ?>
+                <?php if ($social_vk): ?>
+                    <a href="<?php echo esc_url($social_vk); ?>" aria-label="Следите за нами в VK" class="socials__link icon-vk"></a>
+                <?php endif; ?>
             </div>
+
             <div class="footer__prod">
                 <a href="" class="footer__prod-link">
                     <img src="@img/gektor.svg" alt="Студия-разработчик">
@@ -88,6 +128,7 @@
     </div>
 </footer>
 </div>
+<?php require_once(TEMPLATE_PATH . '_modals.php'); ?>
 <?php wp_footer(); ?>
 </body>
 
