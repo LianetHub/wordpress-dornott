@@ -91,8 +91,11 @@
             <?php endif; ?>
         </div>
         <div class="hero__controls">
-            <button type="button" class="hero__prev swiper-button-prev"></button>
-            <button type="button" class="hero__next swiper-button-next"></button>
+            <div class="hero__pagination swiper-pagination"></div>
+            <div class="hero__controls-btns">
+                <button type="button" class="hero__prev swiper-button-prev"></button>
+                <button type="button" class="hero__next swiper-button-next"></button>
+            </div>
         </div>
     </div>
 </section>

@@ -6,7 +6,8 @@
 @use "icons";
 
 //============ МОДУЛИ ====================
-// @use "modules/popup";
+@use "modules/popup";
+@use "modules/preloader";
 // @use "modules/breadcrumbs";
 // @import "modules/select";
 // @import "modules/pagination";
@@ -50,24 +51,98 @@
 	color: $accent;
 }
 
-.custom-logo-link {
-	display: inline-block;
-	max-width: rem(220);
-	@media (min-width: $md4) {
-		max-width: rem(270);
+.swiper-button-next,
+.swiper-button-prev {
+	& .swiper-navigation-icon {
+		display: none !important;
 	}
-	@media (min-width: $md2) {
-		max-width: rem(320);
+	position: relative;
+	left: auto !important;
+	right: auto !important;
+	bottom: auto !important;
+	top: auto !important;
+	margin: 0 !important;
+	transform: none !important;
+	transition: background-color 0.3s ease 0s, color 0.3s ease 0s;
+	z-index: 2;
+	width: 3.25rem;
+	height: 2.75rem;
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: #f3efe7;
+	color: #414651;
+
+	&.swiper-button-lock {
+		display: none;
 	}
-	@media (min-width: $md1) {
-		max-width: rem(362);
+
+	&:disabled,
+	&.swiper-button-disabled,
+	&[aria-disabled="true"] {
+		pointer-events: none;
+		opacity: 0.7;
 	}
-	& img {
-		width: 100%;
-		height: auto;
+
+	@media (any-hover: hover) {
+		&:hover {
+			background: #423931;
+			color: #fff;
+		}
 	}
 }
 
+.swiper-button-prev {
+	@extend %ic, .icon-arrow-left;
+}
+.swiper-button-next {
+	@extend %ic, .icon-arrow-right;
+}
+
+.swiper-pagination {
+	&.swiper-pagination-fraction {
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		position: static;
+		inset: auto;
+		margin: 0;
+		width: auto;
+		color: #717680;
+		font-size: 1rem;
+		line-height: 140%;
+		.swiper-pagination-current {
+			color: #000;
+			font-size: 2rem;
+			font-weight: 700;
+			line-height: 140%;
+			margin-right: 0.75rem;
+		}
+	}
+	&.swiper-pagination-lock {
+		display: none;
+	}
+	&.swiper-pagination-bullets {
+		position: static;
+		margin: auto;
+		width: auto;
+		.swiper-pagination-bullet {
+			width: rem(8);
+			height: rem(8);
+			background: #e9eaeb;
+			opacity: 1;
+			&.swiper-pagination-bullet-active {
+				opacity: 1;
+				background: $accent;
+			}
+		}
+	}
+}
+
+.swiper-lazy-preloader {
+	--swiper-preloader-color: #{$accent};
+}
 //============ ОБЩИЕ ЭЛЕМЕНТЫ ============
 
 // Стилизация селекта

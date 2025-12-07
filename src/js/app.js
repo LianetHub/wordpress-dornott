@@ -1,14 +1,40 @@
 "use strict";
 
 
-//  init Fancybox
-if (typeof Fancybox !== "undefined" && Fancybox !== null) {
-    Fancybox.bind("[data-fancybox]", {
-        dragToClose: false
-    });
+
+// preloader
+if ($('.preloader').length > 0) {
+    let counting = setInterval(function () {
+        let loader = $('#percentage');
+        let currval = parseInt(loader.text());
+
+        if (currval < 90) {
+            loader.text(++currval);
+        } else if (currval < 95 && document.readyState === "interactive") {
+            loader.text(95);
+        } else if (currval < 99 && document.readyState === "complete") {
+            loader.text(99);
+        }
+
+        if (currval >= 99 && document.readyState === "complete") {
+            clearInterval(counting);
+            loader.text(100);
+            setTimeout(function () {
+                $('body').removeClass('preloading').addClass('is-loaded');
+            }, 300);
+        }
+    }, 20);
 }
 
 $(function () {
+
+
+    //  init Fancybox
+    if (typeof Fancybox !== "undefined" && Fancybox !== null) {
+        Fancybox.bind("[data-fancybox]", {
+            dragToClose: false
+        });
+    }
 
     // detect user OS
     const isMobile = {
@@ -35,8 +61,6 @@ $(function () {
     $(window).on('resize', () => {
         getNavigator();
     });
-
-
 
 
     // event handlers
@@ -137,10 +161,83 @@ $(function () {
     }
 
 
+    // sliders
+    if ($('.hero').length) {
+
+
+        const heroImages = $('.hero__images');
+        const heroOffer = $('.hero__offer-slider');
+
+        if (heroImages.length && heroOffer.length) {
+
+            const heroImagesSlider = new Swiper(heroImages.get(0), {
+                loop: true,
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                },
+                speed: 600,
+                allowTouchMove: false,
+
+                navigation: {
+                    nextEl: '.hero__next',
+                    prevEl: '.hero__prev',
+                },
+
+                pagination: {
+                    el: '.hero__pagination',
+                    type: 'fraction',
+                    formatFractionCurrent: (number) => {
+                        return number < 10 ? '0' + number : number;
+                    },
+                    formatFractionTotal: (number) => {
+                        return number < 10 ? '0' + number : number;
+                    },
+                    renderFraction: (currentClass, totalClass) => {
+                        return '<span class="' + currentClass + '"></span>' +
+                            '/' +
+                            '<span class="' + totalClass + '"></span>';
+                    }
+                },
+            });
+
+            const heroOfferSlider = new Swiper(heroOffer.get(0), {
+                loop: true,
+                speed: 600,
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                },
+                controller: {
+                    control: heroImagesSlider
+                },
+            });
+
+
+            heroImagesSlider.controller.control = heroOfferSlider;
+        }
+    }
+
+
+    // header observer
+    const headerElement = $('.header');
+
+    const callback = function (entries, observer) {
+        if (entries[0].isIntersecting) {
+            headerElement.removeClass('scroll');
+        } else {
+            headerElement.addClass('scroll');
+        }
+    };
+
+    const headerObserver = new IntersectionObserver(callback);
+    headerObserver.observe(headerElement[0]);
+
+
     // WPCF7 Redirect
-    document.addEventListener('wpcf7mailsent', function (event) {
-        window.location.href = '/vy-zakazali-zvonok/';
-    }, false);
+    // document.addEventListener('wpcf7mailsent', function (event) {
+    //     window.location.href = '/vy-zakazali-zvonok/';
+    // }, false);
 
 
 

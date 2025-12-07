@@ -1,15 +1,15 @@
-<noscript>
-    <style>
-        .preloader {
-            display: none !important;
-        }
-
-        body.preloading {
-            overflow: visible !important;
-        }
-    </style>
-</noscript>
 <div class="preloader">
+    <noscript>
+        <style>
+            .preloader {
+                display: none !important;
+            }
+
+            body.preloading {
+                overflow: visible !important;
+            }
+        </style>
+    </noscript>
     <div class="preloader__inner">
         <div class="preloader__logo">
             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/logo-white.svg" alt="Лого">

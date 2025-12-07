@@ -28,8 +28,7 @@
             e.preventDefault();
             showLoadingInModal();
             getCartDetails();
-            // Здесь должна быть логика открытия модального окна
-            // openModal('#cart-modal');
+
         });
 
         $(document).on('click', '.checkout-tbank-button', function (e) {

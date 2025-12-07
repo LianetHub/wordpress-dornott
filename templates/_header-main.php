@@ -1,16 +1,14 @@
 <?php
 $option_page = 'option';
-
 $logo = get_field('logo', $option_page);
-
 ?>
 
-<div class="header__top">
-    <?php if ($logo): ?>
-        <a href="#" class="header__logo">
-            <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
-        </a>
-    <?php endif; ?>
+<?php if ($logo): ?>
+    <a href="#" class="header__logo">
+        <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+    </a>
+<?php endif; ?>
+<div class="header__wrapper">
     <nav aria-label="Меню" class="header__menu menu">
         <?php
         wp_nav_menu(array(
@@ -24,7 +22,9 @@ $logo = get_field('logo', $option_page);
     </nav>
     <div class="header__actions">
         <a href="#callback" data-fancybox aria-label="Обратная связь" class="header__action icon-phone-incoming"></a>
-        <a href="#cart" data-fancybox aria-label="Корзина" class="header__action icon-cart"></a>
+        <a href="#cart" data-fancybox aria-label="Корзина" class="header__action icon-cart">
+            <span class="header__action-quantity">4</span>
+        </a>
         <button type="button" aria-label="Открыть меню" class="header__menu-toggler icon-menu">
             <span></span>
             <span></span>

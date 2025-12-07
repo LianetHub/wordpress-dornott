@@ -144,13 +144,12 @@
 	user-select: none;
 	transition: all 0.3s ease;
 	font-family: $font-comfortaa;
-	font-size: 0.875rem;
-	font-weight: 700;
-	line-height: 140%;
 	text-transform: uppercase;
 	border: rem(2) solid;
-	padding: 0.75rem 0.875rem;
-
+	font-size: 1rem;
+	line-height: 140%;
+	font-weight: 700;
+	padding: rem(18) rem(22);
 	&::before {
 		width: 1.125rem;
 		height: 1.125rem;

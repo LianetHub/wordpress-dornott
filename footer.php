@@ -120,8 +120,8 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
             </div>
 
             <div class="footer__prod">
-                <a href="" class="footer__prod-link">
-                    <img src="@img/gektor.svg" alt="Студия-разработчик">
+                <a href="https://gektor-studio.com/" target="_blank" rel="noopener" class="footer__prod-link">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/gektor-logo.svg" alt="Студия-разработчик">
                 </a>
             </div>
         </div>

@@ -158,6 +158,12 @@ add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 add_filter('disable_wpseo_json_ld_search', '__return_true');
 
 
+function add_preloading_body_class($classes)
+{
+	$classes[] = 'preloading';
+	return $classes;
+}
+add_filter('body_class', 'add_preloading_body_class');
 
 // СF7 Settings
 
