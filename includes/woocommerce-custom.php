@@ -42,7 +42,7 @@ function disable_wc_pages()
 add_action('admin_menu', 'hide_wc_admin_menus', 99);
 function hide_wc_admin_menus()
 {
-    remove_menu_page('woocommerce');
+    // remove_menu_page('woocommerce');
     remove_menu_page('wc-admin&path=/analytics/overview');
     remove_menu_page('admin.php?page=wc-settings&tab=checkout&from=PAYMENTS_MENU_ITEM');
     remove_menu_page('woocommerce-marketing');

@@ -229,6 +229,57 @@ $(function () {
         }
     }
 
+    if ($('.product-card').length) {
+        $('.product-card').each(function (index, element) {
+            const $slider = $(element).find('.product-card__slider');
+            if (!$slider.length) return;
+
+            const pagination = $(element).find('.product-card__pagination')[0];
+
+            const swiper = new Swiper($slider[0], {
+                slidesPerView: 1,
+                speed: 0,
+                lazy: true,
+                watchOverflow: true,
+                pagination: {
+                    el: pagination,
+                    clickable: true
+                }
+            });
+
+            const $areasWrapper = $('<div class="product-card__hover-areas"></div>');
+            $areasWrapper.css({
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                zIndex: 10
+            });
+
+            const slidesCount = swiper.slides.length;
+
+            for (let i = 0; i < slidesCount; i++) {
+                const $area = $('<div class="product-card__hover-area"></div>');
+                $area.css({
+                    flex: '1 1 0',
+                    cursor: 'pointer'
+                });
+
+                $area.on('mouseenter', () => {
+                    swiper.slideTo(i);
+                });
+
+                $areasWrapper.append($area);
+            }
+
+
+            $slider.css('position', 'relative').append($areasWrapper);
+        });
+    }
+
+
 
     // header observer
     const headerElement = $('.header');

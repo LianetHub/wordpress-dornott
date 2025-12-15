@@ -128,14 +128,13 @@
 		position: static;
 		margin: auto;
 		width: auto;
+
 		.swiper-pagination-bullet {
-			width: rem(8);
-			height: rem(8);
-			background: #e9eaeb;
+			background: #a4a7ae;
 			opacity: 1;
 			&.swiper-pagination-bullet-active {
 				opacity: 1;
-				background: $accent;
+				background: #414651;
 			}
 		}
 	}

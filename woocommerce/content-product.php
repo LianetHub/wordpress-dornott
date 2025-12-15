@@ -40,85 +40,110 @@ if ($is_on_sale && $regular_price > 0 && $sale_price !== '') {
 	$sale_percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
 }
 
-$label_action = 'Акция';
-$label_cashback = 'Кэшбэк 10%';
-
 $image_id = $product->get_image_id();
 $gallery_ids = $product->get_gallery_image_ids();
 $image_size = 'woocommerce_single';
 
 $slides_html = '';
 
+$image_args = ['class' => 'product-card__image cover-image'];
+
 if ($image_id) {
-	$image_html = wp_get_attachment_image($image_id, $image_size, false, ['class' => 'product__image_main cover-image']);
-	$slides_html .= '<div class="product__slide swiper-slide">' . $image_html . '</div>';
+	$image_html = wp_get_attachment_image($image_id, $image_size, false, $image_args);
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '</div>';
 } else {
-	$slides_html .= '<div class="product__slide swiper-slide">' . wc_placeholder_img($image_size) . '</div>';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . wc_placeholder_img($image_size, $image_args['class']) . '</div>';
 }
 
 if (!empty($gallery_ids)) {
 	foreach ($gallery_ids as $gallery_image_id) {
-		$image_html = wp_get_attachment_image($gallery_image_id, $image_size);
-		$slides_html .= '<div class="product__slide swiper-slide">' . $image_html . '</div>';
+		$image_html = wp_get_attachment_image($gallery_image_id, $image_size, false, $image_args);
+		$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '</div>';
 	}
 }
 
+$labels = get_field('product_labels', $product_id);
+
 ?>
-<li <?php wc_product_class('custom-product-card', $product); ?>>
-	<div class="product__header">
-		<div class="product__slider swiper">
+<li <?php wc_product_class('product-card', $product); ?>>
+	<div class="product-card__header">
+		<div class="product-card__slider swiper">
 			<div class="swiper-wrapper">
 				<?php echo $slides_html; ?>
 			</div>
 		</div>
-		<div class="product__labels">
-			<?php if (!empty($label_action)) : ?>
-				<span class="label"><?php echo esc_html($label_action); ?></span>
+		<div class="product-card__labels">
+			<?php if ($is_on_sale && $sale_percentage > 0) : ?>
+				<span class="label label--red">
+					-<?php echo absint($sale_percentage); ?>%
+				</span>
 			<?php endif; ?>
 
+			<?php if ($labels) : ?>
+				<?php foreach ($labels as $label_item) : ?>
+					<?php
+					$label_text = $label_item['label'] ?? '';
+					$label_color = $label_item['color'] ?? '';
+					$label_icon = $label_item['icon'] ?? null;
+					$label_icon_id = 0;
 
+					if ($label_icon && is_array($label_icon) && isset($label_icon['ID'])) {
+						$label_icon_id = $label_icon['ID'];
+					}
 
-			<?php if (!empty($label_cashback)) : ?>
-				<span class="label label--yellow">
-					<?php echo esc_html($label_cashback); ?>
-				</span>
+					$label_class = '';
+					if ($label_color) {
+						$label_class = 'label--' . sanitize_title($label_color);
+					}
+					?>
+					<?php if ($label_text) : ?>
+						<span class="label <?php echo esc_attr($label_class); ?>">
+							<?php if ($label_icon_id) : ?>
+								<span class="label__icon">
+									<?php echo wp_get_attachment_image($label_icon_id, 'thumbnail', false, ['class' => 'label__icon']); ?>
+								</span>
+							<?php endif; ?>
+							<?php echo esc_html($label_text); ?>
+						</span>
+					<?php endif; ?>
+				<?php endforeach; ?>
 			<?php endif; ?>
 		</div>
 	</div>
 
-	<div class="product__actions">
+	<div class="product-card__actions">
 		<?php if (!empty($sku)) : ?>
-			<div class="product__sku">
+			<div class="product-card__sku">
 				<?php echo esc_html($sku); ?>
 			</div>
 		<?php endif; ?>
-		<div class="product__pagination swiper-pagination"></div>
+		<div class="product-card__pagination swiper-pagination"></div>
 		<button type="button"
 			class="favorite-btn"
 			aria-label="Добавить в избранное"></button>
 	</div>
-	<div class="product__details">
-		<h3 class="product__title">
+	<div class="product-card__details">
+		<h3 class="product-card__title">
 			<?php echo esc_html($product->get_name()); ?>
 		</h3>
 		<?php if (!empty($description)) : ?>
-			<div class="product__description">
+			<div class="product-card__description">
 				<?php echo wp_kses_post($description); ?>
 			</div>
 		<?php endif; ?>
 	</div>
 
-	<div class="product__footer">
-		<div class="product__price">
-			<div class="product__price-header">
+	<div class="product-card__footer">
+		<div class="product-card__price">
+			<div class="product-card__price-header">
 				<?php if ($is_on_sale && !empty($regular_price)) : ?>
-					<div class="product__price-old"><?php echo wc_price($regular_price); ?></div>
+					<div class="product-card__price-old"><?php echo wc_price($regular_price); ?></div>
 				<?php endif; ?>
 				<?php if ($is_on_sale && $sale_percentage > 0) : ?>
-					<span class="product__price-sale">-<?php echo absint($sale_percentage); ?>%</span>
+
 				<?php endif; ?>
 			</div>
-			<div class="product__price-current"><?php echo wc_price($product->get_price()); ?></div>
+			<div class="product-card__price-current"><?php echo wc_price($product->get_price()); ?></div>
 		</div>
 
 		<button
