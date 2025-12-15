@@ -50,7 +50,7 @@ $image_size = 'woocommerce_single';
 $slides_html = '';
 
 if ($image_id) {
-	$image_html = wp_get_attachment_image($image_id, $image_size, false, ['class' => 'product__image_main']);
+	$image_html = wp_get_attachment_image($image_id, $image_size, false, ['class' => 'product__image_main cover-image']);
 	$slides_html .= '<div class="product__slide swiper-slide">' . $image_html . '</div>';
 } else {
 	$slides_html .= '<div class="product__slide swiper-slide">' . wc_placeholder_img($image_size) . '</div>';
@@ -73,13 +73,13 @@ if (!empty($gallery_ids)) {
 		</div>
 		<div class="product__labels">
 			<?php if (!empty($label_action)) : ?>
-				<span class="label label-action"><?php echo esc_html($label_action); ?></span>
+				<span class="label"><?php echo esc_html($label_action); ?></span>
 			<?php endif; ?>
 
 
 
 			<?php if (!empty($label_cashback)) : ?>
-				<span class="label label-cashback">
+				<span class="label label--yellow">
 					<?php echo esc_html($label_cashback); ?>
 				</span>
 			<?php endif; ?>
@@ -122,11 +122,10 @@ if (!empty($gallery_ids)) {
 		</div>
 
 		<button
-			class="add-to-cart-button btn btn-primary icon-shopping-cart ajax_add_to_cart"
+			class="add-to-cart-button btn btn-primary ajax_add_to_cart"
 			data-product-id="<?php echo esc_attr($product_id); ?>"
 			data-quantity="1"
 			aria-label="Добавить <?php echo esc_attr($product->get_name()); ?> в корзину">
-
 		</button>
 	</div>
 </li>

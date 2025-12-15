@@ -44,7 +44,7 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                 <?php endif; ?>
             </div>
 
-            <nav aria-label="Меню" class="menu">
+            <nav aria-label="Меню" class="footer__menu menu">
                 <?php
                 wp_nav_menu(array(
                     'theme_location' => 'general_menu',

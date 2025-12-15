@@ -15,6 +15,7 @@
 	}
 	// .form__field
 	&__field {
+		width: 100%;
 	}
 	// .form__label
 	&__label {
@@ -26,19 +27,18 @@
 		text-overflow: ellipsis;
 		transition: border-color 0.3s ease 0s, color 0.3s ease 0s;
 		width: 100%;
-		border-radius: 0.3125rem;
-		border: rem(1) solid #000;
-		font-size: 1rem;
-		font-weight: 600;
-		padding: 0.62rem 1.81rem;
-
+		border-radius: 0.75rem;
+		background: #f5f5f5;
+		font-size: 1.125rem;
+		line-height: 144.444%;
+		padding: 1rem 1.5rem;
 		&::placeholder {
 			opacity: 1;
 			color: #a4a4a4;
 		}
 		&:hover,
 		&:focus {
-			border-color: $accent;
+			background: #e9eaeb;
 		}
 		&:disabled {
 			background: #ddd;
@@ -46,6 +46,10 @@
 		}
 		&.wpcf7-not-valid {
 			background: #fff1ed;
+		}
+		&:is(textarea) {
+			resize: none;
+			height: rem(136);
 		}
 	}
 
@@ -67,6 +71,36 @@
 		}
 		.wpcf7-spinner {
 			display: none;
+		}
+	}
+
+	// .form__file
+	&__file {
+		width: 100%;
+	}
+	// .form__file-input
+	&__file-input {
+	}
+	// .form__file-btn
+	&__file-btn {
+		color: #1570ef;
+		font-size: 1.125rem;
+		font-weight: 400;
+		line-height: 122.222%;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		cursor: pointer;
+		&::before {
+			color: #181d27;
+			width: 1.25rem;
+			height: 1.25rem;
+			font-size: 1.25rem;
+			flex-shrink: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 		}
 	}
 }

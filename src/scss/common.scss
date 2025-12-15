@@ -138,7 +138,7 @@ body {
 	// .hero__offer-slider
 	&__offer-slider {
 		min-width: 0;
-		max-width: rem(670);
+		max-width: rem(666);
 		margin-left: 0;
 	}
 	// .hero__offer-slide
@@ -329,26 +329,93 @@ body {
 }
 
 .special-offer {
+	background: #2d3623;
+	color: #fff;
+	padding: 5rem 0;
+	position: relative;
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100%;
+
+		z-index: 1;
+		background-image: url("@img/special-offer-decor-line.svg");
+		background-position: center 33%;
+		background-size: 100% auto;
+		background-repeat: no-repeat;
+		@media (min-width: 3200px) {
+			background-size: auto 85%;
+		}
+	}
 	// .special-offer__body
 	&__body {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
 	}
 	// .special-offer__main
 	&__main {
+		position: relative;
+		z-index: 2;
+		max-width: 38.125rem;
+		margin: 2.5rem auto 0;
 	}
 	// .special-offer__title
 	&__title {
 	}
 	// .special-offer__subtitle
 	&__subtitle {
+		border-top: rem(1) solid #535862;
+		padding-top: 1.5rem;
+		margin-top: 1.5rem;
+		font-size: 1.125rem;
+		line-height: 160%;
+	}
+	// .special-offer__btn
+	&__btn {
+		margin-top: 1.5rem;
 	}
 	// .special-offer__image-wrapper
 	&__image-wrapper {
+		position: relative;
 	}
 	// .special-offer__label
 	&__label {
+		width: rem(140);
+		height: rem(140);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='134' height='140' viewBox='0 0 134 140' fill='none'%3E%3Cpath d='M66.574 0L107.719 13.3688L133.148 48.3688V91.6312L107.719 126.631L66.574 140L25.429 126.631L1.52588e-05 91.6312V48.3688L25.429 13.3688L66.574 0Z' fill='%23FCD043'/%3E%3C/svg%3E");
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		transform: rotate(-15deg);
+		position: absolute;
+		z-index: 2;
+		top: 3.62rem;
+		left: rem(-70);
+		filter: drop-shadow(rem(-14) rem(14) rem(32) rgba(0, 0, 0, 0.4));
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+		padding: 1.75rem;
+		font-family: $font-comfortaa;
+		font-size: 1.625rem;
+		line-height: 120%;
+		letter-spacing: -0.04875rem;
+		color: #585858;
+		& span {
+			color: #000;
+			font-size: 2.25rem;
+			letter-spacing: -0.0675rem;
+		}
 	}
 	// .special-offer__image
 	&__image {
+		border-radius: 2rem;
+		overflow: hidden;
 	}
 }
 
@@ -518,83 +585,275 @@ body {
 }
 
 .contacts {
+	padding: rem(40) 0;
+	@media (min-width: $md3) {
+		padding: 5rem 0;
+	}
+	// .contacts__container
+	&__container {
+	}
+	// .contacts__hint
+	&__hint {
+		text-align: center;
+		justify-content: flex-start;
+	}
 	// .contacts__title
 	&__title {
+		text-align: right;
+		@media (min-width: $md2) {
+			font-size: 3rem;
+		}
 	}
 	// .contacts__body
 	&__body {
-	}
-	// .contacts__form
-	&__form {
-	}
-	// .contacts__form-header
-	&__form-header {
-	}
-	// .contacts__form-caption
-	&__form-caption {
-	}
-	// .contacts__form-text
-	&__form-text {
-	}
-	// .contacts__form-fields
-	&__form-fields {
-	}
-	// .contacts__form-field
-	&__form-field {
-	}
-	// .contacts__form-field--large
-	&__form-field--large {
+		display: flex;
+		gap: 5rem;
+		flex-direction: column;
+		&:not(:first-child) {
+			margin-top: 1.5rem;
+		}
+		@media (min-width: $md3) {
+			flex-direction: row;
+			&:not(:first-child) {
+				margin-top: 2.63rem;
+			}
+		}
+		@media (min-width: $md1) {
+			gap: 6.25rem;
+		}
 	}
 	// .contacts__map
 	&__map {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+		&:first-child:last-child {
+			@media (min-width: $md2) {
+				.contacts__list {
+					border-radius: 1.5rem;
+					background: #f5f5f5;
+					padding: 1.5rem 5rem;
+					margin-top: 1.5rem;
+				}
+				.contacts__caption {
+					font-size: 1.75rem;
+					line-height: 128.571%;
+				}
+				.contacts__link {
+					&[href*="mailto:"] {
+						font-size: 1.5rem;
+					}
+				}
+			}
+			.contacts__list-item {
+				@media (min-width: $md2) {
+					border-color: #d5d7da;
+					&:last-child {
+						padding-right: 0;
+					}
+				}
+				@media (min-width: $md0) {
+					max-width: 100%;
+				}
+			}
+		}
+	}
+	// .contacts__map-caption
+	&__map-caption {
+		display: contents;
+		@media (min-width: $md2) {
+			position: relative;
+			padding: rem(24);
+			display: block;
+		}
+		@media (min-width: $md0) {
+			padding: rem(48);
+		}
+		.contacts__map-header {
+			@media (min-width: $md2) {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 1;
+			}
+		}
+		& .contacts__form {
+			margin-top: 5rem;
+			@media (min-width: $md2) {
+				margin-top: 0;
+				position: relative;
+				z-index: 2;
+				background: #fff;
+				padding: rem(24) rem(32);
+				max-width: rem(454);
+				margin-left: auto;
+				border-radius: 1.5rem;
+				box-shadow: rem(-12) rem(12) rem(42) 0 rgba(0, 0, 0, 0.25);
+			}
+		}
 	}
 	// .contacts__map-header
 	&__map-header {
+		position: relative;
+		height: 34.375rem;
+		z-index: 1;
+		background: #2d3623;
+		border-radius: 1.5rem;
+		overflow: hidden;
+		margin: 0 -1rem;
+
+		@media (min-width: $md5) {
+			width: 100%;
+			margin: 0;
+		}
 	}
 	// .contacts__map-block
 	&__map-block {
+		position: absolute;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 	}
 	// .contacts__list
 	&__list {
+		margin-top: 2rem;
+		display: grid;
+		gap: 1rem;
+		@media (min-width: $md5) {
+			gap: 2.28rem;
+			grid-template-columns: repeat(2, 1fr);
+		}
+		@media (min-width: $md0) {
+			display: flex;
+			justify-content: space-between;
+		}
 	}
 	// .contacts__list-item
 	&__list-item {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		break-inside: avoid;
+		padding-right: 2rem;
+		border-color: #e9eaeb;
+		border-style: solid;
+
+		@media (max-width: $md5) {
+			padding-right: 0;
+			&:not(:last-child) {
+				padding-bottom: 1rem;
+				border-right-width: rem(1);
+			}
+		}
+		@media (max-width: $md0) {
+			@media (min-width: $md5) {
+				&:nth-child(odd) {
+					border-right-width: rem(1);
+				}
+			}
+		}
+		@media (min-width: $md0) {
+			max-width: 18rem;
+			&:not(:last-child) {
+				border-right-width: rem(1);
+			}
+		}
+	}
+	// .contacts__row
+	&__row {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		@media (min-width: $md4) {
+			flex-direction: row;
+			gap: 1rem;
+			align-items: center;
+			.socials {
+				margin-top: 0;
+			}
+			.contacts__link {
+				font-size: 1.5rem;
+				color: $accent;
+				font-weight: 600;
+				transition: color 0.3s ease;
+				@media (any-hover: hover) {
+					&:hover {
+						color: #1570ef;
+					}
+				}
+			}
+		}
 	}
 	// .contacts__caption
 	&__caption {
+		font-size: 1.375rem;
+		font-weight: 500;
+		line-height: 109.091%;
+		margin-bottom: 0.62rem;
 	}
 	// .contacts__text
 	&__text {
+		color: #535862;
+		font-size: 1.125rem;
+		line-height: 122.222%;
 	}
 	// .contacts__link
 	&__link {
+		font-size: 1.125rem;
+		line-height: 122.222%;
+		font-size: 1.125rem;
+		line-height: 122.222%;
+		color: #535862;
+		&[href*="mailto:"] {
+			color: #1570ef;
+		}
 	}
 	// .contacts__socials
 	&__socials {
+		margin-top: 0.81rem;
 	}
-}
-
-.form {
-	// .form__field
-	&__field {
+	// .contacts__form
+	&__form {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2rem;
+		// order: 1;
+		@media (min-width: $md3) {
+			gap: rem(42);
+			flex: 0 0 24.2rem;
+		}
+		@media (min-width: $md0) {
+			flex: 0 0 28.2rem;
+			padding-right: rem(62);
+		}
 	}
-	// .form__control
-	&__control {
+	// .contacts__form-caption
+	&__form-caption {
+		font-size: 1.75rem;
+		font-weight: 600;
+		line-height: 128.571%;
 	}
-	// .form__file
-	&__file {
+	// .contacts__form-text
+	&__form-text {
+		margin-top: rem(18);
+		color: #535862;
+		font-size: 1.125rem;
+		line-height: 122.222%;
 	}
-	// .form__file-input
-	&__file-input {
+	// .contacts__form-fields
+	&__form-fields {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 	}
-	// .form__file-btn
-	&__file-btn {
-	}
-	// .form__btn
-	&__btn {
-	}
-	// .form__policy
-	&__policy {
+	// .contacts__form-field
+	&__form-field {
 	}
 }
 

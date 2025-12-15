@@ -235,7 +235,7 @@
                     if ($special_offer_button_group) {
                         get_template_part('templates/components/button', null, [
                             'data'  => $special_offer_button_group,
-                            'class' => 'cert__btn',
+                            'class' => 'special-offer__btn',
                             'type'  => 'primary',
                             'icon'  => 'chevron-right'
                         ]);
@@ -246,7 +246,10 @@
                 <div class="special-offer__image-wrapper">
                     <?php if ($sale_value) : ?>
                         <div class="special-offer__label">
-                            <?php echo esc_html($sale_value); ?>% скидка
+                            <span>
+                                <?php echo esc_html($sale_value); ?>%
+                            </span>
+                            скидка
                         </div>
                     <?php endif; ?>
 
@@ -610,16 +613,16 @@
                         <?php endif; ?>
                     </div>
                     <div class="contacts__form-fields">
-                        <label class="contacts__form-field contacts__form-field--large form__field">
+                        <label class="contacts__form-field form__field">
                             <input type="text" name="name" data-required class="form__control" placeholder="Ваше имя">
                         </label>
                         <label class="contacts__form-field form__field">
                             <input type="tel" name="phone" data-required class="form__control" placeholder="Телефон">
                         </label>
-                        <label class="contacts__form-field contacts__form-field--large form__field">
+                        <label class="contacts__form-field form__field">
                             <textarea name="message" class="form__control" placeholder="Ваш вопрос или предложение..."></textarea>
                         </label>
-                        <label class="form__file contacts__form-field--large">
+                        <label class="form__file">
                             <input type="file" name="file" class="form__file-input" hidden>
                             <span class="form__file-btn icon-clip">Прикрепить (до 10 мб.)</span>
                         </label>

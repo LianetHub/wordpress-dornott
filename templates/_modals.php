@@ -29,7 +29,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 
 ?>
 
-<div class="popup" id="#callback">
+<div class="popup" id="callback">
     <?php if ($white_logo): ?>
         <div class="popup__logo">
             <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
@@ -61,7 +61,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </form>
 </div>
 
-<div class="popup" id="#order">
+<div class="popup" id="order">
     <?php if ($white_logo): ?>
         <div class="popup__logo">
             <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
@@ -96,7 +96,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </form>
 </div>
 
-<div class="popup" id="#error">
+<div class="popup" id="error">
     <?php if ($error_icon): ?>
         <div class="popup__icon">
             <img src="<?php echo esc_url($error_icon['url']); ?>" alt="<?php echo esc_attr($error_icon['alt']) ?: 'Иконка'; ?>">
@@ -117,7 +117,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </button>
 </div>
 
-<div class="popup" id="#success-submiting">
+<div class="popup" id="success-submiting">
     <?php if ($success_icon): ?>
         <div class="popup__icon">
             <img src="<?php echo esc_url($success_icon['url']); ?>" alt="<?php echo esc_attr($success_icon['alt']) ?: 'Иконка'; ?>">
@@ -138,21 +138,21 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </button>
 </div>
 
-<div class="popup" id="#success-order">
+<div class="popup" id="success-order">
 
 </div>
 
-<div class="popup" id="#city">
-
-</div>
-
-
-<div class="popup" id="#cart">
+<div class="popup" id="city">
 
 </div>
 
 
-<div class="popup" id="#policies">
+<div class="popup" id="cart">
+
+</div>
+
+
+<div class="popup" id="policies">
     <?php
     $is_first_policy = true;
 

@@ -8,6 +8,7 @@
 //============ МОДУЛИ ====================
 @use "modules/popup";
 @use "modules/preloader";
+@use "modules/product";
 // @use "modules/breadcrumbs";
 // @import "modules/select";
 // @import "modules/pagination";
@@ -143,6 +144,85 @@
 .swiper-lazy-preloader {
 	--swiper-preloader-color: #{$accent};
 }
+
+.favorite-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #717680;
+	font-size: 1.125rem;
+	cursor: pointer;
+	user-select: none;
+	&::before {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		font-size: 1.5rem;
+		transition: all 0.3s ease 0s;
+		color: #414651;
+		order: 1;
+		@extend %ic, .icon-heart;
+	}
+	&.active {
+		&::before {
+			color: #f04438;
+			animation: pulse 0.3s ease-in-out;
+			@keyframes pulse {
+				0% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.4);
+				}
+				100% {
+					transform: scale(1);
+				}
+			}
+			@extend %ic, .icon-heart-fill;
+		}
+	}
+	& span {
+		display: none;
+		@media (min-width: $md4) {
+			display: inline;
+		}
+	}
+}
+
+%active-state-cart-button {
+	background: #47cd89;
+	border-color: #47cd89;
+	box-shadow: none;
+	@media (any-hover: hover) {
+		&:hover {
+			border-color: color.adjust($color: #47cd89, $lightness: -10%);
+			background: color.adjust($color: #47cd89, $lightness: -10%);
+		}
+	}
+}
+.add-to-cart-button {
+	width: rem(46);
+	height: rem(42);
+	padding: rem(12);
+	&::before {
+		font-size: 1.125rem;
+		@extend %ic;
+		@extend .icon-shopping-cart;
+	}
+	&.active {
+		@extend %active-state-cart-button;
+		&.btn-primary {
+			@extend %active-state-cart-button;
+		}
+		&::before {
+			@extend .icon-check;
+		}
+	}
+}
+
 //============ ОБЩИЕ ЭЛЕМЕНТЫ ============
 
 // Стилизация селекта

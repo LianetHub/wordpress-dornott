@@ -81,6 +81,17 @@ $(function () {
             $('body').removeClass('lock-mobile-menu');
         }
 
+        // toggle active state favorite
+        if ($target.closest('.favorite-btn').length) {
+            $target.closest('.favorite-btn').toggleClass('active')
+        }
+
+        // add to cart
+        if ($target.closest('.add-to-cart-button').length) {
+            $target.closest('.add-to-cart-button').toggleClass('active');
+        }
+
+
     });
 
     // phone input mask
