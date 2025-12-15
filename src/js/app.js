@@ -158,6 +158,7 @@ $(function () {
         }
         input.value = formattedInputValue;
     }
+
     var onPhoneKeyDown = function (e) {
         // Clear input after remove last symbol
         var inputValue = e.target.value.replace(/\D/g, '');
@@ -165,6 +166,7 @@ $(function () {
             e.target.value = "";
         }
     }
+
     for (var phoneInput of phoneInputs) {
         phoneInput.addEventListener('keydown', onPhoneKeyDown);
         phoneInput.addEventListener('input', onPhoneInput, false);
@@ -247,37 +249,71 @@ $(function () {
                 }
             });
 
-            const $areasWrapper = $('<div class="product-card__hover-areas"></div>');
-            $areasWrapper.css({
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                zIndex: 10
-            });
-
             const slidesCount = swiper.slides.length;
 
-            for (let i = 0; i < slidesCount; i++) {
-                const $area = $('<div class="product-card__hover-area"></div>');
-                $area.css({
-                    flex: '1 1 0',
-                    cursor: 'pointer'
+            if (slidesCount > 1) {
+                const $areasWrapper = $('<div class="product-card__hover-areas"></div>');
+                $areasWrapper.css({
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    zIndex: 10
                 });
 
-                $area.on('mouseenter', () => {
-                    swiper.slideTo(i);
-                });
+                for (let i = 0; i < slidesCount; i++) {
+                    const $area = $('<div class="product-card__hover-area"></div>');
+                    $area.css({
+                        flex: '1 1 0',
+                    });
 
-                $areasWrapper.append($area);
+                    $area.on('mouseenter', () => {
+                        swiper.slideTo(i);
+                    });
+
+                    $areasWrapper.append($area);
+                }
+
+                $slider.css('position', 'relative').append($areasWrapper);
             }
-
-
-            $slider.css('position', 'relative').append($areasWrapper);
         });
     }
+
+    // product variation change price
+
+    $(document).on('change', '.product-card .product-card__variations-input', function () {
+        var $card = $(this).closest('.product-card');
+        var selectedVariationId = $(this).val();
+        var newPriceHtml = $(this).data('price-html');
+        var newRegularPriceHtml = $(this).data('regular-price-html');
+        var isInStock = !$(this).is(':disabled');
+
+        var $currentPriceElement = $card.find('[data-price-role="current-price"]');
+        var $regularPriceElement = $card.find('[data-price-role="regular-price"]');
+        var $addToCartButton = $card.find('.ajax_add_to_cart');
+
+        $currentPriceElement.html(newPriceHtml);
+        $regularPriceElement.html(newRegularPriceHtml);
+
+        $addToCartButton.data('variation-id', selectedVariationId);
+
+        if (isInStock) {
+            $addToCartButton.removeAttr('disabled');
+        } else {
+            $addToCartButton.attr('disabled', 'disabled');
+        }
+    });
+
+    $('.product-card').each(function () {
+        var $card = $(this);
+        var $firstRadio = $card.find('.product-card__variations-input:checked');
+
+        if ($firstRadio.length) {
+            $firstRadio.trigger('change');
+        }
+    });
 
 
 

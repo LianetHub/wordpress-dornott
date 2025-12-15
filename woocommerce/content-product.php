@@ -11,7 +11,7 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see     https://woocommerce.com/document/template-structure/
+ * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
  * @version 9.4.0
  */
@@ -64,8 +64,62 @@ if (!empty($gallery_ids)) {
 
 $labels = get_field('product_labels', $product_id);
 
+$is_variable = $product->is_type('variable');
+$default_price_html = $product->get_price_html();
+
+$variations_data = [];
+$first_variation_id = 0;
+$first_variation_price_html = '';
+$first_variation_regular_price_html = '';
+
+if ($is_variable) {
+	$variations = $product->get_available_variations();
+
+	foreach ($variations as $variation_data) {
+		$variation_obj = wc_get_product($variation_data['variation_id']);
+		if (!$variation_obj) continue;
+
+		$variation_id = $variation_data['variation_id'];
+		$variation_price = $variation_obj->get_price();
+		$variation_regular_price = $variation_obj->get_regular_price();
+		$variation_price_html = wc_price($variation_price);
+		$variation_regular_price_html = ($variation_regular_price > $variation_price) ? wc_price($variation_regular_price) : '';
+
+		$attribute_name = key($variation_data['attributes']);
+		$attribute_value = current($variation_data['attributes']);
+
+		if (!$first_variation_id) {
+			$first_variation_id = $variation_id;
+			$first_variation_price_html = $variation_price_html;
+			$first_variation_regular_price_html = $variation_regular_price_html;
+		}
+
+		$variations_data[$variation_id] = [
+			'id' => $variation_id,
+			'price_html' => $variation_price_html,
+			'regular_price_html' => $variation_regular_price_html,
+			'attribute_value' => $attribute_value,
+			'is_in_stock' => $variation_obj->is_in_stock(),
+			$attribute_name => $attribute_value,
+			'attribute_label' => $attribute_value,
+		];
+	}
+}
+
+if ($is_variable) {
+	// Вариативный товар
+	$initial_price_html = $first_variation_price_html;
+	$initial_regular_price_html = $first_variation_regular_price_html;
+	$initial_product_id = $first_variation_id;
+} else {
+	// Простой товар
+	$initial_price_html = wc_price($product->get_price());
+	$initial_regular_price_html = ($is_on_sale && !empty($regular_price) && $regular_price > $product->get_price()) ? wc_price($regular_price) : '';
+	$initial_product_id = $product_id;
+}
+
 ?>
-<li <?php wc_product_class('product-card', $product); ?>>
+<li <?php wc_product_class('product-card', $product); ?> data-product-id="<?php echo esc_attr($product_id); ?>">
 	<div class="product-card__header">
 		<div class="product-card__slider swiper">
 			<div class="swiper-wrapper">
@@ -126,6 +180,28 @@ $labels = get_field('product_labels', $product_id);
 		<h3 class="product-card__title">
 			<?php echo esc_html($product->get_name()); ?>
 		</h3>
+
+		<?php if ($is_variable) : ?>
+			<div class="product-card__variations" data-variations-data="<?php echo esc_attr(json_encode($variations_data)); ?>">
+				<?php foreach ($variations_data as $variation_id => $data) : ?>
+					<label class="product-card__variations-label <?php echo !$data['is_in_stock'] ? 'out-of-stock' : ''; ?>">
+						<input type="radio"
+							name="variation-<?php echo esc_attr($product_id); ?>"
+							value="<?php echo esc_attr($variation_id); ?>"
+							data-price-html="<?php echo esc_attr($data['price_html']); ?>"
+							data-regular-price-html="<?php echo esc_attr($data['regular_price_html']); ?>"
+							<?php checked($variation_id, $first_variation_id); ?>
+							<?php disabled(!$data['is_in_stock']); ?>
+							class="product-card__variations-input hidden"
+							hidden>
+						<span class="product-card__variations-btn">
+							<?php echo esc_html($data['attribute_label']); ?>
+						</span>
+					</label>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+
 		<?php if (!empty($description)) : ?>
 			<div class="product-card__description">
 				<?php echo wp_kses_post($description); ?>
@@ -133,22 +209,33 @@ $labels = get_field('product_labels', $product_id);
 		<?php endif; ?>
 	</div>
 
+
+
 	<div class="product-card__footer">
 		<div class="product-card__price">
 			<div class="product-card__price-header">
-				<?php if ($is_on_sale && !empty($regular_price)) : ?>
-					<div class="product-card__price-old"><?php echo wc_price($regular_price); ?></div>
-				<?php endif; ?>
+				<div class="product-card__price-old"
+					data-price-role="regular-price">
+					<?php echo $initial_regular_price_html; ?>
+				</div>
 				<?php if ($is_on_sale && $sale_percentage > 0) : ?>
-
+					<div class="product-card__price-sale">
+						-<?php echo $sale_percentage ?>%
+					</div>
 				<?php endif; ?>
 			</div>
-			<div class="product-card__price-current"><?php echo wc_price($product->get_price()); ?></div>
+			<div class="product-card__price-current"
+				data-price-role="current-price">
+				<?php echo $initial_price_html; ?>
+			</div>
 		</div>
 
 		<button
 			class="add-to-cart-button btn btn-primary ajax_add_to_cart"
 			data-product-id="<?php echo esc_attr($product_id); ?>"
+			<?php if ($is_variable) : ?>
+			data-variation-id="<?php echo esc_attr($initial_product_id); ?>"
+			<?php endif; ?>
 			data-quantity="1"
 			aria-label="Добавить <?php echo esc_attr($product->get_name()); ?> в корзину">
 		</button>

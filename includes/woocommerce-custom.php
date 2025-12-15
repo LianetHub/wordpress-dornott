@@ -181,3 +181,62 @@ function custom_enqueue_cart_scripts()
         'ajaxurl' => admin_url('admin-ajax.php')
     ));
 }
+
+// --- НОВЫЕ ФУНКЦИИ ДЛЯ ОТКЛЮЧЕНИЯ ПУБЛИЧНЫХ СТРАНИЦ ТОВАРОВ И ТАКСОНОМИЙ ---
+
+// Отключение одиночных страниц товара и архивов товаров/категорий
+add_filter('woocommerce_register_post_type_product', 'custom_disable_product_pages');
+function custom_disable_product_pages($args)
+{
+    $args['public']              = false;
+    $args['publicly_queryable']  = false;
+    $args['exclude_from_search'] = true;
+    $args['has_archive']         = false;
+    $args['rewrite']             = false;
+    $args['query_var']           = false;
+
+    return $args;
+}
+
+// Отключение архивов категорий/меток товаров
+add_filter('woocommerce_taxonomy_args_product_cat', 'custom_disable_product_taxonomy_archives');
+add_filter('woocommerce_taxonomy_args_product_tag', 'custom_disable_product_taxonomy_archives');
+function custom_disable_product_taxonomy_archives($args)
+{
+    $args['public']              = false;
+    $args['publicly_queryable']  = false;
+    $args['rewrite']             = false;
+    $args['query_var']           = false;
+    $args['show_ui']             = true;
+
+    return $args;
+}
+
+// Отключение ссылок на sitemap для Yoast SEO (или других плагинов)
+add_filter('wpseo_sitemap_exclude_post_type', 'custom_exclude_product_from_sitemap', 10, 2);
+function custom_exclude_product_from_sitemap($exclude, $post_type)
+{
+    if ($post_type === 'product') {
+        return true;
+    }
+    return $exclude;
+}
+
+add_filter('wpseo_sitemap_exclude_taxonomy', 'custom_exclude_product_taxonomy_from_sitemap', 10, 2);
+function custom_exclude_product_taxonomy_from_sitemap($exclude, $taxonomy)
+{
+    if ($taxonomy === 'product_cat' || $taxonomy === 'product_tag') {
+        return true;
+    }
+    return $exclude;
+}
+
+// Отключение генерации страниц архивов и одиночных страниц
+add_filter('woocommerce_get_query_vars', 'custom_remove_wc_query_vars', 99);
+function custom_remove_wc_query_vars($vars)
+{
+    unset($vars['product']);
+    unset($vars['product_cat']);
+    unset($vars['product_tag']);
+    return $vars;
+}
