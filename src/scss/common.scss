@@ -637,23 +637,49 @@ body {
 }
 
 .reviews {
+	background: #201c18;
+	color: #fff;
+	padding: 5rem 0 4.31rem;
 	// .reviews__header
 	&__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1.5rem;
 	}
 	// .reviews__info
 	&__info {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
 	}
 	// .reviews__title
 	&__title {
 	}
 	// .reviews__subtitle
 	&__subtitle {
+		color: #d5d7da;
+		font-size: 1rem;
+		line-height: 160%;
+		border-left: 0.0625rem solid #d5d7da;
+		padding: 0.56rem 0 0.56rem 1.5rem;
 	}
 	// .reviews__controls
 	&__controls {
+		margin-left: auto;
+		display: flex;
+		align-items: center;
+		gap: rem(20);
+	}
+	// .reviews__controls-btns
+	&__controls-btns {
+		display: flex;
+		gap: 0.5rem;
 	}
 	// .reviews__pagination
 	&__pagination {
+		margin-right: 0.75rem;
+		--swiper-pagination-fraction-color: #efcb92;
 	}
 	// .reviews__prev
 	&__prev {
@@ -663,9 +689,11 @@ body {
 	}
 	// .reviews__switcher
 	&__switcher {
+		margin-top: 1.5rem;
 	}
 	// .reviews__content
 	&__content {
+		margin-top: 1.5rem;
 	}
 	// .reviews__text
 	&__text {
@@ -675,57 +703,109 @@ body {
 	}
 	// .reviews__slide
 	&__slide {
+		border-radius: rem(16);
+		overflow: hidden;
 	}
 	// .reviews__screenshots
 	&__screenshots {
 	}
 }
 
-.switcher {
-	// .switcher__item
-	&__item {
-	}
-	// .switcher__btn
-	&__btn {
-	}
-}
-
 .review-card {
+	border-radius: 1rem;
+	background: #252820;
+	color: #d5d7da;
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
 	// .review-card__header
 	&__header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-size: 1rem;
+		line-height: 150%;
 	}
 	// .review-card__place
 	&__place {
+		font-weight: 700;
 	}
 	// .review-card__time
 	&__time {
 	}
-	// .review-card__qoute
-	&__qoute {
+	// .review-card__quote
+	&__quote {
+		font-size: 1rem;
+		line-height: 150%;
 	}
 	// .review-card__footer
 	&__footer {
+		margin-top: 1.5rem;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 	}
 	// .review-card__thumb
 	&__thumb {
+		width: 3.5rem;
+		height: 3.5rem;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: #d0d5dd;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 1.5rem;
+		color: #000;
+		font-weight: 700;
+		& img {
+			border: rem(1) solid #d0d5dd;
+			border-radius: 50%;
+		}
 	}
 	// .review-card__person
 	&__person {
 	}
 	// .review-card__person-name
 	&__person-name {
+		color: #fff;
+		font-size: 1rem;
+		font-weight: 700;
+		line-height: 150%;
 	}
 	// .review-card__person-info
 	&__person-info {
+		margin-top: rem(2);
+		font-size: 0.75rem;
+		line-height: 140%;
+		& a {
+			text-decoration: underline;
+			color: #53b1fd;
+			@media (any-hover: hover) {
+				&:hover {
+					text-decoration: none;
+				}
+			}
+		}
 	}
 }
 
 .gift {
 	// .gift__body
 	&__body {
+		border-radius: 2.625rem;
+		padding: 3rem;
+		display: grid;
+		align-items: center;
+		grid-template-columns: repeat(2, 1fr);
+		border: rem(1) solid #bfae9f;
+		gap: 2rem;
 	}
 	// .gift__image
 	&__image {
+		border-radius: 1.5rem;
+		overflow: hidden;
 	}
 	// .gift__content
 	&__content {
@@ -735,6 +815,15 @@ body {
 	}
 	// .gift__subtitle
 	&__subtitle {
+		border-top: rem(1) solid #d5d7da;
+		padding-top: 1.5rem;
+		margin-top: 1.5rem;
+		font-size: 1.125rem;
+		line-height: 160%;
+	}
+	// .gift__btn
+	&__btn {
+		margin-top: 1.5rem;
 	}
 }
 

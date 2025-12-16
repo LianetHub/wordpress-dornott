@@ -200,8 +200,22 @@ $(function () {
 
 
     // sliders
-    if ($('.hero').length) {
+    const swiperPaginationConfig = {
+        type: 'fraction',
+        formatFractionCurrent: (number) => {
+            return number < 10 ? '0' + number : number;
+        },
+        formatFractionTotal: (number) => {
+            return number < 10 ? '0' + number : number;
+        },
+        renderFraction: (currentClass, totalClass) => {
+            return '<span class="' + currentClass + '"></span>' +
+                '/' +
+                '<span class="' + totalClass + '"></span>';
+        }
+    };
 
+    if ($('.hero').length) {
 
         const heroImages = $('.hero__images');
         const heroOffer = $('.hero__offer-slider');
@@ -224,18 +238,7 @@ $(function () {
 
                 pagination: {
                     el: '.hero__pagination',
-                    type: 'fraction',
-                    formatFractionCurrent: (number) => {
-                        return number < 10 ? '0' + number : number;
-                    },
-                    formatFractionTotal: (number) => {
-                        return number < 10 ? '0' + number : number;
-                    },
-                    renderFraction: (currentClass, totalClass) => {
-                        return '<span class="' + currentClass + '"></span>' +
-                            '/' +
-                            '<span class="' + totalClass + '"></span>';
-                    }
+                    ...swiperPaginationConfig
                 },
             });
 
@@ -306,6 +309,104 @@ $(function () {
         });
     }
 
+
+    if ($('.reviews').length) {
+
+
+        let reviewsTextSwiper;
+        const initTextSwiper = () => {
+            if ($('.reviews__text .reviews__slider').length && !reviewsTextSwiper) {
+                reviewsTextSwiper = new Swiper('.reviews__text .reviews__slider', {
+                    slidesPerView: 1,
+                    spaceBetween: 24,
+                    watchOverflow: true,
+                    navigation: {
+                        nextEl: '.reviews__controls--text .reviews__next',
+                        prevEl: '.reviews__controls--text .reviews__prev',
+                    },
+                    pagination: {
+                        el: '.reviews__controls--text .reviews__pagination',
+                        ...swiperPaginationConfig
+                    },
+                    breakpoints: {
+                        1199.98: {
+                            slidesPerView: 4,
+                        }
+                    }
+                });
+            }
+        };
+
+        let reviewsScreenshotsSwiper;
+        const initScreenshotsSwiper = () => {
+            if ($('.reviews__screenshots .reviews__slider').length && !reviewsScreenshotsSwiper) {
+                reviewsScreenshotsSwiper = new Swiper('.reviews__screenshots .reviews__slider', {
+                    slidesPerView: 1,
+                    spaceBetween: 24,
+                    watchOverflow: true,
+                    navigation: {
+                        nextEl: '.reviews__controls--screenshots .reviews__next',
+                        prevEl: '.reviews__controls--screenshots .reviews__prev',
+                    },
+                    pagination: {
+                        el: '.reviews__controls--screenshots .reviews__pagination',
+                        ...swiperPaginationConfig
+                    },
+                    breakpoints: {
+                        768: {
+                            slidesPerView: 2,
+                        },
+                        1024: {
+                            slidesPerView: 5,
+                        }
+                    },
+                });
+            }
+        };
+
+
+        const $reviewsSection = $('#reviews');
+        const $switcherInputs = $reviewsSection.find('.reviews__switcher input[name="reviews-type"]');
+        const $reviewsTextContainer = $reviewsSection.find('.reviews__text');
+        const $reviewsScreenshotsContainer = $reviewsSection.find('.reviews__screenshots');
+        const $controlsText = $reviewsSection.find('.reviews__controls--text');
+        const $controlsScreenshots = $reviewsSection.find('.reviews__controls--screenshots');
+
+
+        if ($switcherInputs.filter(':checked').val() === 'text') {
+            initTextSwiper();
+        } else {
+            initScreenshotsSwiper();
+        }
+
+        $switcherInputs.on('change', function () {
+            const type = $(this).val();
+
+            if (type === 'text') {
+                $reviewsTextContainer.show();
+                $reviewsScreenshotsContainer.hide();
+                $controlsText.show();
+                $controlsScreenshots.hide();
+                initTextSwiper();
+            } else if (type === 'screenshots') {
+                $reviewsTextContainer.hide();
+                $reviewsScreenshotsContainer.show();
+                $controlsText.hide();
+                $controlsScreenshots.show();
+                initScreenshotsSwiper();
+            }
+
+            if (reviewsTextSwiper) {
+                reviewsTextSwiper.update();
+            }
+            if (reviewsScreenshotsSwiper) {
+                reviewsScreenshotsSwiper.update();
+            }
+        });
+    }
+
+
+
     // product variation change price
 
     $(document).on('change', '.product-card .product-card__variations-input', function () {
@@ -363,6 +464,49 @@ $(function () {
     // }, false);
 
 
+    // switcher animation
+
+    $('.switcher').each(function () {
+        var $switcher = $(this);
+        var $slider = $('<div class="switcher__slider"></div>');
+        $switcher.prepend($slider);
+
+        function updateSliderPosition($checkedInput) {
+            var $button = $checkedInput.next('.switcher__btn');
+            var width = $button.outerWidth();
+            var offsetLeft = $button.offset().left;
+            var parentOffsetLeft = $switcher.offset().left;
+            var parentPaddingLeft = parseFloat($switcher.css('padding-left'));
+
+            var offset = offsetLeft - parentOffsetLeft - parentPaddingLeft;
+
+            $switcher.css('--active-width', width + 'px');
+            $switcher.css('--active-offset', offset + 'px');
+        }
+
+        var $initialChecked = $switcher.find('.switcher__input:checked');
+        if ($initialChecked.length) {
+            window.requestAnimationFrame(function () {
+                updateSliderPosition($initialChecked);
+            });
+        }
+
+        $switcher.on('change', '.switcher__input', function () {
+            updateSliderPosition($(this));
+        });
+
+
+        var resizeTimeout;
+        $(window).on('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                var $currentChecked = $switcher.find('.switcher__input:checked');
+                if ($currentChecked.length) {
+                    updateSliderPosition($currentChecked);
+                }
+            }, 150);
+        });
+    });
 
 })
 

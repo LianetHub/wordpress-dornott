@@ -395,7 +395,22 @@
     $reviews_text_items = get_field('reviews_text');
     $reviews_screenshots = get_field('reviews_screenshots');
     $reviews_default_type = get_field('reviews_deafult_type');
+
 ?>
+    <?php
+    $text_active = $reviews_default_type;
+    if (!$reviews_screenshots) {
+        $text_active = true;
+    } elseif (!$reviews_text_items) {
+        $text_active = false;
+    }
+
+    $check_text = $text_active ? 'checked' : '';
+    $check_screenshots = $text_active ? '' : 'checked';
+
+    $text_style = $text_active ? '' : 'display: none;';
+    $screenshots_style = $text_active ? 'display: none;' : '';
+    ?>
     <section id="reviews" class="reviews">
         <div class="container">
             <div class="reviews__header">
@@ -407,32 +422,23 @@
                         <p class="reviews__subtitle"><?php echo esc_html($reviews_subtitle); ?></p>
                     <?php endif; ?>
                 </div>
-                <div class="reviews__controls">
+                <div class="reviews__controls reviews__controls--text" style="<?php echo esc_attr($text_style); ?>">
                     <div class="reviews__pagination swiper-pagination"></div>
-                    <button type="button" class="reviews__prev swiper-button-prev"></button>
-                    <button type="button" class="reviews__next swiper-button-next"></button>
+                    <div class="reviews__controls-btns">
+                        <button type="button" class="reviews__prev swiper-button-prev"></button>
+                        <button type="button" class="reviews__next swiper-button-next"></button>
+                    </div>
+                </div>
+                <div class="reviews__controls reviews__controls--screenshots" style="<?php echo esc_attr($screenshots_style); ?>">
+                    <div class="reviews__pagination swiper-pagination"></div>
+                    <div class="reviews__controls-btns">
+                        <button type="button" class="reviews__prev swiper-button-prev"></button>
+                        <button type="button" class="reviews__next swiper-button-next"></button>
+                    </div>
                 </div>
             </div>
 
             <?php if ($reviews_text_items || $reviews_screenshots): ?>
-                <?php
-
-                $text_active = $reviews_default_type;
-
-                if (!$reviews_screenshots) {
-                    $text_active = true;
-                } elseif (!$reviews_text_items) {
-                    $text_active = false;
-                }
-
-
-                $check_text = $text_active ? 'checked' : '';
-                $check_screenshots = $text_active ? '' : 'checked';
-
-                $text_style = $text_active ? '' : 'display: none;';
-                $screenshots_style = $text_active ? 'display: none;' : '';
-                ?>
-
                 <div class="reviews__switcher switcher">
                     <?php if ($reviews_text_items): ?>
                         <label class="switcher__item">
@@ -495,21 +501,50 @@
                                                 <?php endif; ?>
                                                 <?php if ($review['date']): ?>
                                                     <?php
-                                                    $date_format = 'd.m.Y';
-                                                    $formatted_date = date_i18n($date_format, strtotime($review['date']));
+                                                    $raw_date = $review['date'];
+
+                                                    $date_string_for_strtotime = str_replace('/', '-', $raw_date);
+
+                                                    $timestamp = strtotime($date_string_for_strtotime);
+
+                                                    if ($timestamp) {
+                                                        $date_format = 'j F Y г.';
+                                                        $formatted_date = date_i18n($date_format, $timestamp);
+
+                                                        $iso_date = date('Y-m-d', $timestamp);
+
                                                     ?>
-                                                    <time datetime="<?php echo esc_attr($review['date']); ?>" class="review-card__time"><?php echo esc_html($formatted_date); ?></time>
+                                                        <time datetime="<?php echo esc_attr($iso_date); ?>" class="review-card__time"><?php echo esc_html($formatted_date); ?></time>
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                        <div class="review-card__time"><?php echo esc_html($raw_date); ?></div>
+                                                    <?php
+                                                    }
+                                                    ?>
                                                 <?php endif; ?>
                                             </div>
                                             <?php if ($review['text']): ?>
-                                                <blockquote class="review-card__qoute"><?php echo $review['text']; ?></blockquote>
+                                                <blockquote class="review-card__quote"><?php echo $review['text']; ?></blockquote>
                                             <?php endif; ?>
                                             <div class="review-card__footer">
-                                                <?php if ($person_thumb): ?>
+                                                <?php
+                                                $initials = '';
+                                                if (!$person_thumb && $person_name) {
+                                                    $initials = mb_substr(trim($person_name), 0, 1);
+                                                }
+                                                ?>
+
+                                                <?php if ($person_thumb || $initials): ?>
                                                     <div class="review-card__thumb">
-                                                        <img src="<?php echo esc_url($person_thumb['sizes']['thumbnail']); ?>" alt="<?php echo esc_attr($person_thumb['alt']); ?>">
+                                                        <?php if ($person_thumb): ?>
+                                                            <img src="<?php echo esc_url($person_thumb['sizes']['thumbnail']); ?>" alt="<?php echo esc_attr($person_thumb['alt']); ?>" class="cover-image">
+                                                        <?php else: ?>
+                                                            <span class="review-card__initials"><?php echo esc_html($initials); ?></span>
+                                                        <?php endif; ?>
                                                     </div>
                                                 <?php endif; ?>
+
                                                 <div class="review-card__person">
                                                     <?php if ($person_name): ?>
                                                         <div class="review-card__person-name"><?php echo esc_html($person_name); ?></div>

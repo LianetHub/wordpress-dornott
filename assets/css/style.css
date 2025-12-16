@@ -163,7 +163,7 @@
 }
 
 .fancybox__backdrop {
-  background: rgba(0, 0, 0, 0.01);
+  background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
@@ -616,7 +616,7 @@ body.is-loaded .preloader {
 }
 
 .swiper-pagination.swiper-pagination-fraction .swiper-pagination-current {
-  color: #000;
+  color: var(--swiper-pagination-fraction-color, #000);
   font-size: 2rem;
   font-weight: 700;
   line-height: 140%;
@@ -1073,6 +1073,59 @@ body.is-loaded .preloader {
   -webkit-transform: scale(0.985);
       -ms-transform: scale(0.985);
           transform: scale(0.985);
+}
+
+.switcher {
+  border-radius: 0.75rem;
+  background: #0a0d12;
+  color: #fff;
+  padding: 0.25rem;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  gap: 0.25rem;
+  position: relative;
+  --active-width: 0px;
+  --active-offset: 0px;
+}
+
+.switcher__slider {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  height: calc(100% - 0.5rem);
+  border-radius: 0.5rem;
+  background: #efcb92;
+  z-index: 1;
+  width: var(--active-width);
+  -webkit-transform: translateX(var(--active-offset));
+      -ms-transform: translateX(var(--active-offset));
+          transform: translateX(var(--active-offset));
+  -webkit-transition: width 0.3s ease, -webkit-transform 0.3s ease;
+  transition: width 0.3s ease, -webkit-transform 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease, -webkit-transform 0.3s ease;
+}
+
+.switcher__item {
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.switcher__input:checked + .switcher__btn {
+  color: #181d27;
+}
+
+.switcher__btn {
+  font-size: 1.125rem;
+  line-height: 144.444%;
+  border-radius: 0.5rem;
+  display: block;
+  cursor: pointer;
+  -webkit-transition: color 0.3s ease, background-color 0.3s ease;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  padding: 0.25rem 0.5rem;
 }
 
 .header {
@@ -2352,6 +2405,201 @@ body.lock-mobile-menu .wrapper::before {
   margin-top: 1.5rem;
 }
 
+.reviews {
+  background: #201c18;
+  color: #fff;
+  padding: 5rem 0 4.31rem;
+}
+
+.reviews__header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.reviews__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 1.5rem;
+}
+
+.reviews__subtitle {
+  color: #d5d7da;
+  font-size: 1rem;
+  line-height: 160%;
+  border-left: 0.0625rem solid #d5d7da;
+  padding: 0.56rem 0 0.56rem 1.5rem;
+}
+
+.reviews__controls {
+  margin-left: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 1.25rem;
+}
+
+.reviews__controls-btns {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reviews__pagination {
+  margin-right: 0.75rem;
+  --swiper-pagination-fraction-color: #efcb92;
+}
+
+.reviews__switcher {
+  margin-top: 1.5rem;
+}
+
+.reviews__content {
+  margin-top: 1.5rem;
+}
+
+.reviews__slide {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.review-card {
+  border-radius: 1rem;
+  background: #252820;
+  color: #d5d7da;
+  padding: 1.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 1.5rem;
+}
+
+.review-card__header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  line-height: 150%;
+}
+
+.review-card__place {
+  font-weight: 700;
+}
+
+.review-card__quote {
+  font-size: 1rem;
+  line-height: 150%;
+}
+
+.review-card__footer {
+  margin-top: 1.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 0.75rem;
+}
+
+.review-card__thumb {
+  width: 3.5rem;
+  height: 3.5rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  border-radius: 50%;
+  background: #d0d5dd;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 1.5rem;
+  color: #000;
+  font-weight: 700;
+}
+
+.review-card__thumb img {
+  border: 0.0625rem solid #d0d5dd;
+  border-radius: 50%;
+}
+
+.review-card__person-name {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 150%;
+}
+
+.review-card__person-info {
+  margin-top: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 140%;
+}
+
+.review-card__person-info a {
+  text-decoration: underline;
+  color: #53b1fd;
+}
+
+.gift__body {
+  border-radius: 2.625rem;
+  padding: 3rem;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-grid-columns: (1fr)[2];
+  grid-template-columns: repeat(2, 1fr);
+  border: 0.0625rem solid #bfae9f;
+  gap: 2rem;
+}
+
+.gift__image {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.gift__subtitle {
+  border-top: 0.0625rem solid #d5d7da;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 160%;
+}
+
+.gift__btn {
+  margin-top: 1.5rem;
+}
+
 .contacts {
   padding: 2.5rem 0;
 }
@@ -2579,6 +2827,10 @@ html {
 
   .favorite-btn span {
     display: inline;
+  }
+
+  .switcher__btn {
+    padding: 0.375rem 0.75rem;
   }
 
   .footer {
@@ -3199,5 +3451,9 @@ html {
 
   .about__benefit:hover .about__benefit-title {
     color: #ca9b73;
+  }
+
+  .review-card__person-info a:hover {
+    text-decoration: none;
   }
 }
