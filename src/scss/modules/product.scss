@@ -110,6 +110,11 @@
 		font-size: 0.875rem;
 		font-weight: 400;
 		line-height: 157.143%;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 	// .product-card__footer
 	&__footer {

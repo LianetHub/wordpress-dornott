@@ -301,6 +301,10 @@
                     <div class="cert__widget">
                         <?php echo $cert_widget; ?>
                     </div>
+                <?php else: ?>
+                    <div class="cert__widget">
+                        Код виджета отсутствует
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -322,62 +326,64 @@
                     <h2 class="steps__title title"><?php echo esc_html($steps_title); ?></h2>
                 <?php endif; ?>
                 <p class="steps__subtitle">
+                    Простое оформление в
                     <?php
                     $num_steps = is_array($steps_items) ? count($steps_items) : 0;
-                    echo "Простое оформление в {$num_steps} шагов";
                     ?>
+                    <span><?php echo $num_steps; ?> шагов</span>
                 </p>
-                <div class="steps__body">
-                    <?php if ($steps_items): ?>
-                        <ul class="steps__list">
-                            <?php
-                            $i = 1;
-                            foreach ($steps_items as $item):
-                                $item_image = $item['image'] ?? null;
-                                $item_title = $item['title'] ?? '';
-                                $item_description = $item['description'] ?? '';
-                            ?>
-                                <li class="steps__item">
-                                    <div class="steps__item-content">
-                                        <?php if ($item_image): ?>
-                                            <div class="steps__item-image">
-                                                <img src="<?php echo esc_url($item_image['url']); ?>" alt="<?php echo esc_attr($item_image['alt']); ?>">
-                                            </div>
-                                        <?php endif; ?>
-                                        <?php if ($item_title): ?>
-                                            <div class="steps__item-title"><?php echo esc_html($item_title); ?></div>
-                                        <?php endif; ?>
-                                        <?php if ($item_description): ?>
-                                            <p class="steps__item-subtitle"><?php echo esc_html($item_description); ?></p>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="steps__item-hint">Шаг</div>
-                                    <div class="steps__item-number"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></div>
-                                </li>
-                            <?php
-                                $i++;
-                            endforeach;
-                            ?>
-                        </ul>
-                    <?php endif; ?>
-                    <?php if ($terms_title || $terms_button): ?>
-                        <div class="steps__terms">
-                            <?php if ($terms_title): ?>
-                                <div class="steps__terms-title"><?php echo esc_html($terms_title); ?></div>
-                            <?php endif; ?>
-                            <?php
-                            if ($terms_button) {
-                                get_template_part('templates/components/button', null, [
-                                    'data'  => $terms_button,
-                                    'class' => 'steps__terms-btn',
-                                    'type'  => 'primary',
-                                    'icon'  => 'chevron-right'
-                                ]);
-                            }
-                            ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
+            </div>
+            <div class="steps__body">
+                <?php if ($steps_items): ?>
+                    <ul class="steps__list">
+                        <?php
+                        $i = 1;
+                        foreach ($steps_items as $item):
+                            $item_image = $item['image'] ?? null;
+                            $item_title = $item['title'] ?? '';
+                            $item_description = $item['description'] ?? '';
+                        ?>
+
+                            <li class="steps__item <?php if ($i == 1): ?> active <?php endif; ?>">
+                                <div class="steps__item-content">
+                                    <?php if ($item_image): ?>
+                                        <div class="steps__item-image">
+                                            <img src="<?php echo esc_url($item_image['url']); ?>" alt="<?php echo esc_attr($item_image['alt']); ?>">
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if ($item_title): ?>
+                                        <div class="steps__item-title"><?php echo esc_html($item_title); ?></div>
+                                    <?php endif; ?>
+                                    <?php if ($item_description): ?>
+                                        <p class="steps__item-subtitle"><?php echo esc_html($item_description); ?></p>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="steps__item-hint">Шаг</div>
+                                <div class="steps__item-number"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></div>
+                            </li>
+                        <?php
+                            $i++;
+                        endforeach;
+                        ?>
+                    </ul>
+                <?php endif; ?>
+                <?php if ($terms_title || $terms_button): ?>
+                    <div class="steps__terms">
+                        <?php if ($terms_title): ?>
+                            <div class="steps__terms-title"><?php echo esc_html($terms_title); ?></div>
+                        <?php endif; ?>
+                        <?php
+                        if ($terms_button) {
+                            get_template_part('templates/components/button', null, [
+                                'data'  => $terms_button,
+                                'class' => 'steps__terms-btn',
+                                'type'  => 'primary',
+                                'icon'  => 'chevron-right'
+                            ]);
+                        }
+                        ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>

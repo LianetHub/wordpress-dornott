@@ -58,9 +58,34 @@ $(function () {
 
     getNavigator();
 
+    setupStepsHandlers();
+
     $(window).on('resize', () => {
-        getNavigator();
+        clearTimeout(window.resizeTimer);
+        window.resizeTimer = setTimeout(() => {
+            getNavigator();
+            setupStepsHandlers();
+        }, 100);
     });
+
+    // steps animation
+
+    function setupStepsHandlers() {
+        const $stepsItems = $('.steps__item');
+
+        $stepsItems.off('click mouseenter mouseleave');
+
+        if ($('body').hasClass('_pc')) {
+            $stepsItems.on('mouseenter', function () {
+                $(this).addClass('active').siblings().removeClass('active');
+            });
+
+        } else {
+            $stepsItems.on('click', function (e) {
+                $(this).addClass('active').siblings().removeClass('active');
+            });
+        }
+    }
 
 
     // event handlers
