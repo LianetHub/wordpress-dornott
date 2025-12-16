@@ -222,6 +222,61 @@
 	}
 }
 
+.socials {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	// .socials__link
+	&__link {
+		width: 2rem;
+		height: 2rem;
+		font-size: 1.25rem;
+		flex-shrink: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: #4e443d;
+		border-radius: 50%;
+		color: #fff;
+		transition: background-color 0.3s ease;
+		&.icon-telegram {
+			@media (any-hover: hover) {
+				&:hover {
+					background-color: #00b0f2;
+				}
+			}
+		}
+		&.icon-whatsapp {
+			@media (any-hover: hover) {
+				&:hover {
+					background-color: #00e510;
+				}
+			}
+		}
+		&.icon-youtube {
+			@media (any-hover: hover) {
+				&:hover {
+					background-color: #ff0000;
+				}
+			}
+		}
+		&.icon-rutube {
+			@media (any-hover: hover) {
+				&:hover {
+					background-color: #13141c;
+				}
+			}
+		}
+		&.icon-vk {
+			@media (any-hover: hover) {
+				&:hover {
+					background-color: #2688eb;
+				}
+			}
+		}
+	}
+}
+
 //============ ОБЩИЕ ЭЛЕМЕНТЫ ============
 
 // Стилизация селекта

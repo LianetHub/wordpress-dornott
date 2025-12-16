@@ -634,8 +634,10 @@
     $phone = get_field('tel', 'option') ?? '';
     $email = get_field('email', 'option') ?? '';
     $map_coords = get_field('coords', 'option') ?? '';
-    $telegram = get_field('telegram_url', 'option') ?? '';
-    $whatsapp = get_field('whatsapp_url', 'option') ?? '';
+    $telegram = get_field('telegram', 'option') ?? '';
+    $whatsapp = get_field('whatsapp', 'option') ?? '';
+    $privacy_txt = get_field('privacy_txt', 'option') ?? '';
+    $placemarker_logo_url = get_field('placemarker_logo', 'option') ?? '';
 ?>
     <section id="contacts" class="contacts">
         <div class="container">
@@ -647,7 +649,7 @@
                 <form action="#" class="contacts__form form">
                     <div class="contacts__form-header">
                         <?php if ($form_caption): ?>
-                            <div class="contacts__form-caption"><?php echo esc_html($form_caption); ?></div>
+                            <div class="contacts__form-caption title-sm"><?php echo esc_html($form_caption); ?></div>
                         <?php endif; ?>
                         <?php if ($form_text): ?>
                             <div class="contacts__form-text"><?php echo esc_html($form_text); ?></div>
@@ -668,16 +670,21 @@
                             <span class="form__file-btn icon-clip">Прикрепить (до 10 мб.)</span>
                         </label>
                     </div>
-                    <button type="submit" class="form__btn btn btn-primary">Отправить</button>
-                    <div class="form__policy">
-                        <?php echo wp_kses_post($privacy_txt) ?>
+                    <div class="contacts__form-footer">
+                        <button type="submit" class="form__btn btn btn-primary btn-sm">Отправить</button>
+                        <div class="form__policy">
+                            <?php echo wp_kses_post($privacy_txt) ?>
+                        </div>
                     </div>
                 </form>
 
                 <div class="contacts__map">
                     <?php if ($map_coords): ?>
                         <div class="contacts__map-header">
-                            <div id="map" class="contacts__map-block" data-coords="<?php echo esc_attr($map_coords); ?>"></div>
+                            <div id="map"
+                                class="contacts__map-block"
+                                data-coords="<?php echo esc_attr($map_coords); ?>"
+                                data-placemark-logo="<?php echo esc_attr($placemarker_logo_url); ?>"></div>
                         </div>
                     <?php endif; ?>
                     <ul class="contacts__list">

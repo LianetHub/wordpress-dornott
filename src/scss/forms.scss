@@ -84,23 +84,40 @@
 	// .form__file-btn
 	&__file-btn {
 		color: #1570ef;
-		font-size: 1.125rem;
+		font-size: 1rem;
 		font-weight: 400;
-		line-height: 122.222%;
+		line-height: 137.5%;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
 		cursor: pointer;
 		&::before {
-			color: #181d27;
-			width: 1.25rem;
-			height: 1.25rem;
-			font-size: 1.25rem;
+			color: #717680;
+			width: 1.5rem;
+			height: 1.5rem;
+			font-size: 1.5rem;
 			flex-shrink: 0;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+		}
+	}
+	// .form__btn
+	&__btn {
+		width: 100%;
+	}
+	// .form__policy
+	&__policy {
+		font-size: 0.875rem;
+		line-height: 142.857%;
+		& a {
+			color: #1570ef;
+			@media (any-hover: hover) {
+				&:hover {
+					text-decoration: underline;
+				}
+			}
 		}
 	}
 }
@@ -206,6 +223,10 @@
 				box-shadow: none;
 			}
 		}
+	}
+
+	&.btn-sm {
+		padding: rem(15) rem(22);
 	}
 
 	&:disabled,

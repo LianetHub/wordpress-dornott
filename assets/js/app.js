@@ -508,6 +508,84 @@ $(function () {
         });
     });
 
-})
 
+    // Contacts Block Map
+    function createMap() {
+
+        const $map = $('#map');
+
+        var coordsAddress = $map.data('coords').split('; ');
+        var placemarkURL = $map.data('placemark-logo');
+
+        for (var i = 0; i < coordsAddress.length; i++) {
+            coordsAddress[i] = coordsAddress[i].split(', ');
+            for (var j = 0; j < coordsAddress[i].length; j++) {
+                coordsAddress[i][j] = parseFloat(coordsAddress[i][j]);
+            }
+        }
+
+        var mapCenter = coordsAddress[0].map(function (element) {
+            return element;
+        });
+
+        ymaps.ready(function () {
+
+            var myMap = new ymaps.Map('map', {
+                center: mapCenter,
+                zoom: 16,
+                controls: [],
+            });
+
+            var addressOne = new ymaps.Placemark(coordsAddress[0], {}, {
+                iconLayout: 'default#image',
+                iconImageHref: placemarkURL,
+                iconImageSize: [69, 78],
+                iconImageOffset: [-35, -78],
+            });
+
+
+            var zoomControl = new ymaps.control.ZoomControl({
+                options: {
+                    position: {
+                        right: 10,
+                        top: 200,
+                    },
+                },
+            });
+
+
+            myMap.behaviors.disable('scrollZoom');
+
+            myMap.controls.add(zoomControl);
+
+            myMap.geoObjects.add(addressOne);
+        });
+
+
+    }
+
+    var isMapShown = false;
+    $(window).scroll(function () {
+        let container = $('#map');
+        if (!isMapShown && (container.length > 0)) {
+            let script = document.createElement("script");
+            script.async = true;
+            script.defer = true;
+            script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU";
+            let container_pos = container.offset().top;
+            let winHeight = $(window).height();
+            let scrollToElem = container_pos - winHeight - 200;
+            if ($(this).scrollTop() > scrollToElem) {
+                document.head.append(script);
+                script.onload = function () {
+                    createMap();
+                };
+                isMapShown = true;
+            }
+        }
+    });
+
+
+
+})
 

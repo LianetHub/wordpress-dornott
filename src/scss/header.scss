@@ -438,25 +438,25 @@
 	// .submenu__contacts-socials
 	&__contacts-socials {
 		margin-top: 0.25rem;
-		@media (max-width: 1299.98px) {
-			.socials__link {
-				&.icon-telegram {
-					background-color: #00b0f2;
-				}
-				&.icon-whatsapp {
-					background-color: #00e510;
-				}
-				&.icon-youtube {
-					background-color: #ff0000;
-				}
-				&.icon-rutube {
-					background-color: #13141c;
-				}
-				&.icon-vk {
-					background-color: #2688eb;
-				}
-			}
-		}
+		// @media (max-width: 1299.98px) {
+		// 	.socials__link {
+		// 		&.icon-telegram {
+		// 			background-color: #00b0f2;
+		// 		}
+		// 		&.icon-whatsapp {
+		// 			background-color: #00e510;
+		// 		}
+		// 		&.icon-youtube {
+		// 			background-color: #ff0000;
+		// 		}
+		// 		&.icon-rutube {
+		// 			background-color: #13141c;
+		// 		}
+		// 		&.icon-vk {
+		// 			background-color: #2688eb;
+		// 		}
+		// 	}
+		// }
 	}
 }
 
