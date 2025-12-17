@@ -48,6 +48,14 @@ $(function () {
                             } else {
                                 $container.find('input[name="policy-type"]:checked').trigger('change');
                             }
+                            setTimeout(() => {
+                                if ($targetRadio.length) {
+                                    $targetRadio.prop('checked', true).trigger('change');
+                                } else {
+                                    $container.find('input[name="policy-type"]:checked').trigger('change');
+                                }
+
+                            }, 300)
                         }
 
                     }
@@ -464,7 +472,6 @@ $(function () {
     $(document).on('change', '#policies input[name="policy-type"]', function () {
         const $this = $(this);
         const $popup = $this.closest('#policies');
-        const $switcher = $this.closest('.switcher');
         const $items = $popup.find('.switcher__item');
         const currentIndex = $items.index($this.closest('.switcher__item'));
         const $textBlocks = $popup.find('.popup__text');
