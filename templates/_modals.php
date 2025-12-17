@@ -36,7 +36,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         </div>
     <?php endif; ?>
     <?php if ($callback_form_title): ?>
-        <h3 class="popup__title title-sm">
+        <h3 class="popup__title color-accent title-sm">
             <?php echo esc_html($callback_form_title) ?>
         </h3>
     <?php endif; ?>
@@ -71,7 +71,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         </div>
     <?php endif; ?>
     <?php if ($order_form_title): ?>
-        <h3 class="popup__title title-sm">
+        <h3 class="popup__title color-accent title-sm">
             <?php echo esc_html($order_form_title) ?>
         </h3>
     <?php endif; ?>
@@ -109,7 +109,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         </div>
     <?php endif; ?>
     <?php if ($error_title): ?>
-        <h3 class="popup__title title-sm">
+        <h3 class="popup__title color-accent title-sm">
             <?php echo esc_html($error_title) ?>
         </h3>
     <?php endif; ?>
@@ -130,7 +130,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         </div>
     <?php endif; ?>
     <?php if ($success_title): ?>
-        <h3 class="popup__title title-sm">
+        <h3 class="popup__title color-accent title-sm">
             <?php echo esc_html($success_title) ?>
         </h3>
     <?php endif; ?>
@@ -155,10 +155,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 </div>
 
 
-<div class="popup" id="cart">
-
-</div>
-
+<?php require_once(TEMPLATE_PATH . '_cart.php'); ?>
 
 <div class="popup popup--white popup--large" id="policies">
     <?php

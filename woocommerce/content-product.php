@@ -213,19 +213,19 @@ if ($is_variable) {
 	</div>
 
 	<div class="product-card__footer">
-		<div class="product-card__price">
-			<div class="product-card__price-header">
-				<div class="product-card__price-old"
+		<div class="product-card__price price-block">
+			<div class="price-block__header">
+				<div class="price-block__old"
 					data-price-role="regular-price">
 					<?php echo $initial_regular_price_html; ?>
 				</div>
 				<?php if ($is_on_sale && $sale_percentage > 0) : ?>
-					<div class="product-card__price-sale">
+					<div class="price-block__sale">
 						-<?php echo $sale_percentage ?>%
 					</div>
 				<?php endif; ?>
 			</div>
-			<div class="product-card__price-current"
+			<div class="price-block__current"
 				data-price-role="current-price">
 				<?php echo $initial_price_html; ?>
 			</div>

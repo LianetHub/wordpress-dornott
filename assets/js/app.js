@@ -634,5 +634,44 @@ $(function () {
 
 
 
+    // quantity block
+    $('.quantity-block').each(function () {
+        const $block = $(this);
+        const $input = $block.find('.quantity-block__input');
+        const $btnUp = $block.find('.quantity-block__up');
+        const $btnDown = $block.find('.quantity-block__down');
+
+        $btnUp.on('click', function () {
+            let currentVal = parseInt($input.val()) || 0;
+            if (currentVal < 999) {
+                $input.val(currentVal + 1);
+            }
+        });
+
+        $btnDown.on('click', function () {
+            let currentVal = parseInt($input.val()) || 0;
+            if (currentVal > 1) {
+                $input.val(currentVal - 1);
+            }
+        });
+
+        $input.on('input', function () {
+            let val = $input.val().replace(/\D/g, '');
+            val = parseInt(val) || 1;
+            if (val < 1) val = 1;
+            if (val > 999) val = 999;
+            $input.val(val);
+        });
+
+
+        $input.on('paste', function (e) {
+            const pastedData = e.originalEvent.clipboardData.getData('text');
+            if (/\D/.test(pastedData)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+
 })
 

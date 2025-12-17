@@ -137,32 +137,6 @@
 	}
 	// .product-card__price
 	&__price {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	// .product-card__price-header
-	&__price-header {
-		display: flex;
-		align-items: center;
-		gap: 0.38rem;
-		font-size: 0.875rem;
-	}
-	// .product-card__price-old
-	&__price-old {
-		color: #717680;
-		text-decoration-line: line-through;
-	}
-	// .product-card__price-sale
-	&__price-sale {
-		color: #d92d20;
-	}
-	// .product-card__price-current
-	&__price-current {
-		color: #181d27;
-		font-size: 1.5rem;
-		font-weight: 700;
-		line-height: 1.1;
 	}
 }
 

@@ -18,6 +18,15 @@
 	}
 }
 
+.icon-cross:before {
+	content: "\e913";
+}
+.icon-plus:before {
+	content: "\e911";
+}
+.icon-minus:before {
+	content: "\e912";
+}
 .icon-arrow-left:before {
 	content: "\e900";
 }

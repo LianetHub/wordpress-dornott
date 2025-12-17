@@ -75,6 +75,9 @@
 			top: 1.5rem;
 			right: 1.5rem;
 		}
+		&.cart {
+			max-width: rem(1280);
+		}
 	}
 	// .popup__logo
 	&__logo {
@@ -106,7 +109,6 @@
 	// .popup__title
 	&__title {
 		margin-top: rem(30);
-		color: $accent;
 	}
 	// .popup__subtitle
 	&__subtitle {
