@@ -719,6 +719,12 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;
+	transition: background-color 0.3s ease;
+	@media (any-hover: hover) {
+		&:hover {
+			background-color: #151210;
+		}
+	}
 	// .review-card__header
 	&__header {
 		display: flex;
@@ -1106,4 +1112,134 @@ body {
 .ymaps-2-1-79-copyright__wrap,
 .ymaps-2-1-79-map-copyrights-promo {
 	display: none !important;
+}
+
+.article-text {
+	text-align: left;
+	& > img {
+		width: 100%;
+		border-radius: rem(12);
+	}
+	& h2 {
+		line-height: 150%;
+		font-size: rem(20);
+		color: #9e703b;
+		@media (min-width: $md4) {
+			font-size: 1.75rem;
+		}
+		&:not(:first-child) {
+			margin-top: 1.12rem;
+		}
+		&:not(:last-child) {
+			margin-bottom: 1.12rem;
+		}
+	}
+	& h3 {
+		font-size: 1.25rem;
+		line-height: 160%;
+
+		&:not(:first-child) {
+			margin-top: 2rem;
+		}
+		&:not(:last-child) {
+			margin-bottom: 1.25rem;
+		}
+	}
+	& p,
+	& ul:not([class]) {
+		font-size: 1rem;
+		line-height: 150%;
+		@media (min-width: $md4) {
+			font-size: 1.125rem;
+			line-height: 155.556%;
+		}
+		&:not(:last-child) {
+			margin-bottom: 0.75rem;
+		}
+	}
+	& figure {
+		&:not(:first-child) {
+			margin-top: 3rem;
+		}
+		&:not(:last-child) {
+			margin-bottom: 3rem;
+		}
+		& > img {
+			min-height: 14.375rem;
+			object-fit: cover;
+			width: 100%;
+			border-radius: rem(12);
+		}
+		figcaption {
+			margin-top: 1rem;
+			font-size: 0.875rem;
+			line-height: 142.857%;
+			& a {
+				text-decoration: underline;
+				color: inherit;
+				@media (any-hover: hover) {
+					&:hover {
+						text-decoration: none;
+					}
+				}
+			}
+		}
+		&:has(cite) {
+			border-left: 0.125rem solid $accent;
+			padding-block: 0.5rem;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			padding-left: 1.25rem;
+			@media (min-width: $md4) {
+				padding-left: 1.5rem;
+			}
+			& cite {
+				padding-left: 0;
+				border-left: 0;
+				padding-block: 0;
+			}
+			.article__author {
+				margin-top: 2rem;
+			}
+			.article__author-thumb {
+				width: 3rem;
+				height: 3rem;
+			}
+		}
+	}
+	& cite,
+	& blockquote {
+		padding-block: 0.5rem;
+		border-left: 0.125rem solid $accent;
+		font-style: italic;
+		font-weight: 500;
+		line-height: 150%;
+		display: block;
+		font-size: 1.25rem;
+		padding-left: 1.25rem;
+		@media (min-width: $md4) {
+			padding-left: 1.5rem;
+			font-size: 1.5rem;
+		}
+	}
+	& iframe {
+		width: 100%;
+		aspect-ratio: math.div(328, 187);
+		&:not(:first-child) {
+			margin-top: 3rem;
+		}
+		&:not(:last-child) {
+			margin-bottom: 3rem;
+		}
+	}
+	& ul:not([class]) {
+		list-style: disc;
+		padding-left: 1em;
+		& li {
+			&::marker {
+				font-size: 0.8em;
+			}
+		}
+	}
 }

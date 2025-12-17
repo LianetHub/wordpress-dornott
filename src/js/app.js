@@ -32,7 +32,27 @@ $(function () {
     //  init Fancybox
     if (typeof Fancybox !== "undefined" && Fancybox !== null) {
         Fancybox.bind("[data-fancybox]", {
-            dragToClose: false
+            dragToClose: false,
+            on: {
+                ready: (fancyboxRef) => {
+                    const slide = fancyboxRef.getSlide();
+                    if (slide.src === '#policies') {
+                        const $container = $(slide.el);
+                        const trigger = slide.triggerEl;
+
+                        if (trigger) {
+                            const targetSlug = trigger.getAttribute('href').replace('#', '');
+                            const $targetRadio = $container.find(`input[name="policy-type"][value="${targetSlug}"]`);
+                            if ($targetRadio.length) {
+                                $targetRadio.prop('checked', true).trigger('change');
+                            } else {
+                                $container.find('input[name="policy-type"]:checked').trigger('change');
+                            }
+                        }
+
+                    }
+                }
+            }
         });
     }
 
@@ -57,7 +77,6 @@ $(function () {
     }
 
     getNavigator();
-
     setupStepsHandlers();
 
     $(window).on('resize', () => {
@@ -65,6 +84,7 @@ $(function () {
         window.resizeTimer = setTimeout(() => {
             getNavigator();
             setupStepsHandlers();
+
         }, 100);
     });
 
@@ -309,7 +329,6 @@ $(function () {
         });
     }
 
-
     if ($('.reviews').length) {
 
 
@@ -441,6 +460,17 @@ $(function () {
         }
     });
 
+    // policies tabs
+    $(document).on('change', '#policies input[name="policy-type"]', function () {
+        const $this = $(this);
+        const $popup = $this.closest('#policies');
+        const $switcher = $this.closest('.switcher');
+        const $items = $popup.find('.switcher__item');
+        const currentIndex = $items.index($this.closest('.switcher__item'));
+        const $textBlocks = $popup.find('.popup__text');
+
+        $textBlocks.hide().eq(currentIndex).show();
+    });
 
 
     // header observer
@@ -472,29 +502,39 @@ $(function () {
         $switcher.prepend($slider);
 
         function updateSliderPosition($checkedInput) {
+            if (!$switcher.is(':visible')) {
+                return;
+            }
+
             var $button = $checkedInput.next('.switcher__btn');
+            if (!$button.length) return;
+
             var width = $button.outerWidth();
             var offsetLeft = $button.offset().left;
             var parentOffsetLeft = $switcher.offset().left;
             var parentPaddingLeft = parseFloat($switcher.css('padding-left'));
-
             var offset = offsetLeft - parentOffsetLeft - parentPaddingLeft;
 
             $switcher.css('--active-width', width + 'px');
             $switcher.css('--active-offset', offset + 'px');
         }
 
-        var $initialChecked = $switcher.find('.switcher__input:checked');
-        if ($initialChecked.length) {
-            window.requestAnimationFrame(function () {
-                updateSliderPosition($initialChecked);
-            });
-        }
+        var observer = new ResizeObserver(function (entries) {
+            for (var entry of entries) {
+                if (entry.contentRect.width > 0 || entry.contentRect.height > 0) {
+                    var $initialChecked = $switcher.find('.switcher__input:checked');
+                    if ($initialChecked.length) {
+                        updateSliderPosition($initialChecked);
+                    }
+                }
+            }
+        });
+
+        observer.observe($switcher[0]);
 
         $switcher.on('change', '.switcher__input', function () {
             updateSliderPosition($(this));
         });
-
 
         var resizeTimeout;
         $(window).on('resize', function () {

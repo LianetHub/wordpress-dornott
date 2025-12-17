@@ -47,19 +47,22 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     <?php endif; ?>
     <form action="#" class="popup__form form">
         <label class="popup__form-field form__field">
-            <input type="text" name="name" data-required class="form__control" placeholder="Ваше имя">
+            <input type="text" name="username" data-required class="form__control form__control--dark" placeholder="Ваше имя">
         </label>
         <label class="popup__form-field form__field">
-            <input type="tel" name="phone" data-required class="form__control" placeholder="Телефон">
+            <input type="tel" name="phone" data-required class="form__control form__control--dark" placeholder="Телефон">
         </label>
-        <button type="submit" class="form__btn btn btn-primary">
-            <?php echo esc_html($callback_form_btn) ?>
-        </button>
-        <div class="form__policy">
-            <?php echo wp_kses_post($privacy_txt) ?>
+        <div class="popup__form-footer">
+            <button type="submit" class="form__btn btn btn-primary btn-sm">
+                <?php echo esc_html($callback_form_btn) ?>
+            </button>
+            <div class="form__policy">
+                <?php echo wp_kses_post($privacy_txt) ?>
+            </div>
         </div>
     </form>
 </div>
+
 
 <div class="popup" id="order">
     <?php if ($white_logo): ?>
@@ -79,24 +82,27 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     <?php endif; ?>
     <form action="#" class="popup__form form">
         <label class="popup__form-field form__field">
-            <input type="text" name="name" data-required class="form__control" placeholder="Ваше имя">
+            <input type="text" name="username" data-required class="form__control form__control--dark" placeholder="Ваше имя">
         </label>
         <label class="popup__form-field form__field">
-            <input type="tel" name="phone" data-required class="form__control" placeholder="Телефон">
+            <input type="tel" name="phone" data-required class="form__control form__control--dark" placeholder="Телефон">
         </label>
         <label class="popup__form-field popup__form-field--large form__field">
-            <textarea name="message" class="form__control" placeholder="Если у вас корпоративный заказ, опишите приблизительный объём товаров и сроки..."></textarea>
+            <textarea name="message" class="form__control form__control--dark" placeholder="Если у вас корпоративный заказ, опишите приблизительный объём товаров и сроки..."></textarea>
         </label>
-        <button type="submit" class="form__btn btn btn-primary">
-            <?php echo esc_html($order_form_btn) ?>
-        </button>
-        <div class="form__policy">
-            <?php echo wp_kses_post($privacy_txt) ?>
+        <div class="popup__form-footer">
+            <button type="submit" class="form__btn btn btn-primary btn-sm">
+                <?php echo esc_html($order_form_btn) ?>
+            </button>
+            <div class="form__policy">
+                <?php echo wp_kses_post($privacy_txt) ?>
+            </div>
         </div>
     </form>
 </div>
 
-<div class="popup" id="error">
+
+<div class="popup popup--background-decor" id="error">
     <?php if ($error_icon): ?>
         <div class="popup__icon">
             <img src="<?php echo esc_url($error_icon['url']); ?>" alt="<?php echo esc_attr($error_icon['alt']) ?: 'Иконка'; ?>">
@@ -117,7 +123,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </button>
 </div>
 
-<div class="popup" id="success-submiting">
+<div class="popup popup--background-decor" id="success-submiting">
     <?php if ($success_icon): ?>
         <div class="popup__icon">
             <img src="<?php echo esc_url($success_icon['url']); ?>" alt="<?php echo esc_attr($success_icon['alt']) ?: 'Иконка'; ?>">
@@ -138,6 +144,8 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </button>
 </div>
 
+
+
 <div class="popup" id="success-order">
 
 </div>
@@ -152,7 +160,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 </div>
 
 
-<div class="popup" id="policies">
+<div class="popup popup--white popup--large" id="policies">
     <?php
     $is_first_policy = true;
 
@@ -243,7 +251,5 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 
     <?php endif; ?>
 
-    <!-- #payment-and-delivery : Оплата и доставка
-#data-protection : Защита данных
-#privacy-policy : Политика конфиденциальности -->
+
 </div>

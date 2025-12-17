@@ -25,13 +25,25 @@
 	// .form__control
 	&__control {
 		text-overflow: ellipsis;
-		transition: border-color 0.3s ease 0s, color 0.3s ease 0s;
+		transition: border-color 0.3s ease 0s, color 0.3s ease 0s, background-color 0.3s ease;
 		width: 100%;
 		border-radius: 0.75rem;
 		background: #f5f5f5;
 		font-size: 1.125rem;
 		line-height: 144.444%;
 		padding: 1rem 1.5rem;
+		&.form__control--dark {
+			background: rgba(255, 255, 255, 0.08);
+			color: #fff;
+			&:hover,
+			&:focus {
+				background: rgba(255, 255, 255, 0.18);
+			}
+			&::placeholder {
+				opacity: 0.5;
+				color: #fff;
+			}
+		}
 		&::placeholder {
 			opacity: 1;
 			color: #a4a4a4;
@@ -122,67 +134,67 @@
 	}
 }
 
-.wpcf7-form {
-	&:has(.wpcf7-submit[disabled]) {
-		.form__submit {
-			cursor: not-allowed;
-			opacity: 0.7;
-		}
-	}
-	&.submitting {
-		.form__submit {
-			pointer-events: none;
-		}
-		.wpcf7-submit {
-			color: transparent;
-		}
-		.wpcf7-spinner {
-			opacity: 1;
-			visibility: visible;
-			display: block;
-			background: transparent;
-			opacity: 1;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin: 0;
-			transform: translate(-50%, -50%);
-			&::before {
-				display: none;
-			}
-			&::after {
-				content: "";
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				width: 20px;
-				height: 20px;
-				border: 3px solid currentColor;
-				border-bottom-color: transparent;
-				border-radius: 50%;
-				transform-origin: center;
-				animation: rotation 1s linear infinite;
-				z-index: 3;
-			}
-			@keyframes rotation {
-				0% {
-					transform: translate(-50%, -50%) rotate(0deg);
-				}
-				100% {
-					transform: translate(-50%, -50%) rotate(360deg);
-				}
-			}
-		}
-	}
-}
+// .wpcf7-form {
+// 	&:has(.wpcf7-submit[disabled]) {
+// 		.form__submit {
+// 			cursor: not-allowed;
+// 			opacity: 0.7;
+// 		}
+// 	}
+// 	&.submitting {
+// 		.form__submit {
+// 			pointer-events: none;
+// 		}
+// 		.wpcf7-submit {
+// 			color: transparent;
+// 		}
+// 		.wpcf7-spinner {
+// 			opacity: 1;
+// 			visibility: visible;
+// 			display: block;
+// 			background: transparent;
+// 			opacity: 1;
+// 			position: absolute;
+// 			top: 50%;
+// 			left: 50%;
+// 			margin: 0;
+// 			transform: translate(-50%, -50%);
+// 			&::before {
+// 				display: none;
+// 			}
+// 			&::after {
+// 				content: "";
+// 				position: absolute;
+// 				top: 50%;
+// 				left: 50%;
+// 				transform: translate(-50%, -50%);
+// 				width: 20px;
+// 				height: 20px;
+// 				border: 3px solid currentColor;
+// 				border-bottom-color: transparent;
+// 				border-radius: 50%;
+// 				transform-origin: center;
+// 				animation: rotation 1s linear infinite;
+// 				z-index: 3;
+// 			}
+// 			@keyframes rotation {
+// 				0% {
+// 					transform: translate(-50%, -50%) rotate(0deg);
+// 				}
+// 				100% {
+// 					transform: translate(-50%, -50%) rotate(360deg);
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
-.wpcf7-response-output {
-	display: none !important;
-}
-.wpcf7-not-valid-tip {
-	margin-top: 0.25em;
-}
+// .wpcf7-response-output {
+// 	display: none !important;
+// }
+// .wpcf7-not-valid-tip {
+// 	margin-top: 0.25em;
+// }
 
 .btn {
 	position: relative;
@@ -209,8 +221,18 @@
 		justify-content: center;
 		align-items: center;
 		order: 1;
+		transition: transform 0.3s ease;
 	}
 
+	&.icon-chevron-right {
+		@media (any-hover: hover) {
+			&:hover {
+				&::before {
+					transform: translateX(0.5rem);
+				}
+			}
+		}
+	}
 	&.btn-primary {
 		border-color: #efcb92;
 		background: #efcb92;
@@ -243,7 +265,7 @@
 .switcher {
 	border-radius: 0.75rem;
 	background: #0a0d12;
-	color: #fff;
+	color: #d5d7da;
 	padding: 0.25rem;
 	display: inline-flex;
 	gap: 0.25rem;

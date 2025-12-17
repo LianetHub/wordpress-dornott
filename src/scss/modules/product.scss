@@ -13,6 +13,14 @@
 	gap: 0.5rem;
 	min-width: 0;
 	max-width: 100%;
+	border: 1px solid #fff;
+	transition: border-color 0.3s ease;
+	@media (any-hover: hover) {
+		&:hover {
+			border-color: #717680;
+		}
+	}
+
 	// .product-card__slide
 	&__slide {
 	}
@@ -21,6 +29,8 @@
 		position: relative;
 		min-width: 0;
 		max-width: 100%;
+		border-radius: 1rem;
+		background: #414651;
 	}
 	// .product-card__slider
 	&__slider {

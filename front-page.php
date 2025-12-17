@@ -657,7 +657,7 @@
                     </div>
                     <div class="contacts__form-fields">
                         <label class="contacts__form-field form__field">
-                            <input type="text" name="name" data-required class="form__control" placeholder="Ваше имя">
+                            <input type="text" name="username" data-required class="form__control" placeholder="Ваше имя">
                         </label>
                         <label class="contacts__form-field form__field">
                             <input type="tel" name="phone" data-required class="form__control" placeholder="Телефон">

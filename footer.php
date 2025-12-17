@@ -76,21 +76,21 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                     <ul class="footer__policies">
                         <?php if ($privacy_policy): ?>
                             <li class="footer__policy">
-                                <a href="#privacy-policy" data-fancybox class="footer__policy-link">Политика конфиденциальности</a>
+                                <a href="#privacy-policy" data-src="#policies" data-fancybox class="footer__policy-link">Политика конфиденциальности</a>
                             </li>
                         <?php endif; ?>
 
 
                         <?php if ($data_protection): ?>
                             <li class="footer__policy">
-                                <a href="#data-protection" data-fancybox class="footer__policy-link">Защита данных</a>
+                                <a href="#data-protection" data-src="#policies" data-fancybox class="footer__policy-link">Защита данных</a>
                             </li>
                         <?php endif; ?>
 
 
                         <?php if ($payment_delivery): ?>
                             <li class="footer__policy">
-                                <a href="#payment-and-delivery" data-fancybox class="footer__policy-link">Оплата и доставка</a>
+                                <a href="#payment-and-delivery" data-src="#policies" data-fancybox class="footer__policy-link">Оплата и доставка</a>
                             </li>
                         <?php endif; ?>
                     </ul>

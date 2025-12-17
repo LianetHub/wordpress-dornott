@@ -46,19 +46,22 @@ $image_size = 'woocommerce_single';
 
 $slides_html = '';
 
-$image_args = ['class' => 'product-card__image cover-image'];
+$image_args = [
+	'class'   => 'product-card__image cover-image',
+	'loading' => 'lazy',
+];
 
 if ($image_id) {
 	$image_html = wp_get_attachment_image($image_id, $image_size, false, $image_args);
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '</div>';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '<span class="swiper-lazy-preloader"></span></div>';
 } else {
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . wc_placeholder_img($image_size, $image_args['class']) . '</div>';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . wc_placeholder_img($image_size, $image_args) . '<span class="swiper-lazy-preloader"></span></div>';
 }
 
 if (!empty($gallery_ids)) {
 	foreach ($gallery_ids as $gallery_image_id) {
 		$image_html = wp_get_attachment_image($gallery_image_id, $image_size, false, $image_args);
-		$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '</div>';
+		$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '<span class="swiper-lazy-preloader"></span></div>';
 	}
 }
 
@@ -208,8 +211,6 @@ if ($is_variable) {
 			</div>
 		<?php endif; ?>
 	</div>
-
-
 
 	<div class="product-card__footer">
 		<div class="product-card__price">

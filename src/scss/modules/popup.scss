@@ -18,7 +18,7 @@
 }
 
 .fancybox__backdrop {
-	background: rgba(0, 0, 0, 0.25);
+	background: rgba(0, 0, 0, 0.65);
 	backdrop-filter: blur(5px);
 	-webkit-backdrop-filter: blur(5px);
 }
@@ -33,28 +33,107 @@
 	outline: none;
 }
 
+.f-button.is-close-button {
+	top: 1rem;
+	right: 1rem;
+	--f-close-button-width: #{rem(36)};
+	--f-close-button-height: #{rem(36)};
+	--f-close-button-svg-stroke-width: #{rem(3)};
+	--f-close-button-svg-width: #{rem(25)};
+	--f-close-button-svg-height: #{rem(25)};
+	--f-close-button-color: #{rgba(#fff, 0.7)};
+	--f-close-button-hover-color: #fff;
+}
+
 .popup {
 	display: none;
+	max-width: 36.25rem;
 	width: 100%;
-	background: #f4f8f4;
-	color: $dark;
-	max-width: rem(1100);
-	padding: 2rem 1rem;
-	border-radius: 1rem;
-	overflow-x: hidden;
-	@media (min-width: $md4) {
-		border-radius: 1.875rem;
-		padding: 4.56rem 1.56rem;
+	padding: 2rem 2rem 2.625rem 2rem;
+	text-align: center;
+	flex-direction: column;
+	border-radius: 1.5rem;
+	background-color: #000;
+	color: #a4a7ae;
+	&.popup--background-decor {
+		background-image: url("@img/pattern.svg");
+		background-repeat: repeat;
+		background-position: 0 0;
+		background-size: contain;
+	}
+	&.popup--white {
+		background: #fff;
+		color: #414651;
+		.f-button.is-close-button {
+			--f-close-button-color: #{rgba(#717680, 0.7)};
+			--f-close-button-hover-color: #717680;
+		}
+	}
+	&.popup--large {
+		max-width: 46.875rem;
+		.f-button.is-close-button {
+			top: 1.5rem;
+			right: 1.5rem;
+		}
+	}
+	// .popup__logo
+	&__logo {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-bottom: rem(1) solid #414651;
+		padding-bottom: rem(30);
+		& img {
+			max-width: rem(138);
+		}
+	}
+	&__icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		& img {
+			max-width: 10rem;
+			width: 100%;
+		}
+	}
+	// .popup__btn
+	&__btn {
+		margin-top: 2.62rem;
+		&[data-fancybox-close] {
+			align-self: center;
+		}
+	}
+	// .popup__title
+	&__title {
+		margin-top: rem(30);
+		color: $accent;
+	}
+	// .popup__subtitle
+	&__subtitle {
+		margin-top: 1.25rem;
+		font-size: 1rem;
+		line-height: 140%;
 	}
 	// .popup__form
 	&__form {
-		form {
-			display: flex;
-			flex-direction: column;
-			gap: 5rem;
-			@media (min-width: $md4) {
-				gap: 10.44rem;
-			}
-		}
+		margin-top: rem(30);
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	// .popup__form-field
+	&__form-field {
+	}
+	// .popup__form-footer
+	&__form-footer {
+		margin-top: rem(34);
+		display: flex;
+		flex-direction: column;
+		gap: rem(18);
+	}
+	// .popup__switcher
+	&__switcher {
+		align-self: flex-start;
+		margin-bottom: 1.5rem;
 	}
 }

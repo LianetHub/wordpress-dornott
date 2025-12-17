@@ -57,19 +57,19 @@ $has_policy_links = $privacy_policy || $data_protection || $payment_delivery;
 
                 <?php if ($privacy_policy): ?>
                     <li class="submenu__item">
-                        <a href="<?php echo esc_url($privacy_policy); ?>" data-fancybox class="submenu__link icon-chevron-right">Политика конфиденциальности</a>
+                        <a href="#privacy-policy" data-src="#policies" data-fancybox class="submenu__link icon-chevron-right">Политика конфиденциальности</a>
                     </li>
                 <?php endif; ?>
 
                 <?php if ($data_protection): ?>
                     <li class="submenu__item">
-                        <a href="<?php echo esc_url($data_protection); ?>" data-fancybox class="submenu__link icon-chevron-right">Защита данных</a>
+                        <a href="#data-protection" data-src="#policies" data-fancybox class="submenu__link icon-chevron-right">Защита данных</a>
                     </li>
                 <?php endif; ?>
 
                 <?php if ($payment_delivery): ?>
                     <li class="submenu__item">
-                        <a href="<?php echo esc_url($payment_delivery); ?>" data-fancybox class="submenu__link icon-chevron-right">Оплата и доставка</a>
+                        <a href="#payment-and-delivery" data-src="#policies" data-fancybox class="submenu__link icon-chevron-right">Оплата и доставка</a>
                     </li>
                 <?php endif; ?>
             <?php endif; ?>
