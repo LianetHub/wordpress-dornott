@@ -30,30 +30,48 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
 <footer class="footer">
     <div class="footer__top">
         <div class="container">
-            <div class="footer__side">
-                <?php if ($white_logo): ?>
-                    <a href="#hero" class="footer__logo">
-                        <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
-                    </a>
-                <?php endif; ?>
+            <div class="footer__header">
+                <div class="footer__side">
+                    <?php if ($white_logo): ?>
+                        <a href="#hero" class="footer__logo">
+                            <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+                        </a>
+                    <?php endif; ?>
 
+
+                </div>
+
+                <nav aria-label="Меню" class="footer__menu menu">
+                    <?php
+                    wp_nav_menu(array(
+                        'theme_location' => 'general_menu',
+                        'container'      => false,
+                        'menu_class'     => 'menu__list',
+                        'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                        'walker'         => new Dornott_Menu_Walker()
+                    ));
+                    ?>
+
+                </nav>
+
+                <?php
+
+                if ($footer_button_data) {
+                    get_template_part('templates/components/button', null, [
+                        'data'  => $footer_button_data,
+                        'class' => 'footer__callback',
+                        'type'  => 'primary',
+                        'icon'  => 'phone-incoming'
+                    ]);
+                }
+                ?>
+            </div>
+            <div class="footer__body">
                 <?php if ($requisites): ?>
                     <div class="footer__reqs">
                         <?php echo $requisites; ?>
                     </div>
                 <?php endif; ?>
-            </div>
-
-            <nav aria-label="Меню" class="footer__menu menu">
-                <?php
-                wp_nav_menu(array(
-                    'theme_location' => 'general_menu',
-                    'container'      => false,
-                    'menu_class'     => 'menu__list',
-                    'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-                    'walker'         => new Dornott_Menu_Walker()
-                ));
-                ?>
                 <?php if ($privacy_policy || $data_protection || $payment_delivery): ?>
                     <ul class="footer__policies">
                         <?php if ($privacy_policy): ?>
@@ -77,19 +95,7 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                         <?php endif; ?>
                     </ul>
                 <?php endif; ?>
-            </nav>
-
-            <?php
-
-            if ($footer_button_data) {
-                get_template_part('templates/components/button', null, [
-                    'data'  => $footer_button_data,
-                    'class' => 'footer__callback',
-                    'type'  => 'primary',
-                    'icon'  => 'phone-incoming'
-                ]);
-            }
-            ?>
+            </div>
         </div>
     </div>
 
@@ -102,20 +108,20 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
             <?php endif; ?>
 
             <div class="footer__socials socials">
+                <?php if ($social_whatsapp): ?>
+                    <a href="<?php echo esc_url($social_whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
+                <?php endif; ?>
                 <?php if ($social_telegram): ?>
                     <a href="<?php echo esc_url($social_telegram); ?>" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
                 <?php endif; ?>
-                <?php if ($social_whatsapp): ?>
-                    <a href="<?php echo esc_url($social_whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
+                <?php if ($social_vk): ?>
+                    <a href="<?php echo esc_url($social_vk); ?>" aria-label="Следите за нами в VK" class="socials__link icon-vk"></a>
                 <?php endif; ?>
                 <?php if ($social_youtube): ?>
                     <a href="<?php echo esc_url($social_youtube); ?>" aria-label="Следите за нами в Youtube" class="socials__link icon-youtube"></a>
                 <?php endif; ?>
                 <?php if ($social_rutube): ?>
                     <a href="<?php echo esc_url($social_rutube); ?>" aria-label="Следите за нами в Rutube" class="socials__link icon-rutube"></a>
-                <?php endif; ?>
-                <?php if ($social_vk): ?>
-                    <a href="<?php echo esc_url($social_vk); ?>" aria-label="Следите за нами в VK" class="socials__link icon-vk"></a>
                 <?php endif; ?>
             </div>
 

@@ -235,6 +235,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		position: relative;
+		overflow: hidden;
 		background: #4e443d;
 		border-radius: 50%;
 		color: #fff;
@@ -261,9 +263,24 @@
 			}
 		}
 		&.icon-rutube {
+			border-radius: 0.4rem;
+			&::after {
+				content: "";
+				position: absolute;
+				bottom: 1rem;
+				left: 1rem;
+				width: 2rem;
+				height: 2rem;
+				border-radius: 50%;
+				background: #909193;
+				transition: background-color 0.3s ease;
+			}
 			@media (any-hover: hover) {
 				&:hover {
 					background-color: #13141c;
+					&::after {
+						background-color: #ec0f37;
+					}
 				}
 			}
 		}

@@ -773,9 +773,28 @@ body.is-loaded .preloader {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  position: relative;
+  overflow: hidden;
   background: #4e443d;
   border-radius: 50%;
   color: #fff;
+  -webkit-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+
+.socials__link.icon-rutube {
+  border-radius: 0.4rem;
+}
+
+.socials__link.icon-rutube::after {
+  content: "";
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #909193;
   -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
@@ -1616,18 +1635,13 @@ body.is-loaded .preloader {
   z-index: 3;
   background: #2d3623;
   color: #ffffff;
-  border-radius: 1.5rem 1.5rem 0 0;
 }
 
 .footer__top {
   padding: 2.625rem 1.625rem;
 }
 
-.footer__top .footer__container {
-  row-gap: 2.625rem;
-}
-
-.footer__container {
+.footer__header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1639,6 +1653,7 @@ body.is-loaded .preloader {
       -ms-flex-direction: column;
           flex-direction: column;
   gap: 1.5rem;
+  row-gap: 2.625rem;
 }
 
 .footer__side {
@@ -1664,10 +1679,10 @@ body.is-loaded .preloader {
 }
 
 .footer__reqs {
-  font-weight: 400;
-  line-height: 150%;
+  line-height: 156%;
   letter-spacing: -0.00625rem;
   font-size: 0.875rem;
+  max-width: 22rem;
 }
 
 .footer__menu {
@@ -1679,6 +1694,37 @@ body.is-loaded .preloader {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  gap: 1.5rem;
+}
+
+.footer__callback.btn {
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  gap: 0.38rem;
+  font-size: 0.875rem;
+  padding: 0.75rem 0.875rem;
+}
+
+.footer__callback.btn::before {
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
+  width: 1.125rem;
+  height: 1.125rem;
+  font-size: 1.125rem;
+}
+
+.footer__body {
+  margin-top: 2.88rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  padding-right: 13rem;
 }
 
 .footer__policies {
@@ -1699,43 +1745,18 @@ body.is-loaded .preloader {
       -ms-flex-direction: column;
           flex-direction: column;
   gap: 1rem;
+  margin: 0 auto;
 }
 
 .footer__policy-link {
-  color: #2e90fa;
+  color: rgba(255, 255, 255, 0.5);
   line-height: 133.333%;
   text-decoration-line: underline;
   font-size: 1.125rem;
 }
 
-.footer__sending-caption {
-  color: #fff;
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 133.333%;
-  letter-spacing: -0.00625rem;
-}
-
-.footer__sending-form {
-  margin-top: 1.5rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  gap: 0.62rem;
-}
-
-.footer__sending-form .btn {
-  -ms-flex-negative: 0;
-      flex-shrink: 0;
-}
-
-.footer__sending-text {
-  margin-top: 1rem;
-  line-height: 142.857%;
-  font-size: 0.75rem;
-}
-
 .footer__bottom {
+  position: relative;
   background: #201b18;
   padding: 1.5rem 0.75rem;
   text-align: center;
@@ -1758,6 +1779,16 @@ body.is-loaded .preloader {
   font-size: 1rem;
   line-height: 150%;
   letter-spacing: -0.00625rem;
+}
+
+.footer__socials {
+  gap: 0.75rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
 }
 
 html {
@@ -2899,30 +2930,18 @@ html {
     padding: 0.375rem 0.75rem;
   }
 
-  .footer {
-    border-radius: 3rem 3rem 0 0;
-  }
-
   .footer__logo {
-    width: 6.125rem;
-  }
-
-  .footer__reqs {
-    font-size: 1rem;
+    width: 8.625rem;
   }
 
   .footer__policies {
-    gap: 3.28rem;
+    gap: 2.62rem;
     -ms-flex-wrap: wrap;
         flex-wrap: wrap;
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
         -ms-flex-direction: row;
             flex-direction: row;
-  }
-
-  .footer__sending-text {
-    font-size: 0.875rem;
   }
 
   .container {
@@ -2973,6 +2992,9 @@ html {
     -webkit-box-direction: normal;
         -ms-flex-direction: row;
             flex-direction: row;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
   }
 
   .footer__prod {
@@ -3003,7 +3025,7 @@ html {
 }
 
 @media (min-width: 1199.98px) {
-  .footer__container {
+  .footer__header {
     gap: 1rem;
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
@@ -3046,23 +3068,8 @@ html {
             flex-direction: column;
   }
 
-  .footer__policies {
-    margin-top: 2rem;
-  }
-
   .footer__policy-link {
     font-size: 1rem;
-  }
-
-  .footer__sending {
-    -ms-flex-item-align: start;
-        align-self: flex-start;
-    -webkit-box-ordinal-group: 0;
-        -ms-flex-order: -1;
-            order: -1;
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 18rem;
-            flex: 0 0 18rem;
   }
 
   .footer__bottom {
@@ -3207,7 +3214,7 @@ html {
 }
 
 @media (min-width: 1399.98px) {
-  .footer__container {
+  .footer__header {
     -ms-flex-wrap: nowrap;
         flex-wrap: nowrap;
   }
@@ -3231,16 +3238,6 @@ html {
     -webkit-box-flex: 1;
         -ms-flex: 1 1 auto;
             flex: 1 1 auto;
-  }
-
-  .footer__policies {
-    margin-top: 8.19rem;
-  }
-
-  .footer__sending {
-    -webkit-box-ordinal-group: 1;
-        -ms-flex-order: 0;
-            order: 0;
   }
 
   .container {
@@ -3366,9 +3363,7 @@ html {
     padding-bottom: 0.75rem;
     border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.2);
   }
-}
 
-@media (max-width: 1299.8px) {
   .footer__menu .submenu__contacts {
     display: none;
   }
@@ -3424,6 +3419,10 @@ html {
 
   .socials__link.icon-rutube:hover {
     background-color: #13141c;
+  }
+
+  .socials__link.icon-rutube:hover::after {
+    background-color: #ec0f37;
   }
 
   .socials__link.icon-vk:hover {
@@ -3498,6 +3497,7 @@ html {
 
   .footer__policy-link:hover {
     text-decoration: none;
+    color: #ffbb4e;
   }
 
   .about__benefit:hover {
