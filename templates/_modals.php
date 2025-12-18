@@ -16,6 +16,11 @@ $error_subtitle = get_field('error_subtitle', $option_page);
 $error_close_btn = get_field('error_close_btn', $option_page) ?? "ок, закрыть";
 $error_icon = get_field('error_icon', $option_page);
 
+$error_order_title = get_field('error_order_title', $option_page);
+$error_order_subtitle = get_field('error_order_subtitle', $option_page);
+$error_order_close_btn = get_field('error_order_close_btn', $option_page) ?? "ок, закрыть";
+$error_order_icon = get_field('error_order_icon', $option_page);
+
 $success_title = get_field('success_title', $option_page);
 $success_subtitle = get_field('success_subtitle', $option_page);
 $success_close_btn = get_field('success_close_btn', $option_page) ?? "ок, закрыть";
@@ -45,7 +50,8 @@ $privacy_policy = get_field('privacy_policy', $option_page);
             <?php echo esc_html($callback_form_subtitle) ?>
         </p>
     <?php endif; ?>
-    <form action="#" class="popup__form form">
+    <form action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST" class="popup__form form">
+        <input type="hidden" name="action" value="send_callback_form">
         <label class="popup__form-field form__field">
             <input type="text" name="username" data-required class="form__control form__control--dark" placeholder="Ваше имя">
         </label>
@@ -80,7 +86,8 @@ $privacy_policy = get_field('privacy_policy', $option_page);
             <?php echo esc_html($order_form_subtitle) ?>
         </p>
     <?php endif; ?>
-    <form action="#" class="popup__form form">
+    <form action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST" class="popup__form form">
+        <input type="hidden" name="action" value="send_order_form">
         <label class="popup__form-field form__field">
             <input type="text" name="username" data-required class="form__control form__control--dark" placeholder="Ваше имя">
         </label>
@@ -102,7 +109,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 </div>
 
 
-<div class="popup popup--background-decor" id="error">
+<div class="popup popup--background-decor" id="error-submitting">
     <?php if ($error_icon): ?>
         <div class="popup__icon">
             <img src="<?php echo esc_url($error_icon['url']); ?>" alt="<?php echo esc_attr($error_icon['alt']) ?: 'Иконка'; ?>">
@@ -123,7 +130,8 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     </button>
 </div>
 
-<div class="popup popup--background-decor" id="success-submiting">
+
+<div class="popup popup--background-decor" id="success-submitting">
     <?php if ($success_icon): ?>
         <div class="popup__icon">
             <img src="<?php echo esc_url($success_icon['url']); ?>" alt="<?php echo esc_attr($success_icon['alt']) ?: 'Иконка'; ?>">
@@ -148,6 +156,27 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 
 <div class="popup" id="success-order">
 
+</div>
+
+<div class="popup popup--background-decor" id="error-order">
+    <?php if ($error_order_icon): ?>
+        <div class="popup__icon">
+            <img src="<?php echo esc_url($error_order_icon['url']); ?>" alt="<?php echo esc_attr($error_order_icon['alt']) ?: 'Иконка'; ?>">
+        </div>
+    <?php endif; ?>
+    <?php if ($error_order_title): ?>
+        <h3 class="popup__title color-accent title-sm">
+            <?php echo esc_html($error_order_title) ?>
+        </h3>
+    <?php endif; ?>
+    <?php if ($error_order_subtitle): ?>
+        <p class="popup__subtitle">
+            <?php echo esc_html($error_order_subtitle) ?>
+        </p>
+    <?php endif; ?>
+    <button type="button" data-fancybox-close class="popup__btn btn btn-primary">
+        <?php echo esc_html($error_order_close_btn) ?>
+    </button>
 </div>
 
 <div class="popup" id="city">

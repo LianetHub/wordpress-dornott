@@ -8,10 +8,10 @@
 }
 
 @font-face {
-  font-family: "icons";
+  font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
-  font-weight: 400;
+  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
+  font-weight: 700;
   font-style: normal;
 }
 
@@ -27,9 +27,9 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
+  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
 }
 
 @font-face {
@@ -41,11 +41,11 @@
 }
 
 @font-face {
-  font-family: "PTSans";
+  font-family: "icons";
   font-display: swap;
-  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
+  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
   font-weight: 400;
-  font-style: italic;
+  font-style: normal;
 }
 
 @font-face {
@@ -1379,6 +1379,7 @@ body.is-loaded .preloader {
   background: #909193;
   -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
+  z-index: -1;
 }
 
 .quantity-block {
@@ -1463,6 +1464,56 @@ body.is-loaded .preloader {
   line-height: 1.1;
 }
 
+._loading {
+  color: transparent !important;
+  pointer-events: none;
+}
+
+._loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0.1875rem solid #483a2e;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  -webkit-transform-origin: center;
+      -ms-transform-origin: center;
+          transform-origin: center;
+  -webkit-animation: rotation 1s linear infinite;
+          animation: rotation 1s linear infinite;
+  z-index: 3;
+}
+
+@-webkit-keyframes rotation {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotate(360deg);
+            transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes rotation {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotate(360deg);
+            transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
 ::-webkit-scrollbar {
   width: 0.5rem;
 }
@@ -1476,7 +1527,8 @@ body.is-loaded .preloader {
   border-radius: 0.5rem;
 }
 
-.hidden {
+.hidden,
+.form__file.uploaded .form__file-field {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1522,6 +1574,7 @@ body.is-loaded .preloader {
   transition: border-color 0.3s ease 0s, color 0.3s ease 0s, background-color 0.3s ease;
   width: 100%;
   border-radius: 0.75rem;
+  border: 0.0625rem solid #f5f5f5;
   background: #f5f5f5;
   font-size: 1.125rem;
   line-height: 144.444%;
@@ -1591,6 +1644,7 @@ body.is-loaded .preloader {
 .form__control:hover,
 .form__control:focus {
   background: #e9eaeb;
+  border-color: #e9eaeb;
 }
 
 .form__control:disabled {
@@ -1600,6 +1654,7 @@ body.is-loaded .preloader {
 
 .form__control._error {
   background: #fff1ed;
+  border-color: #f04438;
   color: #f04438;
 }
 
@@ -1689,6 +1744,45 @@ body.is-loaded .preloader {
           align-items: center;
   -webkit-transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
   transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+
+.form__file-preview {
+  margin-top: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 0.5rem;
+}
+
+.form__file-image {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 5rem;
+          flex: 0 0 5rem;
+  height: 5rem;
+}
+
+.form__file-image img {
+  width: 100%;
+}
+
+.form__file-name {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+}
+
+.form__file-remove {
+  width: 2rem;
+  height: 2rem;
+  font-size: 2rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  color: #a4a7ae;
+  -webkit-transition: color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .form__btn {
@@ -4357,6 +4451,10 @@ html {
 
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(255, 167.406779661, 27);
+  }
+
+  .form__file-remove:hover {
+    color: #d92d20;
   }
 
   .form__policy a:hover {

@@ -28,6 +28,7 @@
 		transition: border-color 0.3s ease 0s, color 0.3s ease 0s, background-color 0.3s ease;
 		width: 100%;
 		border-radius: 0.75rem;
+		border: rem(1) solid #f5f5f5;
 		background: #f5f5f5;
 		font-size: 1.125rem;
 		line-height: 144.444%;
@@ -51,6 +52,7 @@
 		&:hover,
 		&:focus {
 			background: #e9eaeb;
+			border-color: #e9eaeb;
 		}
 		&:disabled {
 			background: #ddd;
@@ -59,6 +61,7 @@
 		&._error {
 			background: #fff1ed;
 
+			border-color: #f04438;
 			color: #f04438;
 			&::placeholder {
 				color: #f04438;
@@ -94,6 +97,11 @@
 	// .form__file
 	&__file {
 		width: 100%;
+		&.uploaded {
+			.form__file-field {
+				@extend .hidden;
+			}
+		}
 	}
 	// .form__file-input
 	&__file-input {
@@ -120,6 +128,40 @@
 			transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 		}
 	}
+	// .form__file-preview
+	&__file-preview {
+		margin-top: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	// .form__file-image
+	&__file-image {
+		flex: 0 0 5rem;
+		height: 5rem;
+		& img {
+			width: 100%;
+		}
+	}
+	// .form__file-name
+	&__file-name {
+		flex: 1 1 auto;
+	}
+	// .form__file-remove
+	&__file-remove {
+		width: 2rem;
+		height: 2rem;
+		font-size: 2rem;
+		flex-shrink: 0;
+		color: #a4a7ae;
+		transition: color 0.3s ease;
+		@media (any-hover: hover) {
+			&:hover {
+				color: #d92d20;
+			}
+		}
+	}
+
 	// .form__btn
 	&__btn {
 		width: 100%;

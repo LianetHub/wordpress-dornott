@@ -646,7 +646,8 @@
             <?php endif; ?>
 
             <div class="contacts__body">
-                <form action="#" class="contacts__form form">
+                <form action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST" class="contacts__form form">
+                    <input type="hidden" name="action" value="send_contact_form">
                     <div class="contacts__form-header">
                         <?php if ($form_caption): ?>
                             <div class="contacts__form-caption title-sm"><?php echo esc_html($form_caption); ?></div>
@@ -665,10 +666,12 @@
                         <label class="contacts__form-field form__field">
                             <textarea name="message" class="form__control" placeholder="Ваш вопрос или предложение..."></textarea>
                         </label>
-                        <label class="form__file">
-                            <input type="file" name="file" class="form__file-input" hidden>
-                            <span class="form__file-btn icon-clip">Прикрепить (до 10 мб.)</span>
-                        </label>
+                        <div class="form__file">
+                            <label class="form__file-field">
+                                <input type="file" name="file" class="form__file-input" hidden>
+                                <span class="form__file-btn icon-clip">Прикрепить (до 10 мб.)</span>
+                            </label>
+                        </div>
                     </div>
                     <div class="contacts__form-footer">
                         <button type="submit" class="form__btn btn btn-primary btn-sm">Отправить</button>

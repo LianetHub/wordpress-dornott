@@ -627,10 +627,252 @@ $(function () {
         }
     });
 
+    class FormController {
+        constructor() {
+            this.selectors = {
+                field: '.form__field',
+                errorClass: '_error',
+                loadingClass: '_loading',
+                requiredAttr: '[data-required]',
+                fileInput: '.form__file-input',
+                fileContainer: '.form__file',
+                fileRemove: '.form__file-remove',
+                submitBtn: '[type="submit"]'
+            };
+            this.init();
+        }
 
+        init() {
+            const self = this;
 
+            $('form').each(function () {
+                self.bindSubmit($(this));
+            });
 
-    // Сart Logic
+            $(document).on('input change', this.selectors.requiredAttr, (e) => {
+                const $field = $(e.target);
+                if ($field.hasClass(this.selectors.errorClass) || $field.closest(this.selectors.field).hasClass(this.selectors.errorClass)) {
+                    this.toggleErrorState($field, true);
+                }
+            });
+
+            $(document).on('keydown', 'input[type="tel"]', (e) => this.onPhoneKeyDown(e));
+            $(document).on('input', 'input[type="tel"]', (e) => this.onPhoneInput(e));
+            $(document).on('paste', 'input[type="tel"]', (e) => this.onPhonePaste(e));
+
+            $(document).off('change', this.selectors.fileInput).on('change', this.selectors.fileInput, (e) => this.handleFileChange(e));
+            $(document).off('click', this.selectors.fileRemove).on('click', this.selectors.fileRemove, (e) => this.handleFileRemove(e));
+        }
+
+        bindSubmit($form) {
+            $form.on('submit', async (e) => {
+                e.preventDefault();
+
+                if (this.validateForm($form)) {
+                    await this.sendForm($form);
+                }
+            });
+        }
+
+        async sendForm($form) {
+            const url = $form.attr('action');
+            const method = $form.attr('method') || 'POST';
+            const formData = new FormData($form[0]);
+            const $submitBtn = $form.find(this.selectors.submitBtn);
+
+            $submitBtn.addClass(this.selectors.loadingClass);
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    $form[0].reset();
+                    $form.find('.form__file-preview').remove();
+                    $form.find('.uploaded').removeClass('uploaded');
+
+                    if (window.dornottCart && $form.attr('id') === 'cart-form') {
+                        localStorage.removeItem(window.dornottCart.storageKey);
+                        window.dornottCart.updateInterface();
+                    }
+
+                    Fancybox.show([{
+                        src: "#success-submitting",
+                        type: "inline"
+                    }]);
+                } else {
+                    console.error('Ошибка сервера');
+                    Fancybox.show([{
+                        src: "#error-submitting",
+                        type: "inline"
+                    }]);
+                }
+            } catch (error) {
+                console.error('Ошибка сети', error);
+                Fancybox.show([{
+                    src: "#error-submitting",
+                    type: "inline"
+                }]);
+            } finally {
+                $submitBtn.removeClass(this.selectors.loadingClass);
+            }
+        }
+
+        validateField($field) {
+            const type = $field.attr('type');
+            const name = $field.attr('name');
+            const val = $field.val() ? $field.val().trim() : '';
+            let isValid = true;
+
+            if (type === 'checkbox') {
+                isValid = $field.is(':checked');
+            } else if (name === 'username') {
+                isValid = /^[^\d]+$/.test(val) && val.length > 1;
+            } else if (type === 'tel') {
+                const numbers = val.replace(/\D/g, '');
+                isValid = numbers.length >= 11;
+            } else if (type === 'email') {
+                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+            } else if (name === 'city') {
+                isValid = val.length >= 2;
+            } else if (name === 'address') {
+                isValid = val.length >= 5;
+            } else {
+                isValid = val !== '';
+            }
+
+            this.toggleErrorState($field, isValid);
+            return isValid;
+        }
+
+        toggleErrorState($field, isValid) {
+            $field.closest(this.selectors.field).toggleClass(this.selectors.errorClass, !isValid);
+            $field.toggleClass(this.selectors.errorClass, !isValid);
+        }
+
+        validateForm($form) {
+            let isAllValid = true;
+            const self = this;
+
+            $form.find(this.selectors.requiredAttr).each(function () {
+                if (!self.validateField($(this))) {
+                    isAllValid = false;
+                }
+            });
+
+            return isAllValid;
+        }
+
+        handleFileChange(e) {
+            const $input = $(e.currentTarget);
+            const $container = $input.closest(this.selectors.fileContainer);
+            const file = e.target.files[0];
+
+            $container.find('.form__file-preview').remove();
+            $container.removeClass('uploaded');
+
+            if (file) {
+                const isImage = file.type.match('image.*');
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    let previewContent = '';
+                    if (isImage) {
+                        previewContent = `
+                        <span class="form__file-image">
+                            <img src="${event.target.result}" alt="Превью" class="cover-image">
+                        </span>
+                    `;
+                    }
+                    const previewHtml = `
+                    <div class="form__file-preview">
+                        ${previewContent}
+                        <span class="form__file-name">${file.name}</span>
+                        <button type="button" aria-label="Удалить" class="form__file-remove icon-cross"></button>
+                    </div>
+                `;
+                    $container.append(previewHtml);
+                    $container.addClass('uploaded');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        handleFileRemove(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $btn = $(e.currentTarget);
+            const $container = $btn.closest(this.selectors.fileContainer);
+            const $preview = $btn.closest('.form__file-preview');
+
+            $container.find(this.selectors.fileInput).val('');
+            $container.removeClass('uploaded');
+            $preview.remove();
+        }
+
+        onPhoneInput(e) {
+            let input = e.target,
+                inputNumbersValue = input.value.replace(/\D/g, ''),
+                selectionStart = input.selectionStart,
+                formattedInputValue = "";
+
+            if (!inputNumbersValue) return input.value = "";
+
+            if (input.value.length != selectionStart) {
+                if (e.originalEvent.data && /\D/g.test(e.originalEvent.data)) {
+                    input.value = inputNumbersValue;
+                }
+                return;
+            }
+
+            if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
+                if (inputNumbersValue[0] == "9") inputNumbersValue = "7" + inputNumbersValue;
+                let firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7";
+                formattedInputValue = firstSymbols + " ";
+                if (inputNumbersValue.length > 1) {
+                    formattedInputValue += '(' + inputNumbersValue.substring(1, 4);
+                }
+                if (inputNumbersValue.length >= 5) {
+                    formattedInputValue += ') ' + inputNumbersValue.substring(4, 7);
+                }
+                if (inputNumbersValue.length >= 8) {
+                    formattedInputValue += '-' + inputNumbersValue.substring(7, 9);
+                }
+                if (inputNumbersValue.length >= 10) {
+                    formattedInputValue += '-' + inputNumbersValue.substring(9, 11);
+                }
+            } else {
+                formattedInputValue = '+' + inputNumbersValue.substring(0, 16);
+            }
+            input.value = formattedInputValue;
+        }
+
+        onPhoneKeyDown(e) {
+            let inputValue = e.target.value.replace(/\D/g, '');
+            if (e.keyCode == 8 && inputValue.length == 1) {
+                e.target.value = "";
+            }
+        }
+
+        onPhonePaste(e) {
+            let input = e.target,
+                inputNumbersValue = input.value.replace(/\D/g, '');
+            let pasted = e.originalEvent.clipboardData || window.clipboardData;
+            if (pasted) {
+                let pastedText = pasted.getData('Text');
+                if (/\D/g.test(pastedText)) {
+                    input.value = inputNumbersValue;
+                }
+            }
+        }
+    }
+
+    window.formController = new FormController();
+
     class DornottCart {
         constructor() {
             this.storageKey = 'dornott_cart';
@@ -672,11 +914,7 @@ $(function () {
             $(document).on('change', '.product-card__variations-input', (e) => this.handleVariationChange(e));
 
             this.$form.on('submit', (e) => this.handleSubmit(e));
-            this.$form.on('input change', '[data-required]', (e) => this.validateField($(e.target)));
-
-            $(document).on('keydown', 'input[type="tel"]', (e) => this.onPhoneKeyDown(e));
-            $(document).on('input', 'input[type="tel"]', (e) => this.onPhoneInput(e));
-            $(document).on('paste', 'input[type="tel"]', (e) => this.onPhonePaste(e));
+            this.$form.on('input change', '[data-required]', () => this.validateForm());
         }
 
         handleAddToCart(e) {
@@ -749,95 +987,12 @@ $(function () {
             }
         }
 
-        onPhoneInput(e) {
-            let input = e.target,
-                inputNumbersValue = input.value.replace(/\D/g, ''),
-                selectionStart = input.selectionStart,
-                formattedInputValue = "";
-
-            if (!inputNumbersValue) return input.value = "";
-
-            if (input.value.length != selectionStart) {
-                if (e.originalEvent.data && /\D/g.test(e.originalEvent.data)) {
-                    input.value = inputNumbersValue;
-                }
-                return;
-            }
-
-            if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
-                if (inputNumbersValue[0] == "9") inputNumbersValue = "7" + inputNumbersValue;
-                let firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7";
-                formattedInputValue = firstSymbols + " ";
-                if (inputNumbersValue.length > 1) {
-                    formattedInputValue += '(' + inputNumbersValue.substring(1, 4);
-                }
-                if (inputNumbersValue.length >= 5) {
-                    formattedInputValue += ') ' + inputNumbersValue.substring(4, 7);
-                }
-                if (inputNumbersValue.length >= 8) {
-                    formattedInputValue += '-' + inputNumbersValue.substring(7, 9);
-                }
-                if (inputNumbersValue.length >= 10) {
-                    formattedInputValue += '-' + inputNumbersValue.substring(9, 11);
-                }
-            } else {
-                formattedInputValue = '+' + inputNumbersValue.substring(0, 16);
-            }
-            input.value = formattedInputValue;
-        }
-
-        onPhoneKeyDown(e) {
-            let inputValue = e.target.value.replace(/\D/g, '');
-            if (e.keyCode == 8 && inputValue.length == 1) {
-                e.target.value = "";
-            }
-        }
-
-        onPhonePaste(e) {
-            let input = e.target,
-                inputNumbersValue = input.value.replace(/\D/g, '');
-            let pasted = e.originalEvent.clipboardData || window.clipboardData;
-            if (pasted) {
-                let pastedText = pasted.getData('Text');
-                if (/\D/g.test(pastedText)) {
-                    input.value = inputNumbersValue;
-                }
-            }
-        }
-
-        validateField($field) {
-            const type = $field.attr('type');
-            const name = $field.attr('name');
-            const val = $field.val().trim();
-            let isValid = true;
-
-            if (type === 'checkbox') {
-                isValid = $field.is(':checked');
-            } else if (name === 'username') {
-                isValid = /^[^\d]+$/.test(val) && val.length > 1;
-            } else if (type === 'tel') {
-                const numbers = val.replace(/\D/g, '');
-                isValid = numbers.length >= 11;
-            } else if (type === 'email') {
-                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-            } else if (name === 'city') {
-                isValid = val.length >= 2;
-            } else if (name === 'address') {
-                isValid = val.length >= 5;
-            } else {
-                isValid = val !== '';
-            }
-
-            $field.closest('.form__field').toggleClass('_error', !isValid);
-            $field.toggleClass('_error', !isValid);
-
-            return isValid;
-        }
-
         validateForm() {
             let isAllValid = true;
             this.$form.find('[data-required]').each((_, el) => {
-                if (!this.validateField($(el))) isAllValid = false;
+                if (window.formController && !window.formController.validateField($(el))) {
+                    isAllValid = false;
+                }
             });
 
             $('#cart-validation-warning').toggleClass('hidden', isAllValid);
