@@ -490,12 +490,6 @@ $(function () {
     headerObserver.observe(headerElement[0]);
 
 
-    // WPCF7 Redirect
-    // document.addEventListener('wpcf7mailsent', function (event) {
-    //     window.location.href = '/vy-zakazali-zvonok/';
-    // }, false);
-
-
     // switcher animation
 
     $('.switcher').each(function () {
@@ -627,6 +621,7 @@ $(function () {
         }
     });
 
+
     class FormController {
         constructor() {
             this.selectors = {
@@ -722,6 +717,12 @@ $(function () {
         }
 
         validateField($field) {
+
+            if (!$field.is(':visible')) {
+                this.toggleErrorState($field, true);
+                return true;
+            }
+
             const type = $field.attr('type');
             const name = $field.attr('name');
             const val = $field.val() ? $field.val().trim() : '';
@@ -879,6 +880,7 @@ $(function () {
             this.$form = $('#cart-form');
             this.$container = $('#cart-items-container');
             this.$headerCart = $('.header__action.icon-cart');
+            this.$addressStep = this.$form.find('.order__step').eq(2);
 
             this.init();
         }
@@ -886,6 +888,7 @@ $(function () {
         init() {
             this.bindEvents();
             this.updateInterface();
+            this.toggleAddressStep();
         }
 
         getData() {
@@ -907,7 +910,10 @@ $(function () {
                 this.removeItem(id);
             });
 
-            $(document).on('change', 'input[name="delivery"]', () => this.updateInterface());
+            $(document).on('change', 'input[name="delivery"]', () => {
+                this.updateInterface();
+                this.toggleAddressStep()
+            });
             $(document).on('change', 'input[name="select_all"]', (e) => this.toggleAllCheckboxes(e));
             $(document).on('change', '.cart__item-checkbox .checkbox__input', () => this.updateSelectAllState());
             $(document).on('click', '.cart__clear', () => this.removeSelected());
@@ -1070,6 +1076,16 @@ $(function () {
 
             this.renderItems(data);
             this.syncButtons(data);
+        }
+
+        toggleAddressStep() {
+            const deliveryMethod = $('input[name="delivery"]:checked').val();
+            if (deliveryMethod === 'pickup') {
+                this.$addressStep.hide();
+                this.$addressStep.find('.' + window.formController.selectors.errorClass).removeClass(window.formController.selectors.errorClass);
+            } else {
+                this.$addressStep.show();
+            }
         }
 
         syncButtons(data) {
