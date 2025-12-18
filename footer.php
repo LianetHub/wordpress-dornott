@@ -37,11 +37,15 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                             <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
                         </a>
                     <?php endif; ?>
-
+                    <?php if ($requisites): ?>
+                        <div class="footer__reqs">
+                            <?php echo $requisites; ?>
+                        </div>
+                    <?php endif; ?>
 
                 </div>
 
-                <nav aria-label="Меню" class="footer__menu menu">
+                <nav aria-label="Меню в подвале" class="footer__menu menu">
                     <?php
                     wp_nav_menu(array(
                         'theme_location' => 'general_menu',
@@ -51,7 +55,29 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                         'walker'         => new Dornott_Menu_Walker()
                     ));
                     ?>
+                    <?php if ($privacy_policy || $data_protection || $payment_delivery): ?>
+                        <ul class="footer__policies">
+                            <?php if ($privacy_policy): ?>
+                                <li class="footer__policy">
+                                    <a href="#privacy-policy" data-src="#policies" data-fancybox class="footer__policy-link">Политика конфиденциальности</a>
+                                </li>
+                            <?php endif; ?>
 
+
+                            <?php if ($data_protection): ?>
+                                <li class="footer__policy">
+                                    <a href="#data-protection" data-src="#policies" data-fancybox class="footer__policy-link">Защита данных</a>
+                                </li>
+                            <?php endif; ?>
+
+
+                            <?php if ($payment_delivery): ?>
+                                <li class="footer__policy">
+                                    <a href="#payment-and-delivery" data-src="#policies" data-fancybox class="footer__policy-link">Оплата и доставка</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    <?php endif; ?>
                 </nav>
 
                 <?php
@@ -65,36 +91,6 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                     ]);
                 }
                 ?>
-            </div>
-            <div class="footer__body">
-                <?php if ($requisites): ?>
-                    <div class="footer__reqs">
-                        <?php echo $requisites; ?>
-                    </div>
-                <?php endif; ?>
-                <?php if ($privacy_policy || $data_protection || $payment_delivery): ?>
-                    <ul class="footer__policies">
-                        <?php if ($privacy_policy): ?>
-                            <li class="footer__policy">
-                                <a href="#privacy-policy" data-src="#policies" data-fancybox class="footer__policy-link">Политика конфиденциальности</a>
-                            </li>
-                        <?php endif; ?>
-
-
-                        <?php if ($data_protection): ?>
-                            <li class="footer__policy">
-                                <a href="#data-protection" data-src="#policies" data-fancybox class="footer__policy-link">Защита данных</a>
-                            </li>
-                        <?php endif; ?>
-
-
-                        <?php if ($payment_delivery): ?>
-                            <li class="footer__policy">
-                                <a href="#payment-and-delivery" data-src="#policies" data-fancybox class="footer__policy-link">Оплата и доставка</a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                <?php endif; ?>
             </div>
         </div>
     </div>

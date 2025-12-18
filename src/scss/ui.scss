@@ -21,7 +21,10 @@
 	font-weight: 600;
 	line-height: 120%;
 	letter-spacing: em(-0.12, 4);
-	font-size: 3.25rem;
+	font-size: 3rem;
+	@media (min-width: $md1) {
+		font-size: 3.25rem;
+	}
 	@media (min-width: $md0) {
 		font-size: 3.5rem;
 	}
@@ -212,7 +215,9 @@
 .toggle-to-cart-button {
 	width: rem(46);
 	height: rem(42);
-	padding: rem(12);
+	&.btn {
+		padding: rem(12);
+	}
 	&::before {
 		font-size: 1.125rem;
 		@extend %ic;

@@ -18,7 +18,8 @@ $has_policy_links = $privacy_policy || $data_protection || $payment_delivery;
 ?>
 
 <li class="menu__item menu__item--parent">
-    <button type="button" class="menu__btn icon-chevron-down">Контакты</button>
+    <a href="#contacts" class="menu__link">Контакты</a>
+    <button type="button" aria-label="Открыть подменю" class="menu__arrow icon-chevron-down"></button>
     <div class="submenu">
         <ul class="submenu__list">
 

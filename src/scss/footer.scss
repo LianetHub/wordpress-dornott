@@ -31,7 +31,7 @@
 			flex-wrap: wrap;
 			align-items: center;
 		}
-		@media (min-width: $md1) {
+		@media (min-width: $md0) {
 			flex-wrap: nowrap;
 		}
 	}
@@ -51,7 +51,10 @@
 		@media (min-width: $md1) {
 			flex-direction: column;
 			align-items: flex-start;
-			flex: 0 0 10.25rem;
+			flex: 0 0 16.625rem;
+		}
+		@media (min-width: $md0) {
+			flex: 0 0 rem(290);
 		}
 	}
 	// .footer__logo
@@ -67,6 +70,7 @@
 	}
 	// .footer__reqs
 	&__reqs {
+		margin-top: 1.88rem;
 		line-height: 156%;
 		letter-spacing: -0.00625rem;
 		font-size: 0.875rem;
@@ -80,20 +84,27 @@
 			justify-content: space-between;
 			align-items: center;
 			align-self: flex-start;
-			flex: 0 0 50%;
+			flex: 0 0 100%;
+			order: 1;
+			gap: 2rem;
 			flex-direction: column;
 		}
 		.menu__list {
 			width: 100%;
 			justify-content: center;
 			gap: 1.5rem;
+			@media (min-width: $md0) {
+				padding-right: 5.2rem;
+			}
 		}
 		@media (min-width: $md1) {
-			align-self: flex-end;
+			order: 0;
+			padding-top: 3.6rem;
+			align-self: stretch;
 			flex: 1 1 auto;
 		}
 
-		@media (min-width: 1299.98px) {
+		@media (min-width: $md2) {
 			.submenu {
 				top: auto;
 				bottom: 100%;
@@ -102,34 +113,57 @@
 				transform: translate3d(0, 0.5rem, 1px);
 			}
 		}
-		@media (max-width: 1299.98px) {
-			.submenu__contacts {
-				display: none;
+		.menu__item--parent {
+			border-radius: em(0.5, 1.125);
+			padding: em(0.375, 1.125) em(0.75, 1.125);
+			gap: em(8);
+			.menu__link {
+				padding: 0;
+				background: transparent;
+			}
+			@media (any-hover: hover) {
+				&:hover {
+					color: #181d27;
+					background: #ffbb4e;
+					z-index: 3;
+				}
 			}
 		}
+		.menu__link {
+			@media (any-hover: hover) {
+				&:hover {
+					color: #181d27;
+					background: #ffbb4e;
+				}
+			}
+			z-index: 3;
+		}
+		// @media (max-width: $md2) {
+		// 	.submenu__contacts {
+		// 		display: none;
+		// 	}
+		// }
 	}
 	// .footer__callback
 	&__callback {
 		&.btn {
 			flex-shrink: 0;
-			align-self: flex-end;
 			gap: 0.38rem;
 			font-size: 0.875rem;
-			padding: 0.75rem 0.875rem;
+			padding: rem(9) rem(12);
 			&::before {
 				order: -1;
 				width: 1.125rem;
 				height: 1.125rem;
 				font-size: 1.125rem;
 			}
+			@media (min-width: $md0) {
+				align-self: flex-start;
+				margin-top: 3.6rem;
+			}
 		}
 	}
-	&__body {
-		margin-top: 2.88rem;
-		display: flex;
-		align-items: flex-end;
-		padding-right: 13rem;
-	}
+
 	// .footer__policies
 	&__policies {
 		order: 1;

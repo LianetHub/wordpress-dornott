@@ -122,25 +122,19 @@ $(function () {
 
 
         // Handle submenu logic
-        if ($target.closest('.menu__btn').length) {
-            const $parentItem = $target.closest('.menu__btn').parent();
-            const isMobile = window.matchMedia("(max-width: 1300px)").matches;
+        if ($target.closest('.menu__arrow').length) {
+            const $parentItem = $target.closest('.menu__arrow').parent();
 
-            if (isMobile) {
-                $parentItem.toggleClass('active');
-                $parentItem.find('.submenu').slideToggle(300);
+            if ($parentItem.hasClass('active')) {
+                $parentItem.removeClass('active');
             } else {
-                if ($parentItem.hasClass('active')) {
-                    $parentItem.removeClass('active');
-                } else {
-                    $('.menu__item.active').removeClass('active');
-                    $parentItem.addClass('active');
-                }
+                $('.menu__item.active').removeClass('active');
+                $parentItem.addClass('active');
             }
         }
 
         // Close all submenus when clicking outside the menu
-        if (!$target.closest('.menu__btn').length && !$target.closest(".menu").length) {
+        if (!$target.closest('.menu__arrow').length && !$target.closest(".menu").length) {
             $('.menu__item.active').removeClass('active');
         }
 
@@ -368,8 +362,8 @@ $(function () {
         const initTextSwiper = () => {
             if ($('.reviews__text .reviews__slider').length && !reviewsTextSwiper) {
                 reviewsTextSwiper = new Swiper('.reviews__text .reviews__slider', {
-                    slidesPerView: 1,
-                    spaceBetween: 24,
+                    slidesPerView: "auto",
+                    spaceBetween: 12,
                     watchOverflow: true,
                     navigation: {
                         nextEl: '.reviews__controls--text .reviews__next',
@@ -380,8 +374,13 @@ $(function () {
                         ...swiperPaginationConfig
                     },
                     breakpoints: {
-                        1199.98: {
+                        991.98: {
+                            slidesPerView: 3,
+                            spaceBetween: 18,
+                        },
+                        1399.98: {
                             slidesPerView: 4,
+                            spaceBetween: 24,
                         }
                     }
                 });
@@ -404,10 +403,13 @@ $(function () {
                         ...swiperPaginationConfig
                     },
                     breakpoints: {
-                        768: {
+                        767.98: {
                             slidesPerView: 2,
                         },
-                        1024: {
+                        991.98: {
+                            slidesPerView: 4,
+                        },
+                        1399.98: {
                             slidesPerView: 5,
                         }
                     },
