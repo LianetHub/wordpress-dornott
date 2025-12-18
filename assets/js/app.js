@@ -657,27 +657,26 @@ $(function () {
 
         bindEvents() {
             $(document).on('click', '.toggle-to-cart-button', (e) => this.handleAddToCart(e));
-
             $(document).on('click', '.quantity-block__up', (e) => this.changeQty(e, 1));
             $(document).on('click', '.quantity-block__down', (e) => this.changeQty(e, -1));
             $(document).on('change', '.quantity-block__input', (e) => this.handleQtyInput(e));
-
             $(document).on('click', '.cart__item-remove', (e) => {
                 const id = $(e.target).closest('.cart__item').data('id');
                 this.removeItem(id);
             });
 
             $(document).on('change', 'input[name="delivery"]', () => this.updateInterface());
-
             $(document).on('change', 'input[name="select_all"]', (e) => this.toggleAllCheckboxes(e));
             $(document).on('change', '.cart__item-checkbox .checkbox__input', () => this.updateSelectAllState());
-
             $(document).on('click', '.cart__clear', () => this.removeSelected());
-
             $(document).on('change', '.product-card__variations-input', (e) => this.handleVariationChange(e));
 
             this.$form.on('submit', (e) => this.handleSubmit(e));
             this.$form.on('input change', '[data-required]', (e) => this.validateField($(e.target)));
+
+            $(document).on('keydown', 'input[type="tel"]', (e) => this.onPhoneKeyDown(e));
+            $(document).on('input', 'input[type="tel"]', (e) => this.onPhoneInput(e));
+            $(document).on('paste', 'input[type="tel"]', (e) => this.onPhonePaste(e));
         }
 
         handleAddToCart(e) {
@@ -728,7 +727,6 @@ $(function () {
             const id = $(e.currentTarget).closest('.cart__item').data('id');
             let val = parseInt($input.val()) || 1;
             val = Math.min(999, Math.max(1, val + delta));
-
             $input.val(val);
             this.updateQuantity(id, val);
         }
@@ -738,7 +736,6 @@ $(function () {
             const id = $input.closest('.cart__item').data('id');
             let val = parseInt($input.val().replace(/\D/g, '')) || 1;
             val = Math.min(999, Math.max(1, val));
-
             $input.val(val);
             this.updateQuantity(id, val);
         }
@@ -750,6 +747,101 @@ $(function () {
                 data[index].quantity = qty;
                 this.saveData(data);
             }
+        }
+
+        onPhoneInput(e) {
+            let input = e.target,
+                inputNumbersValue = input.value.replace(/\D/g, ''),
+                selectionStart = input.selectionStart,
+                formattedInputValue = "";
+
+            if (!inputNumbersValue) return input.value = "";
+
+            if (input.value.length != selectionStart) {
+                if (e.originalEvent.data && /\D/g.test(e.originalEvent.data)) {
+                    input.value = inputNumbersValue;
+                }
+                return;
+            }
+
+            if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
+                if (inputNumbersValue[0] == "9") inputNumbersValue = "7" + inputNumbersValue;
+                let firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7";
+                formattedInputValue = firstSymbols + " ";
+                if (inputNumbersValue.length > 1) {
+                    formattedInputValue += '(' + inputNumbersValue.substring(1, 4);
+                }
+                if (inputNumbersValue.length >= 5) {
+                    formattedInputValue += ') ' + inputNumbersValue.substring(4, 7);
+                }
+                if (inputNumbersValue.length >= 8) {
+                    formattedInputValue += '-' + inputNumbersValue.substring(7, 9);
+                }
+                if (inputNumbersValue.length >= 10) {
+                    formattedInputValue += '-' + inputNumbersValue.substring(9, 11);
+                }
+            } else {
+                formattedInputValue = '+' + inputNumbersValue.substring(0, 16);
+            }
+            input.value = formattedInputValue;
+        }
+
+        onPhoneKeyDown(e) {
+            let inputValue = e.target.value.replace(/\D/g, '');
+            if (e.keyCode == 8 && inputValue.length == 1) {
+                e.target.value = "";
+            }
+        }
+
+        onPhonePaste(e) {
+            let input = e.target,
+                inputNumbersValue = input.value.replace(/\D/g, '');
+            let pasted = e.originalEvent.clipboardData || window.clipboardData;
+            if (pasted) {
+                let pastedText = pasted.getData('Text');
+                if (/\D/g.test(pastedText)) {
+                    input.value = inputNumbersValue;
+                }
+            }
+        }
+
+        validateField($field) {
+            const type = $field.attr('type');
+            const name = $field.attr('name');
+            const val = $field.val().trim();
+            let isValid = true;
+
+            if (type === 'checkbox') {
+                isValid = $field.is(':checked');
+            } else if (name === 'username') {
+                isValid = /^[^\d]+$/.test(val) && val.length > 1;
+            } else if (type === 'tel') {
+                const numbers = val.replace(/\D/g, '');
+                isValid = numbers.length >= 11;
+            } else if (type === 'email') {
+                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+            } else if (name === 'city') {
+                isValid = val.length >= 2;
+            } else if (name === 'address') {
+                isValid = val.length >= 5;
+            } else {
+                isValid = val !== '';
+            }
+
+            $field.closest('.form__field').toggleClass('_error', !isValid);
+            $field.toggleClass('_error', !isValid);
+
+            return isValid;
+        }
+
+        validateForm() {
+            let isAllValid = true;
+            this.$form.find('[data-required]').each((_, el) => {
+                if (!this.validateField($(el))) isAllValid = false;
+            });
+
+            $('#cart-validation-warning').toggleClass('hidden', isAllValid);
+            return isAllValid;
         }
 
         toggleAllCheckboxes(e) {
@@ -796,25 +888,6 @@ $(function () {
             });
 
             return { subtotal, discount, totalQty, deliveryPrice, finalPrice: subtotal - discount + deliveryPrice };
-        }
-
-        validateField($field) {
-            const isValid = $field.val().trim() !== '';
-            $field.toggleClass('_error', !isValid);
-            return isValid;
-        }
-
-        validateForm() {
-            let isAllValid = true;
-            this.$form.find('[data-required]').each((_, el) => {
-                if (!this.validateField($(el))) isAllValid = false;
-            });
-
-            const isPolicyChecked = $('input[name="policy"]').is(':checked');
-            if (!isPolicyChecked) isAllValid = false;
-
-            $('#cart-validation-warning').toggleClass('hidden', isAllValid);
-            return isAllValid;
         }
 
         updateInterface() {
