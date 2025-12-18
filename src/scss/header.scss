@@ -11,24 +11,64 @@
 	left: 0;
 	width: 100%;
 	z-index: $ui-index-6;
-	padding: 1.5rem 0;
+	@media (min-width: $md2) {
+		padding: 1.5rem 0;
+	}
 	&.scroll {
-		.header__menu {
+		@media (max-width: $md2) {
+			.header__body {
+				&::before {
+					opacity: 1;
+				}
+			}
+		}
+		@media (min-width: $md2) {
+			.header__menu {
+				&::before {
+					box-shadow: -0.5rem 0.5rem 1rem 0 rgba(0, 0, 0, 0.05);
+				}
+			}
+		}
+	}
+	&__body {
+		@media (max-width: $md2) {
+			padding: rem(7) 0;
+			min-height: rem(56);
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
 			&::before {
-				box-shadow: -0.5rem 0.5rem 1rem 0 rgba(0, 0, 0, 0.05);
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				border-radius: 0 0 0.75rem 0.75rem;
+				background: rgba(255, 255, 255, 0.85);
+				backdrop-filter: blur(rem(9));
+				-webkit-backdrop-filter: blur(rem(9));
+				opacity: 0;
+				transition: opacity 0.3s ease;
 			}
 		}
 	}
 	// .header__wrapper
 	&__wrapper {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		position: fixed;
-		top: 1.25rem;
-		left: 0;
-		width: 100%;
-		z-index: $ui-index-1;
+		@media (min-width: $md2) {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			z-index: $ui-index-1;
+
+			padding: 0;
+			top: 1.25rem;
+		}
 	}
 	// .header__logo
 	&__logo {
@@ -40,49 +80,57 @@
 			max-width: rem(191);
 		}
 	}
+	// .header__content
+	&__content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
 	// .header__menu
 	&__menu {
-		border-radius: 0.75rem;
-		padding: 0 rem(18);
-		margin: 0 rem(200);
-		position: relative;
-		z-index: 1;
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+		@media (min-width: $md2) {
 			border-radius: 0.75rem;
-			transition: box-shadow 0.3s ease;
-			background: rgba(255, 255, 255, 0.85);
-			backdrop-filter: blur(rem(9));
-			-webkit-backdrop-filter: blur(rem(9));
-			z-index: -1;
-		}
-		.menu__link {
-			padding: 1rem 0;
-			background: transparent !important;
-		}
-		.menu__item {
+			padding: 0 rem(18);
+			margin: 0 rem(200);
 			position: relative;
-			&::after {
+			z-index: 1;
+			&::before {
 				content: "";
 				position: absolute;
-				bottom: 0;
+				top: 0;
 				left: 0;
 				width: 100%;
-				pointer-events: none;
-				opacity: 0;
-				transition: opacity 0.3s ease;
-				height: rem(2);
-				background-color: #bca081;
+				height: 100%;
+				border-radius: 0.75rem;
+				transition: box-shadow 0.3s ease;
+				background: rgba(255, 255, 255, 0.85);
+				backdrop-filter: blur(rem(9));
+				-webkit-backdrop-filter: blur(rem(9));
+				z-index: -1;
 			}
-			@media (any-hover: hover) {
-				&:hover {
-					&::after {
-						opacity: 1;
+			.menu__link {
+				padding: 1rem 0;
+				background: transparent !important;
+			}
+			.menu__item {
+				position: relative;
+				&::after {
+					content: "";
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					width: 100%;
+					pointer-events: none;
+					opacity: 0;
+					transition: opacity 0.3s ease;
+					height: rem(2);
+					background-color: #bca081;
+				}
+				@media (any-hover: hover) {
+					&:hover {
+						&::after {
+							opacity: 1;
+						}
 					}
 				}
 			}
@@ -91,12 +139,17 @@
 	// .header__actions
 	&__actions {
 		display: flex;
-		border-radius: 0.75rem 0 0 0.75rem;
-		box-shadow: rem(-16) 1rem 1.5rem 0 rgba(0, 0, 0, 0.2);
-		position: fixed;
-		top: 1.25rem;
-		right: 0;
-		z-index: $ui-index-2;
+		gap: rem(6);
+		margin-left: auto;
+		@media (min-width: $md2) {
+			position: fixed;
+			top: 1.25rem;
+			right: 0;
+			z-index: $ui-index-2;
+			box-shadow: rem(-16) 1rem 1.5rem 0 rgba(0, 0, 0, 0.2);
+			border-radius: 0.75rem 0 0 0.75rem;
+			gap: 0;
+		}
 	}
 	// .header__action
 	&__action {
@@ -104,22 +157,30 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: 0.06rem;
-		padding: 0.75rem 1rem;
-		min-height: 3.75rem;
 		background: #504841;
+		padding: 0.75rem;
 		color: #fff;
 		transition: background-color 0.3s ease;
-		&::before {
-			width: 2rem;
-			height: 2rem;
-			font-size: 2rem;
+		@media (min-width: $md2) {
+			gap: 0.06rem;
+			min-height: 3.75rem;
+			padding: 0.75rem 1rem;
+			&::before {
+				width: 2rem;
+				height: 2rem;
+				font-size: 2rem;
+			}
 		}
 		&.icon-phone-incoming {
 			background: #efcb92;
 			color: $dark;
-			border-radius: 0.75rem 0 0 0.75rem;
-
+			@media (max-width: $md2) {
+				width: rem(46);
+				height: rem(42);
+			}
+			@media (min-width: $md2) {
+				border-radius: 0.75rem 0 0 0.75rem;
+			}
 			@media (any-hover: hover) {
 				&:hover {
 					background: #e2c08b;
@@ -132,34 +193,27 @@
 			&:has(.header__action-quantity) {
 				padding-right: 2.5rem;
 			}
+			@media (max-width: $md2) {
+				position: fixed;
+				z-index: 6;
+				bottom: 0.66rem;
+				right: 0;
+				width: 3.8125rem;
+				height: 2.5rem;
+				padding: 0.5rem 1.5rem 0.5rem 0.75rem;
+				border-radius: 0.75rem 0 0 0.75rem;
+				background: #504841;
+				box-shadow: 0 rem(4) rem(12) 0 rgba(0, 0, 0, 0.25);
+				&::before {
+					font-size: 1.5rem;
+					width: 1.5rem;
+					height: 1.5rem;
+				}
+			}
 			@media (any-hover: hover) {
 				&:hover {
 					background-color: color.adjust($color: #504841, $lightness: -10%);
 				}
-			}
-		}
-	}
-	// .header__action-quantity
-	&__action-quantity {
-		position: absolute;
-		top: rem(10);
-		right: rem(17);
-		min-width: 1.25rem;
-		height: 1.25rem;
-		border-radius: 1rem;
-		background: #ff9c66;
-		color: #181d27;
-		padding: 0.125rem 0.25rem;
-		text-align: center;
-		font-size: 0.75rem;
-		line-height: 133.333%;
-		animation: scale-in 0.3s ease-in-out forwards;
-		@keyframes scale-in {
-			0% {
-				transform: scale(0);
-			}
-			100% {
-				transform: scale(1);
 			}
 		}
 	}
@@ -169,28 +223,25 @@
 }
 
 .menu {
-	// @media (max-width: 1299.98px) {
-	// 	position: fixed;
-	// 	top: 0;
-	// 	right: 0;
-	// 	width: rem(340);
-	// 	height: 100%;
-	// 	z-index: 8;
-	// 	transition: transform 0.3s ease, box-shadow 0.3s ease;
-	// 	transform: translateX(100%);
-	// 	border-radius: 1rem 0 0 1rem;
-	// 	padding: 1.33rem 2rem;
-	// 	overflow-y: auto;
-	// 	&.menu--open {
-	// 		box-shadow: rem(-16) rem(4) rem(32) 0 rgba(0, 0, 0, 0.28);
-	// 		transform: none;
-	// 	}
-	// }
-	// @media (min-width: 1299.98px) {
-	// 	display: flex;
-	// 	justify-content: center;
-	// 	flex: 1 1 auto;
-	// }
+	@media (max-width: $md2) {
+		position: fixed;
+		top: 0;
+		right: 0;
+		width: rem(350);
+		height: 100%;
+		z-index: 8;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		transform: translateX(100%);
+		padding: 1.33rem 2rem;
+		overflow-y: auto;
+		background: #2d3623;
+		color: #d5d7da;
+		min-height: 100vh;
+		&.menu--open {
+			box-shadow: rem(-16) rem(4) rem(32) 0 rgba(0, 0, 0, 0.28);
+			transform: none;
+		}
+	}
 
 	// .menu__list
 	&__list {
@@ -261,9 +312,8 @@
 		transition: background-color 0.3s ease, color 0.3s ease;
 		font-size: 1rem;
 		border-radius: 0.375rem;
-		background: #252b37;
 		width: 100%;
-		min-height: rem(40);
+		min-height: rem(36);
 		&.active {
 			color: #181d27;
 			background: $accent;
@@ -287,18 +337,22 @@
 	}
 	// .menu__arrow
 	&__arrow {
-		position: relative;
-		&::after {
-			content: "";
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 1.5rem;
-			height: 1.5rem;
-		}
-		&::before {
-			transition: transform 0.3s ease;
+		display: none;
+		@media (min-width: $md2) {
+			display: block;
+			position: relative;
+			&::after {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 1.5rem;
+				height: 1.5rem;
+			}
+			&::before {
+				transition: transform 0.3s ease;
+			}
 		}
 	}
 	// .menu__btn
@@ -465,11 +519,10 @@
 	flex-wrap: nowrap;
 	justify-content: center;
 	padding: 0.62rem;
-	min-width: 2.5rem;
-	height: 2.5rem;
-	border-radius: 0.5rem;
-	background: #f4d400;
-	color: #181d27;
+	min-width: rem(46);
+	height: rem(42);
+	background: #483a2e;
+	color: #efcb92;
 	z-index: 11;
 	transition: all 0.3s ease;
 	@media (min-width: $md2) {

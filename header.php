@@ -23,8 +23,10 @@
     <?php require_once(TEMPLATE_PATH . '_preloader.php'); ?>
     <div class="wrapper">
         <header class="header">
-            <div class="container container--fluid">
-                <?php require_once(TEMPLATE_PATH . '_header-main.php'); ?>
+            <div class="header__body">
+                <div class="container container--fluid">
+                    <?php require_once(TEMPLATE_PATH . '_header-main.php'); ?>
+                </div>
             </div>
         </header>
         <main class="main">

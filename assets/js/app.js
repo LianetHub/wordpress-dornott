@@ -910,7 +910,7 @@ $(function () {
             this.storageKey = 'dornott_cart';
             this.$form = $('#cart-form');
             this.$container = $('#cart-items-container');
-            this.$headerCart = $('.header__action.icon-cart');
+            this.$cartToggler = $('[data-cart-toggler]');
             this.$addressStep = this.$form.find('.order__step').eq(2);
 
             this.init();
@@ -1139,14 +1139,14 @@ $(function () {
             if (data.length > 0) {
                 this.$form.show();
                 $('#cart-empty-state').hide();
-                if (!this.$headerCart.find('.header__action-quantity').length) {
-                    this.$headerCart.append('<span class="header__action-quantity"></span>');
+                if (!this.$cartToggler.find('.cart-quantity').length) {
+                    this.$cartToggler.append('<span class="cart-quantity"></span>');
                 }
-                this.$headerCart.find('.header__action-quantity').text(totals.totalQty);
+                this.$cartToggler.find('.cart-quantity').text(totals.totalQty);
             } else {
                 this.$form.hide();
                 $('#cart-empty-state').show();
-                this.$headerCart.find('.header__action-quantity').remove();
+                this.$cartToggler.find('.cart-quantity').remove();
             }
 
             $('#total-qty').text(`${totals.totalQty} шт.`);

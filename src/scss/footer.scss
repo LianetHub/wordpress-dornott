@@ -91,8 +91,15 @@
 		}
 		.menu__list {
 			width: 100%;
-			justify-content: center;
-			gap: 1.5rem;
+			@media (max-width: $md2) {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1rem;
+			}
+			@media (min-width: $md2) {
+				justify-content: center;
+				gap: 1.5rem;
+			}
 			@media (min-width: $md0) {
 				padding-right: 5.2rem;
 			}
@@ -130,6 +137,7 @@
 			}
 		}
 		.menu__link {
+			width: fit-content;
 			@media (any-hover: hover) {
 				&:hover {
 					color: #181d27;
@@ -138,11 +146,6 @@
 			}
 			z-index: 3;
 		}
-		// @media (max-width: $md2) {
-		// 	.submenu__contacts {
-		// 		display: none;
-		// 	}
-		// }
 	}
 	// .footer__callback
 	&__callback {
@@ -234,10 +237,12 @@
 	// .footer__socials
 	&__socials {
 		gap: 0.75rem;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
+		@media (min-width: $md2) {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
 	}
 	// .footer__prod
 	&__prod {

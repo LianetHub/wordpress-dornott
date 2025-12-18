@@ -21,7 +21,10 @@
 	font-weight: 600;
 	line-height: 120%;
 	letter-spacing: em(-0.12, 4);
-	font-size: 3rem;
+	font-size: 2.75rem;
+	@media (min-width: $md2) {
+		font-size: 3rem;
+	}
 	@media (min-width: $md1) {
 		font-size: 3.25rem;
 	}
@@ -35,7 +38,13 @@
 	font-weight: 600;
 	line-height: 120%;
 	letter-spacing: em(-0.12, 4);
-	font-size: 3.75rem;
+	font-size: 3rem;
+	@media (min-width: $md2) {
+		font-size: 3.25rem;
+	}
+	@media (min-width: $md1) {
+		font-size: 3.75rem;
+	}
 	@media (min-width: $md0) {
 		font-size: 4rem;
 	}
@@ -344,6 +353,37 @@
 		width: rem(42);
 		color: #181d27;
 		font-size: 1.25rem;
+	}
+}
+
+.cart-quantity {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	min-width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 50%;
+	background: #ff9c66;
+	color: #181d27;
+	padding: 0.125rem 0.25rem;
+	text-align: center;
+	line-height: 133.333%;
+	font-size: 0.5rem;
+	animation: scale-in 0.3s ease-in-out forwards;
+	@media (min-width: $md2) {
+		font-size: 0.75rem;
+		top: rem(10);
+		right: rem(17);
+		min-width: 1.25rem;
+		height: 1.25rem;
+	}
+	@keyframes scale-in {
+		0% {
+			transform: scale(0);
+		}
+		100% {
+			transform: scale(1);
+		}
 	}
 }
 

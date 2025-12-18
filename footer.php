@@ -45,7 +45,7 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
 
                 </div>
 
-                <nav aria-label="Меню в подвале" class="footer__menu menu">
+                <nav aria-label="Меню в подвале" class="footer__menu">
                     <?php
                     wp_nav_menu(array(
                         'theme_location' => 'general_menu',
