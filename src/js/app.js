@@ -121,17 +121,46 @@ $(function () {
         const $target = $(e.target);
 
 
-        // menu 
-        if ($target.closest('.header__menu-toggler').length) {
-            $('.header__menu-toggler').toggleClass('active');
-            $('.header').toggleClass('open-mobile-menu');
-            $('body').toggleClass('lock-mobile-menu');
+        // Handle submenu logic
+        if ($target.closest('.menu__btn').length) {
+            const $parentItem = $target.closest('.menu__btn').parent();
+            const isMobile = window.matchMedia("(max-width: 1300px)").matches;
+
+            if (isMobile) {
+                $parentItem.toggleClass('active');
+                $parentItem.find('.submenu').slideToggle(300);
+            } else {
+                if ($parentItem.hasClass('active')) {
+                    $parentItem.removeClass('active');
+                } else {
+                    $('.menu__item.active').removeClass('active');
+                    $parentItem.addClass('active');
+                }
+            }
         }
 
-        if (!$target.closest('.header').length && $('.header').hasClass('open-mobile-menu')) {
-            $('.header__menu-toggler').removeClass('active');
-            $('.header').removeClass('open-mobile-menu');
-            $('body').removeClass('lock-mobile-menu');
+        // Close all submenus when clicking outside the menu
+        if (!$target.closest('.menu__btn').length && !$target.closest(".menu").length) {
+            $('.menu__item.active').removeClass('active');
+        }
+
+        // Close all submenus when clicking outside the menu
+        if (!$target.closest('.menu').length && !$target.closest('.icon-menu').length) {
+            $('.menu__item.active').removeClass('active');
+        }
+
+        // Open/close the mobile menu
+        if ($target.closest('.icon-menu').length) {
+            $('.icon-menu').toggleClass("active");
+            $('.menu').toggleClass("menu--open");
+            $('body').toggleClass('menu-lock');
+        }
+
+        // Correctly close the mobile menu on outside click
+        if ($(".menu").hasClass("menu--open") && !$target.closest(".menu").length && !$target.closest(".icon-menu").length) {
+            $('.icon-menu').removeClass("active");
+            $('.menu').removeClass("menu--open");
+            $('body').removeClass('menu-lock');
         }
 
         // toggle active state favorite

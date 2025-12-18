@@ -21,7 +21,7 @@
                                 if (!$button_group_full) {
                                     $button_group_full = get_sub_field('hero_button_btn');
                                 }
-                                $button_group_data = $button_group_full['btn'] ?? $button_group_full; // Логика извлечения данных кнопки
+                                $button_group_data = $button_group_full['btn'] ?? $button_group_full;
 
                                 $tag = ($slide_index === 0) ? 'h1' : 'div';
                                 ?>
@@ -112,7 +112,7 @@
 
                 <?php if ($about_image) : ?>
                     <div class="about__image">
-                        <img src="<?php echo esc_url($about_image['url']); ?>" alt="<?php echo esc_attr($about_image['alt']); ?>">
+                        <img src="<?php echo esc_url($about_image['url']); ?>" alt="<?php echo esc_attr($about_image['alt']); ?>" class="cover-image">
                     </div>
                 <?php endif; ?>
 

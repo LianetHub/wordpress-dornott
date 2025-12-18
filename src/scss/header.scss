@@ -193,12 +193,13 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		&:not(:last-child) {
-			@media (max-width: 1299.98px) {
+			@media (max-width: $md2) {
 				margin-bottom: 0.5rem;
 			}
 		}
-		@media (min-width: 1299.98px) {
+		@media (min-width: $md2) {
 			flex-direction: row;
+			gap: 2.5rem;
 		}
 		@media (min-width: $md0) {
 			gap: 4rem;

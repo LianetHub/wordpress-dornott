@@ -8,10 +8,10 @@
 }
 
 @font-face {
-  font-family: "PTSans";
+  font-family: "icons";
   font-display: swap;
-  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
-  font-weight: 700;
+  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -41,10 +41,10 @@
 }
 
 @font-face {
-  font-family: "icons";
+  font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
-  font-weight: 400;
+  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
+  font-weight: 700;
   font-style: normal;
 }
 
@@ -1093,18 +1093,18 @@ body.is-loaded .preloader {
 
 .title {
   font-family: "Comfortaa";
-  font-size: 3.5rem;
   font-weight: 600;
   line-height: 120%;
   letter-spacing: -0.03em;
+  font-size: 3.25rem;
 }
 
 .title-lg {
   font-family: "Comfortaa";
-  font-size: 4rem;
   font-weight: 600;
   line-height: 120%;
   letter-spacing: -0.03em;
+  font-size: 3.75rem;
 }
 
 .title-sm {
@@ -2790,7 +2790,7 @@ body.lock-mobile-menu .wrapper::before {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  gap: 11.25rem;
+  gap: 9.375rem;
 }
 
 .hero {
@@ -2833,12 +2833,16 @@ body.lock-mobile-menu .wrapper::before {
   margin-left: 0;
 }
 
+.hero__offer-slide {
+  padding-right: 1rem;
+}
+
 .hero__offer-description {
   margin-top: 1.125rem;
-  font-size: 1.5rem;
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.03rem;
+  font-size: 1.375rem;
 }
 
 .hero__offer-btn {
@@ -2885,6 +2889,7 @@ body.lock-mobile-menu .wrapper::before {
 .hero__image {
   border-radius: 9.75rem 0 0 0;
   overflow: hidden;
+  background: #e9eaeb;
 }
 
 .hero__controls {
@@ -2925,7 +2930,10 @@ body.lock-mobile-menu .wrapper::before {
 .about__image {
   overflow: hidden;
   border-radius: 0 6.25rem;
-  margin-right: -0.75rem;
+  -ms-flex-item-align: stretch;
+      -ms-grid-row-align: stretch;
+      align-self: stretch;
+  background: #e9eaeb;
 }
 
 .about__info {
@@ -3017,7 +3025,10 @@ body.lock-mobile-menu .wrapper::before {
   display: grid;
   -ms-grid-columns: (1fr)[4];
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  -webkit-column-gap: 1rem;
+     -moz-column-gap: 1rem;
+          column-gap: 1rem;
+  row-gap: 1.5rem;
 }
 
 .special-offer {
@@ -3205,7 +3216,7 @@ body.lock-mobile-menu .wrapper::before {
   display: -ms-flexbox;
   display: flex;
   gap: 0.125rem;
-  min-height: 34.375rem;
+  min-height: 27.5rem;
 }
 
 .steps__item {
@@ -3213,10 +3224,8 @@ body.lock-mobile-menu .wrapper::before {
   background: #e9eaeb;
   -ms-flex-negative: 0;
       flex-shrink: 0;
-  width: 5.625rem;
   -webkit-transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
   transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
-  padding: 2rem 1.5rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3232,13 +3241,15 @@ body.lock-mobile-menu .wrapper::before {
           align-items: center;
   overflow: hidden;
   cursor: pointer;
+  padding: 2rem 1.125rem;
+  width: 4.6875rem;
 }
 
 .steps__item.active {
   cursor: default;
   background: #2d3623;
   color: #fff;
-  width: 43.75rem;
+  width: 33.125rem;
   padding: 2rem;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
@@ -3255,9 +3266,10 @@ body.lock-mobile-menu .wrapper::before {
 }
 
 .steps__item.active .steps__item-image {
-  width: 560px;
-  height: 364px;
+  height: auto;
   opacity: 1;
+  aspect-ratio: 1.5384615385;
+  width: 24.375rem;
 }
 
 .steps__item.active .steps__item-subtitle {
@@ -3349,7 +3361,6 @@ body.lock-mobile-menu .wrapper::before {
 .steps__item-number {
   color: #717680;
   font-family: "Comfortaa";
-  font-size: 2.625rem;
   font-weight: 700;
   line-height: 100%;
   letter-spacing: -0.07875rem;
@@ -3366,27 +3377,27 @@ body.lock-mobile-menu .wrapper::before {
       align-self: flex-start;
   -webkit-transition: color 0.3s ease-in-out;
   transition: color 0.3s ease-in-out;
+  font-size: 2.25rem;
 }
 
 .steps__terms {
   border-radius: 1rem;
   background: #efe7d9;
   color: #483a2e;
-  width: 33rem;
+  max-width: 33rem;
+  width: 100%;
   padding: 2rem 3rem;
-  -ms-flex-negative: 0;
-      flex-shrink: 0;
   margin-left: auto;
 }
 
 .steps__terms-title {
   font-family: "Comfortaa";
-  font-size: 2.625rem;
   font-weight: 600;
   line-height: 120%;
   letter-spacing: -0.07875rem;
   padding-bottom: 1.5rem;
   border-bottom: 0.0625rem solid #d5d7da;
+  font-size: 2.25rem;
 }
 
 .steps__terms-btn {
@@ -3490,7 +3501,10 @@ body.lock-mobile-menu .wrapper::before {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   gap: 0.75rem;
+  row-gap: 0.25rem;
   font-size: 1rem;
   line-height: 150%;
 }
@@ -3579,7 +3593,7 @@ body.lock-mobile-menu .wrapper::before {
 }
 
 .gift__content {
-  padding-left: 4rem;
+  padding-left: 2rem;
 }
 
 .gift__subtitle {
@@ -4094,6 +4108,14 @@ html {
 }
 
 @media (min-width: 1199.98px) {
+  .menu__list {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    gap: 2.5rem;
+  }
+
   .footer__header {
     gap: 1rem;
     -webkit-box-orient: horizontal;
@@ -4202,40 +4224,6 @@ html {
   }
 }
 
-@media (min-width: 1299.98px) {
-  .menu__list {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-  }
-
-  .submenu__link {
-    font-size: 1rem;
-  }
-
-  .submenu__contacts-phone {
-    font-size: 1.5rem;
-  }
-
-  .submenu__contacts-callback {
-    display: none;
-  }
-
-  .icon-menu {
-    display: none;
-  }
-
-  .footer__menu .submenu {
-    top: auto;
-    bottom: 100%;
-    padding-top: 0;
-    padding-bottom: 0.25rem;
-    -webkit-transform: translate3d(0, 0.5rem, 1px);
-            transform: translate3d(0, 0.5rem, 1px);
-  }
-}
-
 @media (min-width: 1299.8px) {
   .menu__link,
   .menu__btn {
@@ -4282,6 +4270,33 @@ html {
   }
 }
 
+@media (min-width: 1299.98px) {
+  .submenu__link {
+    font-size: 1rem;
+  }
+
+  .submenu__contacts-phone {
+    font-size: 1.5rem;
+  }
+
+  .submenu__contacts-callback {
+    display: none;
+  }
+
+  .icon-menu {
+    display: none;
+  }
+
+  .footer__menu .submenu {
+    top: auto;
+    bottom: 100%;
+    padding-top: 0;
+    padding-bottom: 0.25rem;
+    -webkit-transform: translate3d(0, 0.5rem, 1px);
+            transform: translate3d(0, 0.5rem, 1px);
+  }
+}
+
 @media (min-width: 1399.98px) {
   .footer__header {
     -ms-flex-wrap: nowrap;
@@ -4319,6 +4334,14 @@ html {
 }
 
 @media (min-width: 1661.98px) {
+  .title {
+    font-size: 3.5rem;
+  }
+
+  .title-lg {
+    font-size: 4rem;
+  }
+
   .menu__list {
     gap: 4rem;
   }
@@ -4339,6 +4362,57 @@ html {
 
   .container {
     max-width: 102rem;
+  }
+
+  .main {
+    gap: 11.25rem;
+  }
+
+  .hero__offer-slide {
+    padding-right: 0;
+  }
+
+  .hero__offer-description {
+    font-size: 1.5rem;
+  }
+
+  .about__image {
+    margin-right: -0.75rem;
+  }
+
+  .catalog__grid {
+    -webkit-column-gap: 1.5rem;
+       -moz-column-gap: 1.5rem;
+            column-gap: 1.5rem;
+  }
+
+  .steps__list {
+    min-height: 34.375rem;
+  }
+
+  .steps__item {
+    padding: 2rem 1.5rem;
+    width: 5.625rem;
+  }
+
+  .steps__item.active .steps__item-image {
+    width: 35rem;
+  }
+
+  .steps__item.active {
+    width: 43.75rem;
+  }
+
+  .steps__item-number {
+    font-size: 2.625rem;
+  }
+
+  .steps__terms-title {
+    font-size: 2.625rem;
+  }
+
+  .gift__content {
+    padding-left: 4rem;
   }
 
   .contacts__map:first-child:last-child .contacts__list-item {
@@ -4382,10 +4456,6 @@ html {
 }
 
 @media (max-width: 1299.98px) {
-  .menu__list:not(:last-child) {
-    margin-bottom: 0.5rem;
-  }
-
   .menu__item:has(.submenu__contacts) .menu__btn {
     display: none;
   }
@@ -4438,6 +4508,12 @@ html {
   }
 }
 
+@media (max-width: 1199.98px) {
+  .menu__list:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+}
+
 @media (max-width: 767.98px) {
   .footer__prod {
     margin-top: 0.5rem;
@@ -4459,6 +4535,7 @@ html {
 @media (max-width: 1661.98px) and (min-width: 575.98px) {
   .contacts__list-item:nth-child(even) {
     border-left-width: 0.0625rem;
+    padding-left: 1.5rem;
   }
 }
 
