@@ -290,6 +290,7 @@ $(function () {
 
             const heroOfferSlider = new Swiper(heroOffer.get(0), {
                 loop: true,
+                autoHeight: true,
                 speed: 600,
                 effect: 'fade',
                 fadeEffect: {
@@ -298,6 +299,12 @@ $(function () {
                 controller: {
                     control: heroImagesSlider
                 },
+                breakpoints: {
+                    991.98: {
+                        autoHeight: false
+
+                    }
+                }
             });
 
 
@@ -391,8 +398,8 @@ $(function () {
         const initScreenshotsSwiper = () => {
             if ($('.reviews__screenshots .reviews__slider').length && !reviewsScreenshotsSwiper) {
                 reviewsScreenshotsSwiper = new Swiper('.reviews__screenshots .reviews__slider', {
-                    slidesPerView: 1,
-                    spaceBetween: 24,
+                    slidesPerView: "auto",
+                    spaceBetween: 12,
                     watchOverflow: true,
                     navigation: {
                         nextEl: '.reviews__controls--screenshots .reviews__next',
@@ -403,14 +410,13 @@ $(function () {
                         ...swiperPaginationConfig
                     },
                     breakpoints: {
-                        767.98: {
-                            slidesPerView: 2,
-                        },
                         991.98: {
                             slidesPerView: 4,
+                            spaceBetween: 18,
                         },
                         1399.98: {
                             slidesPerView: 5,
+                            spaceBetween: 24,
                         }
                     },
                 });

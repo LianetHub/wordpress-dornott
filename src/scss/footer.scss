@@ -212,6 +212,7 @@
 		background: #201b18;
 		padding: rem(24) rem(12);
 		text-align: center;
+
 		@media (min-width: $md3) {
 			text-align: left;
 		}
@@ -222,7 +223,9 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			gap: 1.5rem;
 			@media (min-width: $md3) {
+				gap: 0;
 				flex-direction: row;
 				justify-content: space-between;
 			}

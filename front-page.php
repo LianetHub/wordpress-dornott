@@ -358,8 +358,10 @@
                                         <p class="steps__item-subtitle"><?php echo esc_html($item_description); ?></p>
                                     <?php endif; ?>
                                 </div>
-                                <div class="steps__item-hint">Шаг</div>
-                                <div class="steps__item-number"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></div>
+                                <div class="steps__item-order">
+                                    <div class="steps__item-hint">Шаг</div>
+                                    <div class="steps__item-number"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></div>
+                                </div>
                             </li>
                         <?php
                             $i++;
