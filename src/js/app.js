@@ -139,11 +139,6 @@ $(function () {
             $target.closest('.favorite-btn').toggleClass('active')
         }
 
-        // add to cart
-        if ($target.closest('.add-to-cart-button').length) {
-            $target.closest('.add-to-cart-button').toggleClass('active');
-        }
-
 
     });
 
@@ -634,43 +629,284 @@ $(function () {
 
 
 
-    // quantity block
-    $('.quantity-block').each(function () {
-        const $block = $(this);
-        const $input = $block.find('.quantity-block__input');
-        const $btnUp = $block.find('.quantity-block__up');
-        const $btnDown = $block.find('.quantity-block__down');
 
-        $btnUp.on('click', function () {
-            let currentVal = parseInt($input.val()) || 0;
-            if (currentVal < 999) {
-                $input.val(currentVal + 1);
+    // Сart Logic
+    class DornottCart {
+        constructor() {
+            this.storageKey = 'dornott_cart';
+            this.$form = $('#cart-form');
+            this.$container = $('#cart-items-container');
+            this.$headerCart = $('.header__action.icon-cart');
+
+            this.init();
+        }
+
+        init() {
+            this.bindEvents();
+            this.updateInterface();
+        }
+
+        getData() {
+            return JSON.parse(localStorage.getItem(this.storageKey)) || [];
+        }
+
+        saveData(data) {
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+            this.updateInterface();
+        }
+
+        bindEvents() {
+            $(document).on('click', '.toggle-to-cart-button', (e) => this.handleAddToCart(e));
+
+            $(document).on('click', '.quantity-block__up', (e) => this.changeQty(e, 1));
+            $(document).on('click', '.quantity-block__down', (e) => this.changeQty(e, -1));
+            $(document).on('change', '.quantity-block__input', (e) => this.handleQtyInput(e));
+
+            $(document).on('click', '.cart__item-remove', (e) => {
+                const id = $(e.target).closest('.cart__item').data('id');
+                this.removeItem(id);
+            });
+
+            $(document).on('change', 'input[name="delivery"]', () => this.updateInterface());
+
+            $(document).on('change', 'input[name="select_all"]', (e) => this.toggleAllCheckboxes(e));
+            $(document).on('change', '.cart__item-checkbox .checkbox__input', () => this.updateSelectAllState());
+
+            $(document).on('click', '.cart__clear', () => this.removeSelected());
+
+            $(document).on('change', '.product-card__variations-input', (e) => this.handleVariationChange(e));
+
+            this.$form.on('submit', (e) => this.handleSubmit(e));
+            this.$form.on('input change', '[data-required]', (e) => this.validateField($(e.target)));
+        }
+
+        handleAddToCart(e) {
+            const $btn = $(e.currentTarget);
+            const $card = $btn.closest('.product-card');
+            const productId = $btn.data('variation-id') || $btn.data('product-id');
+
+            if ($btn.hasClass('active')) {
+                this.removeItem(productId);
+                $btn.removeClass('active');
+            } else {
+                const price = parseInt($card.find('[data-price-role="current-price"]').text().replace(/\D/g, ''));
+                const regPrice = parseInt($card.find('[data-price-role="regular-price"]').text().replace(/\D/g, '')) || price;
+                const saleText = $card.find('.price-block__sale').text().trim();
+
+                const product = {
+                    id: productId,
+                    name: $card.find('.product-card__title').text().trim(),
+                    sku: $card.find('.product-card__sku').text().trim(),
+                    price: price,
+                    regular_price: regPrice,
+                    sale_label: saleText,
+                    image: $card.find('.product-card__image').first().attr('src'),
+                    quantity: 1
+                };
+
+                this.addItem(product);
+                $btn.addClass('active');
             }
-        });
+        }
 
-        $btnDown.on('click', function () {
-            let currentVal = parseInt($input.val()) || 0;
-            if (currentVal > 1) {
-                $input.val(currentVal - 1);
-            }
-        });
+        addItem(product) {
+            let data = this.getData();
+            const index = data.findIndex(item => item.id === product.id);
+            if (index === -1) data.push(product);
+            this.saveData(data);
+        }
 
-        $input.on('input', function () {
-            let val = $input.val().replace(/\D/g, '');
-            val = parseInt(val) || 1;
-            if (val < 1) val = 1;
-            if (val > 999) val = 999;
+        removeItem(id) {
+            let data = this.getData();
+            data = data.filter(item => item.id !== id);
+            this.saveData(data);
+            $(`.toggle-to-cart-button[data-product-id="${id}"], .toggle-to-cart-button[data-variation-id="${id}"]`).removeClass('active');
+        }
+
+        changeQty(e, delta) {
+            const $input = $(e.currentTarget).siblings('.quantity-block__input');
+            const id = $(e.currentTarget).closest('.cart__item').data('id');
+            let val = parseInt($input.val()) || 1;
+            val = Math.min(999, Math.max(1, val + delta));
+
             $input.val(val);
-        });
+            this.updateQuantity(id, val);
+        }
 
+        handleQtyInput(e) {
+            const $input = $(e.currentTarget);
+            const id = $input.closest('.cart__item').data('id');
+            let val = parseInt($input.val().replace(/\D/g, '')) || 1;
+            val = Math.min(999, Math.max(1, val));
 
-        $input.on('paste', function (e) {
-            const pastedData = e.originalEvent.clipboardData.getData('text');
-            if (/\D/.test(pastedData)) {
-                e.preventDefault();
+            $input.val(val);
+            this.updateQuantity(id, val);
+        }
+
+        updateQuantity(id, qty) {
+            let data = this.getData();
+            const index = data.findIndex(item => item.id === id);
+            if (index > -1) {
+                data[index].quantity = qty;
+                this.saveData(data);
             }
-        });
-    });
+        }
+
+        toggleAllCheckboxes(e) {
+            const isChecked = $(e.currentTarget).is(':checked');
+            $('.cart__item-checkbox .checkbox__input').prop('checked', isChecked);
+        }
+
+        updateSelectAllState() {
+            const totalItems = $('.cart__item-checkbox .checkbox__input').length;
+            const checkedItems = $('.cart__item-checkbox .checkbox__input:checked').length;
+            $('input[name="select_all"]').prop('checked', totalItems === checkedItems && totalItems > 0);
+        }
+
+        removeSelected() {
+            $('.cart__item-checkbox .checkbox__input:checked').each((_, el) => {
+                this.removeItem($(el).closest('.cart__item').data('id'));
+            });
+        }
+
+        handleVariationChange(e) {
+            const $input = $(e.currentTarget);
+            const $card = $input.closest('.product-card');
+            const $btn = $card.find('.toggle-to-cart-button');
+
+            $card.find('[data-price-role="current-price"]').html($input.data('price-html'));
+            $card.find('[data-price-role="regular-price"]').html($input.data('regular-price-html'));
+
+            const newId = $input.val();
+            $btn.data('variation-id', newId);
+
+            const data = this.getData();
+            $btn.toggleClass('active', data.some(item => item.id == newId));
+        }
+
+        calculateTotals() {
+            const data = this.getData();
+            const deliveryPrice = parseInt($('input[name="delivery"]:checked').data('price')) || 0;
+            let subtotal = 0, discount = 0, totalQty = 0;
+
+            data.forEach(item => {
+                subtotal += item.regular_price * item.quantity;
+                discount += (item.regular_price - item.price) * item.quantity;
+                totalQty += item.quantity;
+            });
+
+            return { subtotal, discount, totalQty, deliveryPrice, finalPrice: subtotal - discount + deliveryPrice };
+        }
+
+        validateField($field) {
+            const isValid = $field.val().trim() !== '';
+            $field.toggleClass('_error', !isValid);
+            return isValid;
+        }
+
+        validateForm() {
+            let isAllValid = true;
+            this.$form.find('[data-required]').each((_, el) => {
+                if (!this.validateField($(el))) isAllValid = false;
+            });
+
+            const isPolicyChecked = $('input[name="policy"]').is(':checked');
+            if (!isPolicyChecked) isAllValid = false;
+
+            $('#cart-validation-warning').toggleClass('hidden', isAllValid);
+            return isAllValid;
+        }
+
+        updateInterface() {
+            const data = this.getData();
+            const totals = this.calculateTotals();
+
+            if (data.length > 0) {
+                this.$form.show();
+                $('#cart-empty-state').hide();
+                if (!this.$headerCart.find('.header__action-quantity').length) {
+                    this.$headerCart.append('<span class="header__action-quantity"></span>');
+                }
+                this.$headerCart.find('.header__action-quantity').text(totals.totalQty);
+            } else {
+                this.$form.hide();
+                $('#cart-empty-state').show();
+                this.$headerCart.find('.header__action-quantity').remove();
+            }
+
+            $('#total-qty').text(`${totals.totalQty} шт.`);
+            $('#subtotal-price').text(`${totals.subtotal.toLocaleString()} ₽`);
+            $('#total-discount').text(`${totals.discount.toLocaleString()} ₽`);
+            $('#delivery-price').text(`${totals.deliveryPrice.toLocaleString()} ₽`);
+            $('#final-price').text(`${totals.finalPrice.toLocaleString()} ₽`);
+
+            this.renderItems(data);
+            this.syncButtons(data);
+        }
+
+        syncButtons(data) {
+            $('.toggle-to-cart-button').each((_, el) => {
+                const $btn = $(el);
+                const id = $btn.data('variation-id') || $btn.data('product-id');
+                $btn.toggleClass('active', data.some(item => item.id == id));
+            });
+        }
+
+        renderItems(data) {
+            this.$container.empty();
+            data.forEach(item => {
+                this.$container.append(`
+                <div class="cart__item" data-id="${item.id}">
+                    <div class="cart__item-block">
+                        <label class="cart__item-checkbox checkbox">
+                            <input type="checkbox" class="checkbox__input hidden" hidden checked>
+                            <span class="checkbox__text"></span>
+                        </label>
+                        <div class="cart__item-thumb"><img src="${item.image}"></div>
+                        <div class="cart__item-info">
+                            <div class="cart__item-sku">${item.sku}</div>
+                            <div class="cart__item-name">${item.name}</div>
+                        </div>
+                    </div>
+                    <div class="cart__item-block">
+                        <div class="cart__item-quantity quantity-block">
+                            <button type="button" class="quantity-block__down icon-minus"></button>
+                            <input type="text" class="quantity-block__input" value="${item.quantity}">
+                            <button type="button" class="quantity-block__up icon-plus"></button>
+                        </div>
+                    </div>
+                    <div class="cart__item-block">
+                        <div class="cart__item-price price-block">
+                            <div class="price-block__header">
+                                <div class="price-block__old">${item.regular_price > item.price ? item.regular_price.toLocaleString() + ' ₽' : ''}</div>
+                                <div class="price-block__sale">${item.sale_label || ''}</div>
+                            </div>
+                            <div class="price-block__current">${item.price.toLocaleString()} ₽</div>
+                        </div>
+                        <button type="button" class="cart__item-remove icon-cross"></button>
+                    </div>
+                </div>
+            `);
+            });
+            this.updateSelectAllState();
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            if (this.validateForm()) {
+                const formData = this.$form.serializeArray().filter(item => item.name !== 'select_all');
+                const payload = {
+                    order_info: formData,
+                    items: this.getData(),
+                    totals: this.calculateTotals()
+                };
+                console.log('Final Payload:', payload);
+            }
+        }
+    }
+
+    window.dornottCart = new DornottCart();
+
 
 
 })

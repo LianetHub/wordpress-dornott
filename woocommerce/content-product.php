@@ -232,7 +232,7 @@ if ($is_variable) {
 		</div>
 
 		<button
-			class="add-to-cart-button btn btn-primary ajax_add_to_cart"
+			class="toggle-to-cart-button btn btn-primary"
 			data-product-id="<?php echo esc_attr($product_id); ?>"
 			<?php if ($is_variable) : ?>
 			data-variation-id="<?php echo esc_attr($initial_product_id); ?>"

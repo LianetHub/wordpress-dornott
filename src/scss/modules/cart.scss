@@ -7,7 +7,6 @@
 
 .cart {
 	max-width: rem(1280);
-	width: 100%;
 	border-radius: 1.5rem;
 	background: #fff;
 	padding: 2rem;
@@ -19,6 +18,12 @@
 		font-weight: 700;
 		line-height: 120%;
 		letter-spacing: -0.07875rem;
+	}
+	&__empty {
+		margin-top: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 	}
 	// .cart__body
 	&__body {

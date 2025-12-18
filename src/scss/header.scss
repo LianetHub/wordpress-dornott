@@ -121,7 +121,8 @@
 			}
 		}
 		&.icon-cart {
-			padding: 0.75rem 1.25rem 0.75rem 1.375rem;
+			padding: 0.75rem 2.5rem 0.75rem 1.375rem;
+			width: rem(94);
 			&:has(.header__action-quantity) {
 				padding-right: 2.5rem;
 			}
@@ -146,6 +147,15 @@
 		text-align: center;
 		font-size: 0.75rem;
 		line-height: 133.333%;
+		animation: scale-in 0.3s ease-in-out forwards;
+		@keyframes scale-in {
+			0% {
+				transform: scale(0);
+			}
+			100% {
+				transform: scale(1);
+			}
+		}
 	}
 	// .header__menu-toggler
 	&__menu-toggler {

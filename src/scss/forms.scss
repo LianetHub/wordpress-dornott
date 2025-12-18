@@ -56,8 +56,13 @@
 			background: #ddd;
 			border-color: #ddd;
 		}
-		&.wpcf7-not-valid {
+		&._error {
 			background: #fff1ed;
+
+			color: #f04438;
+			&::placeholder {
+				color: #f04438;
+			}
 		}
 		&:is(textarea) {
 			resize: none;

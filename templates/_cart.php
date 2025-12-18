@@ -3,7 +3,11 @@ $address = get_field('address', 'option') ?? '';
 ?>
 <div class="popup popup--white popup--large cart" id="cart">
     <h2 class="cart__title">Корзина</h2>
-    <div class="cart__body">
+    <div id="cart-empty-state" class="cart__empty">
+        <p class="cart__empty-content">Ваша корзина пока пуста</p>
+        <button type="button" data-fancybox-close class="btn btn-primary">Перейти к покупкам</button>
+    </div>
+    <form action="#" id="cart-form" class="cart__body" style="display: none;">
         <div class="cart__main">
             <div class="cart__products">
                 <div class="cart__products-header">
@@ -21,46 +25,7 @@ $address = get_field('address', 'option') ?? '';
                         <div class="cart__table-block">Кол-во</div>
                         <div class="cart__table-block">Цена</div>
                     </div>
-                    <div class="cart__table-items">
-                        <div class="cart__item">
-                            <div class="cart__item-block">
-                                <label class="cart__item-checkbox checkbox">
-                                    <input type="checkbox" name="select_product_id" class="checkbox__input hidden" hidden>
-                                    <span class="checkbox__text"></span>
-                                </label>
-                                <div class="cart__item-thumb">
-                                    <img src="" alt="">
-                                </div>
-                                <div class="cart__item-info">
-                                    <div class="cart__item-sku">250300</div>
-                                    <div class="cart__item-name">Кашемировый плед</div>
-                                </div>
-                            </div>
-                            <div class="cart__item-block">
-                                <div class="cart__item-quantity quantity-block">
-                                    <button type="button" class="quantity-block__down icon-minus"></button>
-                                    <input type="text" name="product-quantity" maxlength="3" class="quantity-block__input" value="1">
-                                    <button type="button" class="quantity-block__up icon-plus"></button>
-                                </div>
-                            </div>
-                            <div class="cart__item-block">
-                                <div class="cart__item-price price-block">
-                                    <div class="price-block__header">
-                                        <div class="price-block__old">
-                                            3 844 ₽
-                                        </div>
-                                        <div class="price-block__sale">
-                                            -55%
-                                        </div>
-                                    </div>
-                                    <div class="price-block__current">
-                                        1 899 ₽
-                                    </div>
-                                </div>
-                                <button type="button" aria-label="Удалить товар из корзины" class="cart__item-remove icon-cross"></button>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="cart-items-container" class="cart__table-items"></div>
                 </div>
             </div>
             <div class="cart__order order">
@@ -82,7 +47,7 @@ $address = get_field('address', 'option') ?? '';
                     <div class="order__caption">Способ доставки:</div>
                     <div class="order__step-options">
                         <label class="order__step-option">
-                            <input type="radio" name="delivery" value="" data-required checked class="order__step-input hidden" hidden>
+                            <input type="radio" name="delivery" value="pickup" data-price="0" checked class="order__step-input hidden" hidden>
                             <span class="order__card">
                                 <span class="order__card-header">
                                     <span class="order__step-header-title">Самовывоз со склада Dornott</span>
@@ -92,7 +57,7 @@ $address = get_field('address', 'option') ?? '';
                             </span>
                         </label>
                         <label class="order__step-option">
-                            <input type="radio" name="delivery" value="" data-required class="order__step-input hidden" hidden>
+                            <input type="radio" name="delivery" value="cdek" data-price="290" class="order__step-input hidden" hidden>
                             <span class="order__card">
                                 <span class="order__card-header">
                                     <span class="order__step-header-title">Доставка ТК</span>
@@ -130,45 +95,38 @@ $address = get_field('address', 'option') ?? '';
                     <div class="cart__caption">Итого</div>
                     <div class="cart__quantity">
                         <div class="cart__text">Товары:</div>
-                        <div class="cart__value">4 шт.</div>
+                        <div id="total-qty" class="cart__value">0 шт.</div>
                     </div>
                 </div>
                 <div class="cart__details">
                     <div class="cart__row">
                         <div class="cart__text">Сумма:</div>
-                        <div class="cart__value">10 783 ₽</div>
+                        <div id="subtotal-price" class="cart__value">0 ₽</div>
                     </div>
                     <div class="cart__row">
                         <div class="cart__text">Скидка:</div>
-                        <div class="cart__value">2 762 ₽</div>
-                    </div>
-                    <div class="cart__row">
-                        <div class="cart__text">НДС:</div>
-                        <div class="cart__value">0 ₽</div>
-                    </div>
-                    <div class="cart__row">
-                        <div class="cart__text">Кэшбэк:</div>
-                        <div class="cart__value">0 ₽</div>
+                        <div id="total-discount" class="cart__value">0 ₽</div>
                     </div>
                     <div class="cart__row">
                         <div class="cart__text">Доставка:</div>
-                        <div class="cart__value">290 ₽</div>
+                        <div id="delivery-price" class="cart__value">0 ₽</div>
                     </div>
                 </div>
                 <div class="cart__total">
-                    <div class="cart__text">Всего с учётом доставки:</div>
-                    <div class="cart__total-value">8 311 ₽</div>
+                    <div class="cart__text">Всего к оплате:</div>
+                    <div id="final-price" class="cart__total-value">0 ₽</div>
                 </div>
+
                 <label class="checkbox">
-                    <input type="checkbox" checked name="policy" class="checkbox__input hidden" hidden>
+                    <input type="checkbox" checked name="policy" data-required class="checkbox__input hidden" hidden>
                     <span class="checkbox__text">
                         Нажимая на кнопку, вы соглашаетесь на <a href="#data-protection" data-src="#policies" data-fancybox>обработку персональных данных</a>,
                         а также с <a href="#privacy-policy" data-src="#policies" data-fancybox>политикой конфиденциальности</a>
                     </span>
                 </label>
-                <button type="submit" class="btn btn-primary">оплатить заказ</button>
+                <button type="submit" id="checkout-button" class="btn btn-primary">оплатить заказ</button>
             </div>
-            <div class="cart__warning">
+            <div id="cart-validation-warning" class="cart__warning hidden">
                 <div class="cart__warning-icon">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/alert-triangle.svg" alt="Иконка">
                 </div>
@@ -177,13 +135,5 @@ $address = get_field('address', 'option') ?? '';
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        Fancybox.show([{
-            src: "#cart"
-        }])
-    })
-</script>

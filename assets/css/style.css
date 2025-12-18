@@ -61,7 +61,7 @@
 .swiper-button-next,
 .favorite-btn::before,
 .favorite-btn.active::before,
-.add-to-cart-button::before,
+.toggle-to-cart-button::before,
 [class^=icon-]:before,
 [class*=" icon-"]:before {
   font-family: "icons";
@@ -108,7 +108,7 @@
 
 .icon-check:before,
 .checkbox__input:checked + .checkbox__text:before,
-.add-to-cart-button.active:before {
+.toggle-to-cart-button.active:before {
   content: "\e903";
 }
 
@@ -143,7 +143,7 @@
 }
 
 .icon-shopping-cart:before,
-.add-to-cart-button:before {
+.toggle-to-cart-button:before {
   content: "\e90b";
 }
 
@@ -207,7 +207,6 @@
 .popup {
   display: none;
   max-width: 36.25rem;
-  width: 100%;
   padding: 2rem 2rem 2.625rem 2rem;
   text-align: center;
   -webkit-box-orient: vertical;
@@ -610,7 +609,6 @@ body.is-loaded .preloader {
 
 .cart {
   max-width: 80rem;
-  width: 100%;
   border-radius: 1.5rem;
   background: #fff;
   padding: 2rem;
@@ -623,6 +621,18 @@ body.is-loaded .preloader {
   font-weight: 700;
   line-height: 120%;
   letter-spacing: -0.07875rem;
+}
+
+.cart__empty {
+  margin-top: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.75rem;
 }
 
 .cart__body {
@@ -1303,21 +1313,21 @@ body.is-loaded .preloader {
   display: none;
 }
 
-.add-to-cart-button.active.btn-primary,
-.add-to-cart-button.active {
+.toggle-to-cart-button.active.btn-primary,
+.toggle-to-cart-button.active {
   background: #47cd89;
   border-color: #47cd89;
   -webkit-box-shadow: none;
           box-shadow: none;
 }
 
-.add-to-cart-button {
+.toggle-to-cart-button {
   width: 2.875rem;
   height: 2.625rem;
   padding: 0.75rem;
 }
 
-.add-to-cart-button::before {
+.toggle-to-cart-button::before {
   font-size: 1.125rem;
 }
 
@@ -1588,8 +1598,29 @@ body.is-loaded .preloader {
   border-color: #ddd;
 }
 
-.form__control.wpcf7-not-valid {
+.form__control._error {
   background: #fff1ed;
+  color: #f04438;
+}
+
+.form__control._error::-webkit-input-placeholder {
+  color: #f04438;
+}
+
+.form__control._error::-moz-placeholder {
+  color: #f04438;
+}
+
+.form__control._error:-ms-input-placeholder {
+  color: #f04438;
+}
+
+.form__control._error::-ms-input-placeholder {
+  color: #f04438;
+}
+
+.form__control._error::placeholder {
+  color: #f04438;
 }
 
 .form__control:is(textarea) {
@@ -2002,7 +2033,8 @@ body.is-loaded .preloader {
 }
 
 .header__action.icon-cart {
-  padding: 0.75rem 1.25rem 0.75rem 1.375rem;
+  padding: 0.75rem 2.5rem 0.75rem 1.375rem;
+  width: 5.875rem;
 }
 
 .header__action.icon-cart:has(.header__action-quantity) {
@@ -2022,6 +2054,32 @@ body.is-loaded .preloader {
   text-align: center;
   font-size: 0.75rem;
   line-height: 133.333%;
+  -webkit-animation: scale-in 0.3s ease-in-out forwards;
+          animation: scale-in 0.3s ease-in-out forwards;
+}
+
+@-webkit-keyframes scale-in {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
 }
 
 .menu__list {
@@ -4263,7 +4321,7 @@ html {
     color: #fff;
   }
 
-  .add-to-cart-button.active:hover {
+  .toggle-to-cart-button.active:hover {
     border-color: rgb(48.0769230769, 176.9230769231, 111.5384615385);
     background: rgb(48.0769230769, 176.9230769231, 111.5384615385);
   }

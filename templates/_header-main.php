@@ -22,9 +22,7 @@ $logo = get_field('logo', $option_page);
     </nav>
     <div class="header__actions">
         <a href="#callback" data-fancybox aria-label="Обратная связь" class="header__action icon-phone-incoming"></a>
-        <a href="#cart" data-fancybox aria-label="Корзина" class="header__action icon-cart">
-            <span class="header__action-quantity">4</span>
-        </a>
+        <a href="#cart" data-fancybox aria-label="Корзина" class="header__action icon-cart"></a>
         <button type="button" aria-label="Открыть меню" class="header__menu-toggler icon-menu">
             <span></span>
             <span></span>
