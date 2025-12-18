@@ -36,6 +36,9 @@
 		&.form__control--dark {
 			background: rgba(255, 255, 255, 0.08);
 			color: #fff;
+			&._error {
+				background: rgba(255, 255, 255, 0.08);
+			}
 			&:hover,
 			&:focus {
 				background: rgba(255, 255, 255, 0.18);
@@ -60,11 +63,11 @@
 		}
 		&._error {
 			background: #fff1ed;
-
 			border-color: #f04438;
 			color: #f04438;
 			&::placeholder {
 				color: #f04438;
+				opacity: 1;
 			}
 		}
 		&:is(textarea) {

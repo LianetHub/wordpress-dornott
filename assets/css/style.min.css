@@ -1559,6 +1559,10 @@ body.is-loaded .preloader {
     color: #fff
 }
 
+.form__control.form__control--dark._error {
+    background: rgba(255, 255, 255, .08)
+}
+
 .form__control.form__control--dark:focus, .form__control.form__control--dark:hover {
     background: rgba(255, 255, 255, .18)
 }
@@ -1630,23 +1634,28 @@ body.is-loaded .preloader {
 }
 
 .form__control._error::-webkit-input-placeholder {
-    color: #f04438
+    color: #f04438;
+    opacity: 1
 }
 
 .form__control._error::-moz-placeholder {
-    color: #f04438
+    color: #f04438;
+    opacity: 1
 }
 
 .form__control._error:-ms-input-placeholder {
-    color: #f04438
+    color: #f04438;
+    opacity: 1
 }
 
 .form__control._error::-ms-input-placeholder {
-    color: #f04438
+    color: #f04438;
+    opacity: 1
 }
 
 .form__control._error::placeholder {
-    color: #f04438
+    color: #f04438;
+    opacity: 1
 }
 
 .form__control:is(textarea) {
@@ -3104,7 +3113,8 @@ body.lock-mobile-menu .wrapper::before {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    gap: .125rem
+    gap: .125rem;
+    min-height: 34.375rem
 }
 
 .steps__item {

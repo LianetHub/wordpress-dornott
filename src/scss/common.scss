@@ -496,6 +496,7 @@ body {
 	&__list {
 		display: flex;
 		gap: rem(2);
+		min-height: rem(550);
 	}
 	// .steps__item
 	&__item {
