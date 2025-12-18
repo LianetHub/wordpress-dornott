@@ -950,7 +950,7 @@ $(function () {
             const elementHeight = $target.outerHeight();
 
             let top = offset.top - tooltipHeight - 10;
-            let left = offset.left + (elementWidth / 2) - (tooltipWidth / 2);
+            let left = offset.left + elementWidth - tooltipWidth;
 
             if (top < $(window).scrollTop()) {
                 top = offset.top + elementHeight + 10;
@@ -961,8 +961,6 @@ $(function () {
 
             if (left < 5) {
                 left = 5;
-            } else if (left + tooltipWidth > $(window).width()) {
-                left = $(window).width() - tooltipWidth - 5;
             }
 
             $tooltip.css({

@@ -96,6 +96,9 @@
 				grid-template-columns: repeat(3, 1fr);
 				gap: 1rem;
 			}
+			@media (max-width: $md4) {
+				grid-template-columns: repeat(2, 1fr);
+			}
 			@media (min-width: $md2) {
 				justify-content: center;
 				gap: 1.5rem;

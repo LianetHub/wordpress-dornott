@@ -346,7 +346,9 @@ body {
 		margin-top: rem(58);
 		display: grid;
 		gap: 1rem;
-		grid-template-columns: repeat(2, 1fr);
+		@media (min-width: $md4) {
+			grid-template-columns: repeat(2, 1fr);
+		}
 		@media (min-width: $md3) {
 			grid-template-columns: repeat(3, 1fr);
 		}
@@ -367,7 +369,7 @@ body {
 		@media (any-hover: hover) {
 			&:hover {
 				background: #2d3623;
-				box-shadow: 48px 48px 56px -12px rgba(0, 0, 0, 0.25);
+				box-shadow: rem(48) rem(48) rem(56) rem(-12) rgba(0, 0, 0, 0.25);
 				color: #fff;
 				.about__benefit-icon {
 					filter: brightness(0) invert(1);
@@ -375,6 +377,16 @@ body {
 				.about__benefit-title {
 					color: #ca9b73;
 				}
+			}
+		}
+		@media (any-hover: none) {
+			background: #2d3623;
+			color: #fff;
+			.about__benefit-icon {
+				filter: brightness(0) invert(1);
+			}
+			.about__benefit-title {
+				color: #ca9b73;
 			}
 		}
 	}
@@ -898,16 +910,38 @@ body {
 	// .reviews__header
 	&__header {
 		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: 1.5rem;
+		row-gap: 2.06rem;
+		flex-direction: row;
+		flex-wrap: wrap;
+		@media (min-width: $md4) {
+			flex-direction: column;
+			row-gap: 1.5rem;
+		}
+	}
+	// .reviews__header-main
+	&__header-main {
+		display: contents;
+		@media (min-width: $md4) {
+			display: flex;
+			align-items: flex-start;
+			gap: 1.5rem;
+			align-items: flex-end;
+			justify-content: space-between;
+			flex-direction: row;
+		}
 	}
 	// .reviews__info
 	&__info {
 		display: flex;
 		align-items: flex-start;
-		gap: 1.5rem;
 		flex-direction: column;
+		gap: 0.5rem;
+		order: -1;
+		flex: 0 0 100%;
+		@media (min-width: $md4) {
+			flex: 0 1 auto;
+			gap: 1.5rem;
+		}
 		@media (min-width: $md2) {
 			align-items: center;
 			flex-direction: row;
@@ -921,8 +955,12 @@ body {
 		color: #d5d7da;
 		font-size: 1rem;
 		line-height: 160%;
-		border-top: 0.0625rem solid #d5d7da;
+		border-top: 0.0625rem solid #535862;
 		padding: 0.56rem 0;
+		width: 100%;
+		@media (min-width: $md4) {
+			width: auto;
+		}
 		@media (min-width: $md2) {
 			padding: 0.56rem 0 0.56rem 1.5rem;
 			border-top: 0;
@@ -935,11 +973,15 @@ body {
 		display: flex;
 		align-items: center;
 		gap: rem(20);
+		order: 1;
 	}
 	// .reviews__controls-btns
 	&__controls-btns {
-		display: flex;
-		gap: 0.5rem;
+		display: none;
+		@media (min-width: $md4) {
+			display: flex;
+			gap: 0.5rem;
+		}
 	}
 	// .reviews__pagination
 	&__pagination {
@@ -954,7 +996,6 @@ body {
 	}
 	// .reviews__switcher
 	&__switcher {
-		margin-top: 1.5rem;
 	}
 	// .reviews__content
 	&__content {

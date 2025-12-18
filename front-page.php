@@ -416,55 +416,57 @@
     <section id="reviews" class="reviews">
         <div class="container">
             <div class="reviews__header">
-                <div class="reviews__info">
-                    <?php if ($reviews_title): ?>
-                        <h2 class="reviews__title title"><?php echo esc_html($reviews_title); ?></h2>
-                    <?php endif; ?>
-                    <?php if ($reviews_subtitle): ?>
-                        <p class="reviews__subtitle"><?php echo esc_html($reviews_subtitle); ?></p>
-                    <?php endif; ?>
-                </div>
-                <div class="reviews__controls reviews__controls--text" style="<?php echo esc_attr($text_style); ?>">
-                    <div class="reviews__pagination swiper-pagination"></div>
-                    <div class="reviews__controls-btns">
-                        <button type="button" class="reviews__prev swiper-button-prev"></button>
-                        <button type="button" class="reviews__next swiper-button-next"></button>
+                <div class="reviews__header-main">
+                    <div class="reviews__info">
+                        <?php if ($reviews_title): ?>
+                            <h2 class="reviews__title title"><?php echo esc_html($reviews_title); ?></h2>
+                        <?php endif; ?>
+                        <?php if ($reviews_subtitle): ?>
+                            <p class="reviews__subtitle"><?php echo esc_html($reviews_subtitle); ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="reviews__controls reviews__controls--text" style="<?php echo esc_attr($text_style); ?>">
+                        <div class="reviews__pagination swiper-pagination"></div>
+                        <div class="reviews__controls-btns">
+                            <button type="button" class="reviews__prev swiper-button-prev"></button>
+                            <button type="button" class="reviews__next swiper-button-next"></button>
+                        </div>
+                    </div>
+                    <div class="reviews__controls reviews__controls--screenshots" style="<?php echo esc_attr($screenshots_style); ?>">
+                        <div class="reviews__pagination swiper-pagination"></div>
+                        <div class="reviews__controls-btns">
+                            <button type="button" class="reviews__prev swiper-button-prev"></button>
+                            <button type="button" class="reviews__next swiper-button-next"></button>
+                        </div>
                     </div>
                 </div>
-                <div class="reviews__controls reviews__controls--screenshots" style="<?php echo esc_attr($screenshots_style); ?>">
-                    <div class="reviews__pagination swiper-pagination"></div>
-                    <div class="reviews__controls-btns">
-                        <button type="button" class="reviews__prev swiper-button-prev"></button>
-                        <button type="button" class="reviews__next swiper-button-next"></button>
+                <?php if ($reviews_text_items || $reviews_screenshots): ?>
+                    <div class="reviews__switcher switcher">
+                        <?php if ($reviews_text_items): ?>
+                            <label class="switcher__item">
+                                <input type="radio"
+                                    name="reviews-type"
+                                    value="text"
+                                    <?php echo $check_text; ?>
+                                    class="switcher__input hidden" hidden>
+                                <span class="switcher__btn">Текстовые</span>
+                            </label>
+                        <?php endif; ?>
+
+                        <?php if ($reviews_screenshots): ?>
+                            <label class="switcher__item">
+                                <input type="radio"
+                                    name="reviews-type"
+                                    value="screenshots"
+                                    <?php echo $check_screenshots; ?>
+                                    class="switcher__input hidden" hidden>
+                                <span class="switcher__btn">Из соц. сетей</span>
+                            </label>
+                        <?php endif; ?>
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
 
-            <?php if ($reviews_text_items || $reviews_screenshots): ?>
-                <div class="reviews__switcher switcher">
-                    <?php if ($reviews_text_items): ?>
-                        <label class="switcher__item">
-                            <input type="radio"
-                                name="reviews-type"
-                                value="text"
-                                <?php echo $check_text; ?>
-                                class="switcher__input hidden" hidden>
-                            <span class="switcher__btn">Текстовые</span>
-                        </label>
-                    <?php endif; ?>
-
-                    <?php if ($reviews_screenshots): ?>
-                        <label class="switcher__item">
-                            <input type="radio"
-                                name="reviews-type"
-                                value="screenshots"
-                                <?php echo $check_screenshots; ?>
-                                class="switcher__input hidden" hidden>
-                            <span class="switcher__btn">Из соц. сетей</span>
-                        </label>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
 
             <div class="reviews__content">
                 <?php if ($reviews_text_items): ?>

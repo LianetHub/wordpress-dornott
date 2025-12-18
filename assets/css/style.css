@@ -1104,7 +1104,7 @@ body.is-loaded .preloader {
   font-weight: 600;
   line-height: 120%;
   letter-spacing: -0.03em;
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 .title-sm {
@@ -1608,10 +1608,7 @@ body.is-loaded .preloader {
   height: 0;
   border-left: 0.3125rem solid transparent;
   border-right: 0.3125rem solid transparent;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-      -ms-transform: translateX(-50%);
-          transform: translateX(-50%);
+  right: 1.25rem;
 }
 
 ::-webkit-scrollbar {
@@ -2859,8 +2856,6 @@ body {
   display: -ms-grid;
   display: grid;
   gap: 1rem;
-  -ms-grid-columns: (1fr)[2];
-  grid-template-columns: repeat(2, 1fr);
 }
 
 .about__benefit {
@@ -3298,13 +3293,17 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: end;
-      -ms-flex-align: end;
-          align-items: flex-end;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  gap: 1.5rem;
+  row-gap: 2.06rem;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.reviews__header-main {
+  display: contents;
 }
 
 .reviews__info {
@@ -3314,19 +3313,26 @@ body {
   -webkit-box-align: start;
       -ms-flex-align: start;
           align-items: flex-start;
-  gap: 1.5rem;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  gap: 0.5rem;
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 100%;
+          flex: 0 0 100%;
 }
 
 .reviews__subtitle {
   color: #d5d7da;
   font-size: 1rem;
   line-height: 160%;
-  border-top: 0.0625rem solid #d5d7da;
+  border-top: 0.0625rem solid #535862;
   padding: 0.56rem 0;
+  width: 100%;
 }
 
 .reviews__controls {
@@ -3338,22 +3344,18 @@ body {
       -ms-flex-align: center;
           align-items: center;
   gap: 1.25rem;
+  -webkit-box-ordinal-group: 2;
+      -ms-flex-order: 1;
+          order: 1;
 }
 
 .reviews__controls-btns {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  gap: 0.5rem;
+  display: none;
 }
 
 .reviews__pagination {
   margin-right: 0.75rem;
   --swiper-pagination-fraction-color: #efcb92;
-}
-
-.reviews__switcher {
-  margin-top: 1.5rem;
 }
 
 .reviews__content {
@@ -3862,6 +3864,10 @@ html {
     line-height: 157.143%;
   }
 
+  .title-lg {
+    font-size: 3rem;
+  }
+
   .favorite-btn span {
     display: inline;
   }
@@ -3886,6 +3892,57 @@ html {
 
   .container {
     max-width: 45rem;
+  }
+
+  .about__benefits {
+    -ms-grid-columns: (1fr)[2];
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reviews__header {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    row-gap: 1.5rem;
+  }
+
+  .reviews__header-main {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+    gap: 1.5rem;
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+  }
+
+  .reviews__info {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+    gap: 1.5rem;
+  }
+
+  .reviews__subtitle {
+    width: auto;
+  }
+
+  .reviews__controls-btns {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 0.5rem;
   }
 
   .contacts__row {
@@ -5071,6 +5128,11 @@ html {
 }
 
 @media (max-width: 767.98px) {
+  .footer__menu .menu__list {
+    -ms-grid-columns: (1fr)[2];
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .footer__prod {
     margin-top: 0.5rem;
     max-width: 8.125rem;
@@ -5098,6 +5160,20 @@ html {
 @media (any-hover: none) {
   .product-card {
     border-color: #717680;
+  }
+
+  .about__benefit {
+    background: #2d3623;
+    color: #fff;
+  }
+
+  .about__benefit .about__benefit-icon {
+    -webkit-filter: brightness(0) invert(1);
+            filter: brightness(0) invert(1);
+  }
+
+  .about__benefit .about__benefit-title {
+    color: #ca9b73;
   }
 }
 
@@ -5243,8 +5319,8 @@ html {
 
   .about__benefit:hover {
     background: #2d3623;
-    -webkit-box-shadow: 48px 48px 56px -12px rgba(0, 0, 0, 0.25);
-            box-shadow: 48px 48px 56px -12px rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 3rem 3rem 3.5rem -0.75rem rgba(0, 0, 0, 0.25);
+            box-shadow: 3rem 3rem 3.5rem -0.75rem rgba(0, 0, 0, 0.25);
     color: #fff;
   }
 
