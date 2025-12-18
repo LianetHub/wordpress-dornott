@@ -1289,7 +1289,7 @@ body.is-loaded .preloader {
     display: none
 }
 
-.toggle-to-cart-button.active, .toggle-to-cart-button.active.btn-primary {
+.toggle-to-cart-button.active, .toggle-to-cart-button.active.btn.btn-primary {
     background: #47cd89;
     border-color: #47cd89;
     -webkit-box-shadow: none;
@@ -1486,6 +1486,62 @@ body.is-loaded .preloader {
         -webkit-transform: translate(-50%, -50%) rotate(360deg);
         transform: translate(-50%, -50%) rotate(360deg)
     }
+}
+
+.tooltip {
+    position: absolute;
+    border-radius: .3125rem;
+    color: #fff;
+    background: #504841;
+    padding: .625rem;
+    z-index: 100000000;
+    font-size: .8125rem;
+    max-width: 12.5rem;
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: center
+}
+
+.tooltip.open-top::after {
+    border-top: .3125rem solid #504841;
+    bottom: -.25rem
+}
+
+.tooltip.open-bottom::after {
+    border-bottom: .3125rem solid #504841;
+    top: -.25rem
+}
+
+.tooltip.success {
+    background: #47cd89;
+    color: #47cd89;
+    color: #000;
+    text-align: left;
+    max-width: 15.4375rem
+}
+
+.tooltip.success.open-top::after {
+    border-top: .3125rem solid #47cd89
+}
+
+.tooltip.success.open-bottom::after {
+    border-bottom: .3125rem solid #47cd89
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: .3125rem solid transparent;
+    border-right: .3125rem solid transparent;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%)
 }
 
 ::-webkit-scrollbar {
@@ -4381,7 +4437,7 @@ html {
         color: #fff
     }
 
-    .toggle-to-cart-button.active:hover {
+    .toggle-to-cart-button.active.btn.btn-primary:hover, .toggle-to-cart-button.active:hover {
         border-color: rgb(48.0769230769, 176.9230769231, 111.5384615385);
         background: rgb(48.0769230769, 176.9230769231, 111.5384615385)
     }

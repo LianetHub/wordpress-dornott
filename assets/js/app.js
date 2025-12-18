@@ -900,14 +900,59 @@ $(function () {
             this.updateInterface();
         }
 
+        showTooltip($target, text, type = 'success') {
+            $('.tooltip').remove();
+
+            const $tooltip = $(`<div class="tooltip ${type}"></div>`).text(text);
+            $('body').append($tooltip);
+
+            const offset = $target.offset();
+            const tooltipWidth = $tooltip.outerWidth();
+            const tooltipHeight = $tooltip.outerHeight();
+            const elementWidth = $target.outerWidth();
+            const elementHeight = $target.outerHeight();
+
+            let top = offset.top - tooltipHeight - 10;
+            let left = offset.left + (elementWidth / 2) - (tooltipWidth / 2);
+
+            if (top < $(window).scrollTop()) {
+                top = offset.top + elementHeight + 10;
+                $tooltip.addClass('open-bottom');
+            } else {
+                $tooltip.addClass('open-top');
+            }
+
+            if (left < 5) {
+                left = 5;
+            } else if (left + tooltipWidth > $(window).width()) {
+                left = $(window).width() - tooltipWidth - 5;
+            }
+
+            $tooltip.css({
+                top: top,
+                left: left,
+                position: 'absolute',
+                opacity: 0,
+                display: 'block'
+            }).animate({ opacity: 1 }, 200);
+
+            setTimeout(() => {
+                $tooltip.fadeOut(300, function () {
+                    $(this).remove();
+                });
+            }, 2000);
+        }
+
         bindEvents() {
             $(document).on('click', '.toggle-to-cart-button', (e) => this.handleAddToCart(e));
             $(document).on('click', '.quantity-block__up', (e) => this.changeQty(e, 1));
             $(document).on('click', '.quantity-block__down', (e) => this.changeQty(e, -1));
             $(document).on('change', '.quantity-block__input', (e) => this.handleQtyInput(e));
             $(document).on('click', '.cart__item-remove', (e) => {
-                const id = $(e.target).closest('.cart__item').data('id');
+                const $btn = $(e.target);
+                const id = $btn.closest('.cart__item').data('id');
                 this.removeItem(id);
+                this.showTooltip($btn, 'Товар удален', '');
             });
 
             $(document).on('change', 'input[name="delivery"]', () => {
@@ -916,7 +961,10 @@ $(function () {
             });
             $(document).on('change', 'input[name="select_all"]', (e) => this.toggleAllCheckboxes(e));
             $(document).on('change', '.cart__item-checkbox .checkbox__input', () => this.updateSelectAllState());
-            $(document).on('click', '.cart__clear', () => this.removeSelected());
+            $(document).on('click', '.cart__clear', (e) => {
+                this.removeSelected();
+                this.showTooltip($(e.currentTarget), 'Выбранные товары удалены', '');
+            });
             $(document).on('change', '.product-card__variations-input', (e) => this.handleVariationChange(e));
 
             this.$form.on('submit', (e) => this.handleSubmit(e));
@@ -931,6 +979,7 @@ $(function () {
             if ($btn.hasClass('active')) {
                 this.removeItem(productId);
                 $btn.removeClass('active');
+                this.showTooltip($btn, 'Удалено из корзины', '');
             } else {
                 const price = parseInt($card.find('[data-price-role="current-price"]').text().replace(/\D/g, ''));
                 const regPrice = parseInt($card.find('[data-price-role="regular-price"]').text().replace(/\D/g, '')) || price;
@@ -949,6 +998,7 @@ $(function () {
 
                 this.addItem(product);
                 $btn.addClass('active');
+                this.showTooltip($btn, 'Товар добавлен в корзину', 'success');
             }
         }
 
@@ -1080,11 +1130,15 @@ $(function () {
 
         toggleAddressStep() {
             const deliveryMethod = $('input[name="delivery"]:checked').val();
-            if (deliveryMethod === 'pickup') {
-                this.$addressStep.hide();
-                this.$addressStep.find('.' + window.formController.selectors.errorClass).removeClass(window.formController.selectors.errorClass);
-            } else {
-                this.$addressStep.show();
+            if (this.$addressStep.length) {
+                if (deliveryMethod === 'pickup') {
+                    this.$addressStep.hide();
+                    if (window.formController) {
+                        this.$addressStep.find('.' + window.formController.selectors.errorClass).removeClass(window.formController.selectors.errorClass);
+                    }
+                } else {
+                    this.$addressStep.show();
+                }
             }
         }
 
