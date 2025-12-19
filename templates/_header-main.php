@@ -1,6 +1,7 @@
 <?php
 $option_page = 'option';
 $logo = get_field('logo', $option_page);
+
 ?>
 
 <div class="header__content">
@@ -11,6 +12,9 @@ $logo = get_field('logo', $option_page);
     <?php endif; ?>
     <div class="header__wrapper">
         <nav aria-label="Меню" class="header__menu menu">
+            <div class="menu__logo">
+                <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+            </div>
             <?php
             wp_nav_menu(array(
                 'theme_location' => 'general_menu',

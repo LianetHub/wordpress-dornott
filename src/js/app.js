@@ -157,6 +157,12 @@ $(function () {
             $('body').removeClass('menu-lock');
         }
 
+        if ($(".menu").hasClass("menu--open") && $target.closest(".menu__link").length) {
+            $('.icon-menu').removeClass("active");
+            $('.menu').removeClass("menu--open");
+            $('body').removeClass('menu-lock');
+        }
+
         // toggle active state favorite
         if ($target.closest('.favorite-btn').length) {
             $target.closest('.favorite-btn').toggleClass('active')

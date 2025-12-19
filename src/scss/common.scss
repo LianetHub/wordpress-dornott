@@ -116,7 +116,10 @@ body {
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
-	gap: rem(100);
+	gap: rem(80);
+	@media (min-width: $md4) {
+		gap: rem(100);
+	}
 	@media (min-width: $md2) {
 		gap: rem(120);
 	}
@@ -144,14 +147,16 @@ body {
 	}
 	// .hero__offer
 	&__offer {
-		padding-right: rem(24);
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		gap: 2rem;
-		padding-top: rem(100);
 		width: 100%;
+		padding-top: 5rem;
+		gap: 1.5rem;
 		@media (min-width: $md3) {
+			gap: 2rem;
+			padding-top: rem(100);
+			padding-right: rem(24);
 			height: 100%;
 			width: 50%;
 		}
@@ -170,18 +175,23 @@ body {
 	}
 	// .hero__offer-slide
 	&__offer-slide {
-		padding-right: 1rem;
+		@media (min-width: $md3) {
+			padding-right: 1rem;
+		}
 		@media (min-width: $md0) {
 			padding-right: 0;
 		}
 	}
 	// .hero__offer-description
 	&__offer-description {
-		margin-top: rem(18);
 		font-weight: 400;
 		line-height: 140%;
 		letter-spacing: -0.03rem;
-		font-size: 1.125rem;
+		margin-top: 0.75rem;
+		@media (min-width: $md4) {
+			margin-top: rem(18);
+			font-size: 1.125rem;
+		}
 		@media (min-width: $md2) {
 			font-size: 1.25rem;
 		}
@@ -194,7 +204,15 @@ body {
 	}
 	// .hero__offer-btn
 	&__offer-btn {
-		margin-top: rem(48);
+		margin-top: rem(24);
+		width: 100%;
+
+		@media (min-width: $md5) {
+			width: auto;
+		}
+		@media (min-width: $md3) {
+			margin-top: rem(48);
+		}
 	}
 	// .hero__tagline
 	&__tagline {
@@ -204,11 +222,15 @@ body {
 	}
 	// .hero__tagline-image
 	&__tagline-image {
-		width: 8.75rem;
-		height: 5.25rem;
 		border-radius: 62.4375rem;
 		overflow: hidden;
 		flex-shrink: 0;
+		width: 7.125rem;
+		height: 4.25rem;
+		@media (min-width: $md4) {
+			width: 8.75rem;
+			height: 5.25rem;
+		}
 	}
 	// .hero__tagline-text
 	&__tagline-text {
@@ -216,7 +238,9 @@ body {
 		line-height: 140%;
 		letter-spacing: -0.03rem;
 		max-width: 25.9375rem;
-		font-size: 1.125rem;
+		@media (min-width: $md4) {
+			font-size: 1.125rem;
+		}
 		@media (min-width: $md2) {
 			font-size: 1.375rem;
 		}
@@ -228,6 +252,7 @@ body {
 	&__images {
 		margin-top: 1.5rem;
 		position: relative;
+
 		@media (min-width: $md3) {
 			margin-top: 0;
 			flex: 0 0 50%;
@@ -241,6 +266,11 @@ body {
 		overflow: hidden;
 		background: #e9eaeb;
 		border-radius: 5rem 0 0 0;
+		& img {
+			@media (max-width: $md4) {
+				min-height: 23.75rem;
+			}
+		}
 		@media (min-width: $md2) {
 			border-radius: 7.5rem 0 0 0;
 		}
@@ -252,13 +282,18 @@ body {
 	&__controls {
 		position: absolute;
 		bottom: 0;
-		left: rem(11);
 		z-index: $ui-index-2;
-		padding: 1rem;
 		background: #fff;
 		color: #000;
 		display: flex;
-		gap: 1.25rem;
+		left: 0;
+		padding: 0.5rem 1rem;
+		gap: 0.5rem;
+		@media (min-width: $md4) {
+			gap: 1.25rem;
+			padding: 1rem;
+			left: rem(11);
+		}
 	}
 	// .hero__controls-btns
 	&__controls-btns {
@@ -294,6 +329,10 @@ body {
 		align-self: stretch;
 		background: #e9eaeb;
 		border-radius: 0 2.5rem;
+		margin-inline: -1rem;
+		@media (min-width: $md5) {
+			margin-inline: auto;
+		}
 		@media (min-width: $md3) {
 			border-radius: 0 4.25rem;
 		}
@@ -306,7 +345,9 @@ body {
 	}
 	// .about__info
 	&__info {
-		padding-left: 1.25rem;
+		@media (min-width: $md3) {
+			padding-left: 1.25rem;
+		}
 		@media (min-width: $md2) {
 			padding-left: 3.25rem;
 		}
@@ -319,10 +360,11 @@ body {
 	}
 	// .about__description
 	&__description {
-		margin-top: 1.5rem;
 		line-height: 160%;
 		font-size: rem(14);
+		margin-top: 1.25rem;
 		@media (min-width: $md2) {
+			margin-top: 1.5rem;
 			font-size: 1rem;
 		}
 		& em {
@@ -343,10 +385,11 @@ body {
 	}
 	// .about__benefits
 	&__benefits {
-		margin-top: rem(58);
 		display: grid;
 		gap: 1rem;
+		margin-top: rem(30);
 		@media (min-width: $md4) {
+			margin-top: rem(58);
 			grid-template-columns: repeat(2, 1fr);
 		}
 		@media (min-width: $md3) {
@@ -359,13 +402,15 @@ body {
 	// .about__benefit
 	&__benefit {
 		border-radius: 4rem 0;
-		border: 1px solid #d5d7da;
+		border: rem(1) solid #d5d7da;
 		background: #f0efec;
 		padding: 1.5rem;
 		display: flex;
 		flex-direction: column;
 		transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-
+		@media (max-width: $md4) {
+			height: rem(310);
+		}
 		@media (any-hover: hover) {
 			&:hover {
 				background: #2d3623;
@@ -382,6 +427,7 @@ body {
 		@media (any-hover: none) {
 			background: #2d3623;
 			color: #fff;
+			box-shadow: rem(48) rem(48) rem(56) rem(-12) rgba(0, 0, 0, 0.25);
 			.about__benefit-icon {
 				filter: brightness(0) invert(1);
 			}
@@ -395,7 +441,10 @@ body {
 	&__benefit-icon {
 		align-self: flex-end;
 		transition: filter 0.3s ease;
-		margin-bottom: rem(50);
+		margin-bottom: auto;
+		@media (min-width: $md4) {
+			margin-bottom: rem(50);
+		}
 		@media (min-width: $md2) {
 			margin-bottom: rem(63);
 		}
@@ -431,11 +480,14 @@ body {
 	}
 	// .catalog__grid
 	&__grid {
-		margin-top: rem(48);
 		display: grid;
 		column-gap: rem(16);
 		row-gap: rem(24);
-		grid-template-columns: repeat(2, 1fr);
+		margin-top: 2rem;
+		@media (min-width: $md5) {
+			margin-top: rem(48);
+			grid-template-columns: repeat(2, 1fr);
+		}
 		@media (min-width: $md3) {
 			grid-template-columns: repeat(3, 1fr);
 		}
@@ -463,12 +515,12 @@ body {
 		left: 0;
 		width: 100vw;
 		height: 100%;
-
+		pointer-events: none;
 		z-index: 1;
 		background-image: url("@img/special-offer-decor-line.svg");
 		background-size: 100% auto;
 		background-repeat: no-repeat;
-		background-position: center 66%;
+		background-position: center 60%;
 		@media (min-width: $md3) {
 			background-position: center 33%;
 		}
@@ -495,6 +547,9 @@ body {
 	}
 	// .special-offer__title
 	&__title {
+		@media (max-width: $md5) {
+			font-size: 1.5rem;
+		}
 	}
 	// .special-offer__subtitle
 	&__subtitle {
@@ -513,6 +568,13 @@ body {
 	// .special-offer__image-wrapper
 	&__image-wrapper {
 		position: relative;
+		margin-inline: -1rem;
+		@media (min-width: $md5) {
+			margin-inline: 0;
+		}
+		@media (max-width: $md3) {
+			margin-top: rem(85);
+		}
 	}
 	// .special-offer__label
 	&__label {
@@ -537,8 +599,11 @@ body {
 		line-height: 120%;
 		letter-spacing: -0.04875rem;
 		color: #585858;
-		top: rem(-70);
-		right: 3rem;
+		top: rem(-60);
+		right: -0.3rem;
+		@media (max-width: $md4) {
+			transform: scale(math.div(94, 140)) rotate(-15deg);
+		}
 		@media (min-width: $md2) {
 			top: 3.62rem;
 			right: auto;
@@ -552,8 +617,11 @@ body {
 	}
 	// .special-offer__image
 	&__image {
-		border-radius: 2rem;
 		overflow: hidden;
+		border-radius: 1rem;
+		@media (min-width: $md3) {
+			border-radius: 2rem;
+		}
 	}
 }
 
@@ -603,7 +671,11 @@ body {
 		font-weight: 700;
 		line-height: 120%;
 		letter-spacing: -0.045rem;
-		height: 20rem;
+		height: 25rem;
+		margin-inline: -1rem;
+		@media (min-width: $md5) {
+			margin-inline: 0;
+		}
 		@media (min-width: $md2) {
 			height: 37.5rem;
 		}
@@ -644,11 +716,14 @@ body {
 	}
 	// .steps__body
 	&__body {
-		margin-top: 3.5rem;
 		display: flex;
 		align-items: flex-start;
 		gap: rem(36);
 		flex-direction: column;
+		margin-top: 2.62rem;
+		@media (min-width: $md3) {
+			margin-top: 3.5rem;
+		}
 		@media (min-width: $md2) {
 			flex-direction: row;
 		}
@@ -806,8 +881,9 @@ body {
 		font-weight: 700;
 		line-height: 120%;
 		letter-spacing: -0.0525rem;
-		font-size: 1.5rem;
+		font-size: 1.375rem;
 		@media (min-width: $md3) {
+			font-size: 1.5rem;
 			margin-top: 1.5rem;
 			transition: transform 0.3s ease-in-out;
 			white-space: nowrap;
@@ -871,7 +947,10 @@ body {
 		background: #efe7d9;
 		color: #483a2e;
 		width: 100%;
-		padding: 1.5rem 2rem;
+		padding: 1.5rem 1rem;
+		@media (min-width: $md4) {
+			padding: 1.5rem 2rem;
+		}
 		@media (min-width: $md2) {
 			margin-left: auto;
 			max-width: 33rem;
@@ -888,8 +967,10 @@ body {
 		letter-spacing: -0.07875rem;
 		padding-bottom: 1.5rem;
 		border-bottom: rem(1) solid #d5d7da;
-		font-size: 2rem;
-
+		font-size: 1.5rem;
+		@media (min-width: $md4) {
+			font-size: 2rem;
+		}
 		@media (min-width: $md1) {
 			font-size: 2.25rem;
 		}
@@ -906,7 +987,10 @@ body {
 .reviews {
 	background: #201c18;
 	color: #fff;
-	padding: 5rem 0 4.31rem;
+	padding: 3rem 0;
+	@media (min-width: $md3) {
+		padding: 5rem 0 4.31rem;
+	}
 	// .reviews__header
 	&__header {
 		display: flex;
@@ -987,6 +1071,9 @@ body {
 	&__pagination {
 		margin-right: 0.75rem;
 		--swiper-pagination-fraction-color: #efcb92;
+		.swiper-pagination-current {
+			font-size: 2rem;
+		}
 	}
 	// .reviews__prev
 	&__prev {
@@ -1028,11 +1115,14 @@ body {
 	border-radius: 1rem;
 	background: #252820;
 	color: #d5d7da;
-	padding: 1.5rem;
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;
 	transition: background-color 0.3s ease;
+	padding: 1.5rem 1rem;
+	@media (min-width: $md4) {
+		padding: 1.5rem;
+	}
 	@media (any-hover: hover) {
 		&:hover {
 			background-color: #151210;
@@ -1057,8 +1147,11 @@ body {
 	}
 	// .review-card__quote
 	&__quote {
-		font-size: 1rem;
 		line-height: 150%;
+		font-size: 0.875rem;
+		@media (min-width: $md4) {
+			font-size: 1rem;
+		}
 	}
 	// .review-card__footer
 	&__footer {
@@ -1115,20 +1208,33 @@ body {
 .gift {
 	// .gift__body
 	&__body {
-		border-radius: 2.625rem;
-		padding: 3rem;
 		display: grid;
 		align-items: center;
 		border: rem(1) solid #bfae9f;
-		gap: 2rem;
+		padding: 1.5rem;
+		margin: 0 -1rem;
+		border-radius: 1.5rem;
+		gap: 1.5rem;
+		@media (min-width: $md5) {
+			gap: 2rem;
+			border-radius: 2.625rem;
+			margin: 0;
+		}
+		@media (min-width: $md4) {
+			padding: 2rem;
+		}
 		@media (min-width: $md2) {
+			padding: 3rem;
 			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 	// .gift__image
 	&__image {
-		border-radius: 1.5rem;
 		overflow: hidden;
+		border-radius: 0.75rem;
+		@media (min-width: $md4) {
+			border-radius: 1.5rem;
+		}
 	}
 	// .gift__content
 	&__content {
@@ -1141,23 +1247,37 @@ body {
 	}
 	// .gift__title
 	&__title {
+		@media (max-width: $md5) {
+			font-size: 1.5rem;
+		}
 	}
 	// .gift__subtitle
 	&__subtitle {
 		border-top: rem(1) solid #d5d7da;
-		padding-top: 1.5rem;
-		margin-top: 1.5rem;
-		font-size: 1.125rem;
 		line-height: 160%;
+		padding-top: 1rem;
+		margin-top: 1rem;
+		font-size: 1rem;
+		@media (min-width: $md4) {
+			font-size: 1.125rem;
+			padding-top: 1.5rem;
+			margin-top: 1.5rem;
+		}
 	}
 	// .gift__btn
 	&__btn {
-		margin-top: 1.5rem;
+		margin-top: 1rem;
+		@media (min-width: $md4) {
+			margin-top: 1.5rem;
+		}
 	}
 }
 
 .contacts {
-	padding-bottom: 5rem;
+	padding-bottom: 2.5rem;
+	@media (min-width: $md4) {
+		padding-bottom: 5rem;
+	}
 	.container {
 		@media (max-width: $md3) {
 			display: flex;
@@ -1316,9 +1436,9 @@ body {
 
 		@media (max-width: $md5) {
 			padding-left: 0;
-			&:not(:first-child) {
+			&:not(:last-child) {
 				padding-bottom: 1rem;
-				border-left-width: rem(1);
+				border-bottom-width: rem(1);
 			}
 		}
 		@media (max-width: $md0) {
