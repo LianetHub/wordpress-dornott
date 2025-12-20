@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 // preloader
 if ($('.preloader').length > 0) {
     let counting = setInterval(function () {
@@ -48,6 +46,7 @@ $(function () {
             }, 800);
         }
     });
+
     //  init Fancybox
     if (typeof Fancybox !== "undefined" && Fancybox !== null) {
         Fancybox.bind("[data-fancybox]", {
@@ -506,7 +505,29 @@ $(function () {
     }
 
 
+    if ($('.nav-slider').length) {
 
+        let policiesSlider = new Swiper('.nav-slider', {
+            slidesPerView: "auto",
+            spaceBetween: 4,
+            slideToClickedSlide: true,
+            initialSlide: $('.nav-slider__item .nav-slider__link.active').parent().index()
+        })
+
+        $(document).on('change', '#policies input[name="policy-type"]', function () {
+            const $this = $(this);
+            const $popup = $this.closest('#policies');
+            const $items = $popup.find('.switcher__item');
+            const currentIndex = $items.index($this.closest('.switcher__item'));
+            const $textBlocks = $popup.find('.popup__text');
+
+            $textBlocks.hide().eq(currentIndex).show();
+
+            if (policiesSlider) {
+                policiesSlider.slideTo(currentIndex);
+            }
+        });
+    }
     // product variation change price
 
     $(document).on('change', '.product-card .product-card__variations-input', function () {
@@ -541,16 +562,6 @@ $(function () {
         }
     });
 
-    // policies tabs
-    $(document).on('change', '#policies input[name="policy-type"]', function () {
-        const $this = $(this);
-        const $popup = $this.closest('#policies');
-        const $items = $popup.find('.switcher__item');
-        const currentIndex = $items.index($this.closest('.switcher__item'));
-        const $textBlocks = $popup.find('.popup__text');
-
-        $textBlocks.hide().eq(currentIndex).show();
-    });
 
 
     // header observer

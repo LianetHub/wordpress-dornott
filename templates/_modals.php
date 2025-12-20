@@ -153,7 +153,6 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 </div>
 
 
-
 <div class="popup" id="success-order">
 
 </div>
@@ -177,10 +176,6 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     <button type="button" data-fancybox-close class="popup__btn btn btn-primary">
         <?php echo esc_html($error_order_close_btn) ?>
     </button>
-</div>
-
-<div class="popup" id="city">
-
 </div>
 
 
@@ -219,9 +214,41 @@ $privacy_policy = get_field('privacy_policy', $option_page);
     ?>
 
     <?php if ($has_any_policy): ?>
-
-
-        <div class="popup__switcher switcher">
+        <nav class="popup__nav nav-slider swiper">
+            <ul class="swiper-wrapper">
+                <li class="nav-slider__item swiper-slide">
+                    <label class="switcher__item">
+                        <input type="radio"
+                            name="policy-type"
+                            value="payment-and-delivery"
+                            <?php echo $pd_attrs['checked']; ?>
+                            class="switcher__input hidden" hidden>
+                        <span class="switcher__btn">Оплата и доставка</span>
+                    </label>
+                </li>
+                <li class="nav-slider__item swiper-slide">
+                    <label class="switcher__item">
+                        <input type="radio"
+                            name="policy-type"
+                            value="data-protection"
+                            <?php echo $dp_attrs['checked']; ?>
+                            class="switcher__input hidden" hidden>
+                        <span class="switcher__btn">Защита данных</span>
+                    </label>
+                </li>
+                <li class="nav-slider__item swiper-slide">
+                    <label class="switcher__item">
+                        <input type="radio"
+                            name="policy-type"
+                            value="privacy-policy"
+                            <?php echo $pp_attrs['checked']; ?>
+                            class="switcher__input hidden" hidden>
+                        <span class="switcher__btn">Политика конф.</span>
+                    </label>
+                </li>
+            </ul>
+        </nav>
+        <!-- <div class="popup__switcher switcher">
             <?php if ($payment_and_delivery_policy): ?>
                 <label class="switcher__item">
                     <input type="radio"
@@ -252,7 +279,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
                     <span class="switcher__btn">Политика конф.</span>
                 </label>
             <?php endif; ?>
-        </div>
+        </div> -->
 
         <?php if ($payment_and_delivery_policy): ?>
             <div class="popup__text article-text" <?php echo $pd_attrs['display_style']; ?>>
@@ -279,3 +306,11 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 
 
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        Fancybox.show([{
+            src: "#policies"
+        }])
+    })
+</script>

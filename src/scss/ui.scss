@@ -528,6 +528,40 @@
 	}
 }
 
+.nav-slider {
+	border-radius: 0.75rem;
+	padding: 0.25rem;
+	background: #000;
+	color: #d5d7da;
+	width: fit-content;
+	margin: 0 auto;
+	max-width: 100%;
+	// .nav-slider__item
+	&__item {
+		flex-shrink: 0;
+		width: fit-content;
+	}
+	// .nav-slider__link
+	&__link {
+		font-size: 1.125rem;
+		line-height: 144.444%;
+		padding: 0.375rem 0.75rem;
+		display: inline-block;
+		transition: color 0.3s ease;
+		border-radius: 0.5rem;
+
+		@media (any-hover: hover) {
+			&:hover {
+				color: #fff;
+			}
+		}
+		&.active {
+			background: #ff7dbc;
+			color: #181d27;
+		}
+	}
+}
+
 //============ ОБЩИЕ ЭЛЕМЕНТЫ ============
 
 // Стилизация селекта

@@ -1578,11 +1578,8 @@ body {
 	}
 	& h2 {
 		line-height: 150%;
-		font-size: rem(20);
 		color: #9e703b;
-		@media (min-width: $md4) {
-			font-size: 1.75rem;
-		}
+		font-size: 1.75rem;
 		&:not(:first-child) {
 			margin-top: 1.12rem;
 		}
