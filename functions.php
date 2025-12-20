@@ -350,7 +350,7 @@ function handle_tbank_init()
 		$clean_phone = '+7' . substr($clean_phone, 2);
 	}
 
-	$order_id = 'ORD-' . time();
+	$order_id = time();
 	$amount = intval($payload['totals']['finalPrice']) * 100;
 
 

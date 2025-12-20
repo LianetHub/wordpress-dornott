@@ -1335,7 +1335,7 @@ $(function () {
                     const result = await response.json();
 
                     if (result.success && result.data.paymentUrl) {
-                        this.openPaymentIframe(result.data.paymentUrl);
+                        this.openPaymentIframe(result.data.paymentUrl, result.data.OrderId);
                     } else {
 
                         console.error('Ошибка инициализации платежа', result.data.message);
@@ -1348,7 +1348,7 @@ $(function () {
             }
         }
 
-        async openPaymentIframe(paymentUrl) {
+        async openPaymentIframe(paymentUrl, OrderId) {
             if (!window.tbankSDK) {
                 console.error("SDK не инициализирован");
                 return;
@@ -1362,26 +1362,70 @@ $(function () {
             try {
                 const MAIN_INTEGRATION_NAME = 'dornott-checkout-frame';
 
+                const statusMessages = {
+                    'REJECTED': 'Платеж отклонен банком. Проверьте данные карты, баланс или попробуйте другую карту.',
+                    'CANCELED': 'Оплата была отменена. Если это произошло случайно, вы можете попробовать еще раз.',
+                    'EXPIRED': 'Время на оплату истекло. Пожалуйста, создайте новый заказ.',
+                    'PROCESSING_ERROR': 'Произошла техническая ошибка при обработке данных. Пожалуйста, попробуйте позже.',
+                    'default': 'Произошла непредвиденная ошибка при оплате. Попробуйте еще раз или свяжитесь с поддержкой.'
+                };
+
                 const iframeConfig = {
-                    onSuccess: async () => {
-                        localStorage.removeItem(this.storageKey);
-                        await this.resetInterface();
-                        Fancybox.close();
-                        Fancybox.show([{
-                            src: "#success-submitting",
-                            type: "inline"
-                        }]);
-                    },
-                    onFail: (error) => {
-                        console.error('Payment Failed:', error);
-                        alert('Оплата не удалась. Пожалуйста, попробуйте еще раз.');
-                        this.resetInterface();
+                    status: {
+                        changedCallback: async (status) => {
+                            console.log("T-Bank Payment Status:", status);
+
+                            if (status === 'SUCCESS') {
+                                window.formController.sendForm(this.$form);
+                                localStorage.removeItem(this.storageKey);
+
+                                await this.resetInterface();
+                                Fancybox.close();
+
+                                const $successPopup = $('#success-order');
+                                if (OrderId) {
+                                    $successPopup.find('.order-number').text(`№ ${OrderId}`);
+                                }
+
+                                Fancybox.show([{
+                                    src: "#success-order",
+                                    type: "inline",
+                                    autoFocus: false
+                                }]);
+
+                            } else if (['REJECTED', 'CANCELED', 'EXPIRED', 'PROCESSING_ERROR'].includes(status)) {
+                                console.log('work script status', status);
+
+                                const message = statusMessages[status] || statusMessages['default'];
+
+                                await this.resetInterface();
+
+
+                                const instance = Fancybox.getInstance();
+                                if (instance) {
+                                    instance.destroy();
+                                }
+
+
+                                const $errorPopup = $('#error-order');
+                                $errorPopup.find('.popup__subtitle').text(message);
+
+
+                                setTimeout(() => {
+                                    Fancybox.show([{
+                                        src: "#error-order",
+                                        type: "inline",
+                                        autoFocus: false,
+                                        trapFocus: false,
+                                        placeFocusBack: false
+                                    }]);
+                                }, 100);
+                            }
+                        }
                     }
                 };
 
-
                 this.currentPaymentWidget = await window.tbankSDK.iframe.create(MAIN_INTEGRATION_NAME, iframeConfig);
-
                 const container = this.$paymentContainer[0];
                 await this.currentPaymentWidget.mount(container, paymentUrl);
 
@@ -1394,7 +1438,6 @@ $(function () {
         async resetInterface() {
             if (this.currentPaymentWidget) {
                 try {
-
                     await this.currentPaymentWidget.unmount();
                     this.currentPaymentWidget = null;
                 } catch (e) {

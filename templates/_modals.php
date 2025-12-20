@@ -154,7 +154,20 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 
 
 <div class="popup" id="success-order">
-
+    <?php if ($success_icon): ?>
+        <div class="popup__icon">
+            <img src="<?php echo esc_url($success_icon['url']); ?>" alt="<?php echo esc_attr($success_icon['alt']) ?: 'Иконка'; ?>">
+        </div>
+    <?php endif; ?>
+    <h3 class="popup__title color-accent title-sm">
+        Готово!
+    </h3>
+    <p class="popup__subtitle">
+        Заказ <span class="order-number">№ 0012374</span> успешно оплачен. Менеджер свяжется с вами в ближайшее время для уточнения деталей по заказа. Чек об оплате отправили на ваш e-mail. C теплом и заботой Dornott!
+    </p>
+    <button type="button" data-fancybox-close class="popup__btn btn btn-primary">
+        ок, закрыть
+    </button>
 </div>
 
 <div class="popup popup--background-decor" id="error-order">
