@@ -29,8 +29,12 @@ if ($('.preloader').length > 0) {
 $(function () {
 
     // Smooth Scroll Anchors
-    $('a[href^="#"]').on('click', function (event) {
-        const target = $(this.getAttribute('href'));
+    $('a[href^="#"]').not('[data-fancybox]').on('click', function (event) {
+        const href = this.getAttribute('href');
+
+        if (href === '#') return;
+
+        const target = $(href);
         const header = $('.header');
 
         if (target.length) {
@@ -44,7 +48,6 @@ $(function () {
             }, 800);
         }
     });
-
     //  init Fancybox
     if (typeof Fancybox !== "undefined" && Fancybox !== null) {
         Fancybox.bind("[data-fancybox]", {
@@ -75,6 +78,22 @@ $(function () {
                         }
 
                     }
+                },
+                close: (fancyboxRef) => {
+                    if (fancyboxRef.getSlide().src === '#cart') {
+                        const target = $('#catalog');
+                        const header = $('.header');
+
+                        if (target.length) {
+                            const headerHeight = header.outerHeight() || 0;
+                            const targetPosition = target.offset().top - headerHeight;
+
+                            $('html, body').stop().animate({
+                                scrollTop: targetPosition
+                            }, 800);
+                        }
+                    }
+
                 }
             }
         });
