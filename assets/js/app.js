@@ -1251,7 +1251,7 @@ $(function () {
             data.forEach(item => {
                 this.$container.append(`
                 <div class="cart__item" data-id="${item.id}">
-                    <div class="cart__item-block">
+                    <div class="cart__item-block cart__item-block--details">
                         <label class="cart__item-checkbox checkbox">
                             <input type="checkbox" class="checkbox__input hidden" hidden checked>
                             <span class="checkbox__text"></span>
@@ -1262,14 +1262,14 @@ $(function () {
                             <div class="cart__item-name">${item.name}</div>
                         </div>
                     </div>
-                    <div class="cart__item-block">
-                        <div class="cart__item-quantity quantity-block">
+                    <div class="cart__item-block cart__item-block--quantity">
+                        <div class="quantity-block">
                             <button type="button" class="quantity-block__down icon-minus"></button>
                             <input type="text" class="quantity-block__input" value="${item.quantity}">
                             <button type="button" class="quantity-block__up icon-plus"></button>
                         </div>
                     </div>
-                    <div class="cart__item-block">
+                    <div class="cart__item-block cart__item-block--price">
                         <div class="cart__item-price price-block">
                             <div class="price-block__header">
                                 <div class="price-block__old">${item.regular_price > item.price ? item.regular_price.toLocaleString() + ' ₽' : ''}</div>

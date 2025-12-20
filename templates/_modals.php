@@ -248,38 +248,6 @@ $privacy_policy = get_field('privacy_policy', $option_page);
                 </li>
             </ul>
         </nav>
-        <!-- <div class="popup__switcher switcher">
-            <?php if ($payment_and_delivery_policy): ?>
-                <label class="switcher__item">
-                    <input type="radio"
-                        name="policy-type"
-                        value="payment-and-delivery"
-                        <?php echo $pd_attrs['checked']; ?>
-                        class="switcher__input hidden" hidden>
-                    <span class="switcher__btn">Оплата и доставка</span>
-                </label>
-            <?php endif; ?>
-            <?php if ($data_protection_policy): ?>
-                <label class="switcher__item">
-                    <input type="radio"
-                        name="policy-type"
-                        value="data-protection"
-                        <?php echo $dp_attrs['checked']; ?>
-                        class="switcher__input hidden" hidden>
-                    <span class="switcher__btn">Защита данных</span>
-                </label>
-            <?php endif; ?>
-            <?php if ($privacy_policy): ?>
-                <label class="switcher__item">
-                    <input type="radio"
-                        name="policy-type"
-                        value="privacy-policy"
-                        <?php echo $pp_attrs['checked']; ?>
-                        class="switcher__input hidden" hidden>
-                    <span class="switcher__btn">Политика конф.</span>
-                </label>
-            <?php endif; ?>
-        </div> -->
 
         <?php if ($payment_and_delivery_policy): ?>
             <div class="popup__text article-text" <?php echo $pd_attrs['display_style']; ?>>
@@ -306,11 +274,3 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 
 
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        Fancybox.show([{
-            src: "#policies"
-        }])
-    })
-</script>

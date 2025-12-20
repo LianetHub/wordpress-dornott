@@ -82,6 +82,7 @@
 			right: 1.5rem;
 		}
 		&.cart {
+			max-width: 100%;
 			@media (min-width: $md2) {
 				max-width: rem(1280);
 			}
@@ -168,14 +169,7 @@
 			margin-top: rem(34);
 		}
 	}
-	// .popup__switcher
-	// &__switcher {
-	// 	overflow: hidden;
-	// 	overflow-y: auto;
-	// 	.switcher__item {
-	// 		white-space: nowrap;
-	// 	}
-	// }
+
 	&__nav {
 		&.swiper {
 			align-self: flex-start;

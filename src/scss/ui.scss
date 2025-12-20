@@ -348,14 +348,19 @@
 
 .quantity-block {
 	display: flex;
-	padding: 0.4375rem 0.375rem;
 	align-items: center;
 	gap: 0.25rem;
 	background: #fff;
 	border-radius: 0.75rem;
-	width: rem(136);
 	flex-shrink: 0;
-	border: rem(1) solid #e9eaeb;
+	border: rem(1) solid #a4a7ae;
+	padding: rem(2) 0.25rem;
+	width: rem(124);
+	@media (min-width: $md4) {
+		width: rem(136);
+		border: rem(1) solid #e9eaeb;
+		padding: 0.4375rem 0.375rem;
+	}
 	&__up,
 	&__down {
 		width: rem(42);
