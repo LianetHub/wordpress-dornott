@@ -43,6 +43,21 @@ add_action('wp_enqueue_scripts', 'theme_enqueue_scripts');
 // 3. THEME SUPPORT AND UTILITIES
 // =========================================================================
 
+
+function load_env_configs($path)
+{
+	if (!file_exists($path)) return;
+
+	$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	foreach ($lines as $line) {
+		if (strpos(trim($line), '#') === 0) continue;
+		list($name, $value) = explode('=', $line, 2);
+		$_ENV[trim($name)] = trim($value);
+	}
+}
+
+load_env_configs(ABSPATH . '.env');
+
 // Allow SVG file uploads
 function allow_svg_uploads($mimes)
 {
@@ -306,4 +321,118 @@ function handle_checkout_form()
 		'message' => 'Заказ принят, перенаправляем на оплату...',
 		'redirect_url' => '#'
 	]);
+}
+
+
+add_action('wp_ajax_init_tbank_payment', 'handle_tbank_init');
+add_action('wp_ajax_nopriv_init_tbank_payment', 'handle_tbank_init');
+
+function handle_tbank_init()
+{
+	$request_body = file_get_contents('php://input');
+	$payload = json_decode($request_body, true);
+
+	if (!$payload) wp_send_json_error(['message' => 'Пустой запрос']);
+
+	$terminal_key = $_ENV['TBANK_TERMINAL_KEY'] ?? '';
+	$secret_key = $_ENV['TBANK_SECRET_KEY'] ?? '';
+
+	$email = '';
+	$raw_phone = '';
+	foreach ($payload['order_info'] as $info) {
+		if ($info['name'] === 'email') $email = $info['value'];
+		if ($info['name'] === 'phone') $raw_phone = $info['value'];
+	}
+
+	$clean_phone = '+' . preg_replace('/[^0-9]/', '', $raw_phone);
+
+	if (strpos($clean_phone, '+8') === 0) {
+		$clean_phone = '+7' . substr($clean_phone, 2);
+	}
+
+	$order_id = 'ORD-' . time();
+	$amount = intval($payload['totals']['finalPrice']) * 100;
+
+
+
+	$params = [
+		'TerminalKey' => $terminal_key,
+		'Amount'      => $amount,
+		'OrderId'     => $order_id,
+		'Description' => 'Оплата заказа №' . $order_id,
+		'DATA'        => [
+			'Email' => $email,
+			'Phone' => $clean_phone
+		],
+		'Receipt'     => [
+			'Email'    => $email,
+			'Phone'    => $clean_phone,
+			'Taxation' => 'osn',
+			'Items'    => []
+		]
+	];
+
+
+
+	foreach ($payload['items'] as $item) {
+		$item_amount = intval($item['price']) * intval($item['quantity']) * 100;
+		$params['Receipt']['Items'][] = [
+			'Name'     => mb_strimwidth($item['name'], 0, 128),
+			'Price'    => intval($item['price']) * 100,
+			'Quantity' => intval($item['quantity']),
+			'Amount'   => $item_amount,
+			'Tax'      => 'none'
+		];
+	}
+
+	if (isset($payload['totals']['deliveryPrice']) && $payload['totals']['deliveryPrice'] > 0) {
+		$params['Receipt']['Items'][] = [
+			'Name'     => 'Доставка',
+			'Price'    => intval($payload['totals']['deliveryPrice']) * 100,
+			'Quantity' => 1,
+			'Amount'   => intval($payload['totals']['deliveryPrice']) * 100,
+			'Tax'      => 'none'
+		];
+	}
+
+	$token_params = [
+		'TerminalKey' => (string)$params['TerminalKey'],
+		'Amount'      => (string)$params['Amount'],
+		'OrderId'     => (string)$params['OrderId'],
+		'Description' => (string)$params['Description'],
+		'Password'    => (string)$secret_key
+	];
+
+	ksort($token_params);
+
+	$token_str = '';
+	foreach ($token_params as $val) {
+		$token_str .= (string)$val;
+	}
+
+	$params['Token'] = hash('sha256', $token_str);
+
+	$response = wp_remote_post('https://securepay.tinkoff.ru/v2/Init', [
+		'headers' => [
+			'Content-Type' => 'application/json',
+			'User-Agent'   => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+		],
+		'body'    => json_encode($params),
+		'timeout' => 30
+	]);
+
+	if (is_wp_error($response)) {
+		wp_send_json_error(['message' => $response->get_error_message()]);
+	}
+
+	$body = json_decode(wp_remote_retrieve_body($response), true);
+
+
+	if (isset($body['Success']) && $body['Success']) {
+		wp_send_json_success(['paymentUrl' => $body['PaymentURL']]);
+	} else {
+		$error = $body['Message'] ?? 'Ошибка API';
+		$details = $body['Details'] ?? '';
+		wp_send_json_error(['message' => "Банк: $error. $details"]);
+	}
 }

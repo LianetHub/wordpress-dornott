@@ -651,6 +651,10 @@ body.is-loaded .preloader {
 }
 
 .cart__body {
+  margin-top: 1.5rem;
+}
+
+.cart__form {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -659,7 +663,6 @@ body.is-loaded .preloader {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  margin-top: 1.5rem;
 }
 
 .cart__main {
@@ -4662,7 +4665,7 @@ html {
     max-width: 80rem;
   }
 
-  .cart__body {
+  .cart__form {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
         -ms-flex-direction: row;

@@ -78,8 +78,11 @@ $(function () {
 
                     }
                 },
-                close: (fancyboxRef) => {
-                    if (fancyboxRef.getSlide().src === '#cart') {
+                close: (fancyboxRef, event) => {
+                    const targetElement = event.target;
+
+
+                    if (targetElement && targetElement.hasAttribute('data-goto-catalog')) {
                         const target = $('#catalog');
                         const header = $('.header');
 
@@ -93,7 +96,15 @@ $(function () {
                         }
                     }
 
-                }
+
+                },
+                destroy: (fancyboxRef) => {
+
+                    if (fancyboxRef.getSlide().src === '#cart') {
+                        window?.dornottCart.resetInterface()
+                    }
+
+                },
             }
         });
     }
@@ -743,6 +754,11 @@ $(function () {
             $(document).on('keydown', 'input[type="tel"]', (e) => this.onPhoneKeyDown(e));
             $(document).on('input', 'input[type="tel"]', (e) => this.onPhoneInput(e));
             $(document).on('paste', 'input[type="tel"]', (e) => this.onPhonePaste(e));
+            $(document).on('focus', 'input[type="tel"]', (e) => {
+                if (!e.target.value) {
+                    e.target.value = "+7 ";
+                }
+            });
 
             $(document).off('change', this.selectors.fileInput).on('change', this.selectors.fileInput, (e) => this.handleFileChange(e));
             $(document).off('click', this.selectors.fileRemove).on('click', this.selectors.fileRemove, (e) => this.handleFileRemove(e));
@@ -750,6 +766,9 @@ $(function () {
 
         bindSubmit($form) {
             $form.on('submit', async (e) => {
+                if ($form.attr('id') === 'cart-form') {
+                    return;
+                }
                 e.preventDefault();
 
                 if (this.validateForm($form)) {
@@ -759,6 +778,7 @@ $(function () {
         }
 
         async sendForm($form) {
+            console.log('submit from form controller');
             const url = $form.attr('action');
             const method = $form.attr('method') || 'POST';
             const formData = new FormData($form[0]);
@@ -815,7 +835,6 @@ $(function () {
         }
 
         validateField($field) {
-
             if (!$field.is(':visible')) {
                 this.toggleErrorState($field, true);
                 return true;
@@ -914,12 +933,14 @@ $(function () {
         }
 
         onPhoneInput(e) {
-            let input = e.target,
-                inputNumbersValue = input.value.replace(/\D/g, ''),
-                selectionStart = input.selectionStart,
-                formattedInputValue = "";
+            const input = e.target;
+            let inputNumbersValue = input.value.replace(/\D/g, '');
+            const selectionStart = input.selectionStart;
+            let formattedInputValue = "";
 
-            if (!inputNumbersValue) return input.value = "";
+            if (!inputNumbersValue) {
+                return input.value = "";
+            }
 
             if (input.value.length != selectionStart) {
                 if (e.originalEvent.data && /\D/g.test(e.originalEvent.data)) {
@@ -928,41 +949,41 @@ $(function () {
                 return;
             }
 
-            if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
-                if (inputNumbersValue[0] == "9") inputNumbersValue = "7" + inputNumbersValue;
-                let firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7";
-                formattedInputValue = firstSymbols + " ";
-                if (inputNumbersValue.length > 1) {
-                    formattedInputValue += '(' + inputNumbersValue.substring(1, 4);
-                }
-                if (inputNumbersValue.length >= 5) {
-                    formattedInputValue += ') ' + inputNumbersValue.substring(4, 7);
-                }
-                if (inputNumbersValue.length >= 8) {
-                    formattedInputValue += '-' + inputNumbersValue.substring(7, 9);
-                }
-                if (inputNumbersValue.length >= 10) {
-                    formattedInputValue += '-' + inputNumbersValue.substring(9, 11);
-                }
-            } else {
-                formattedInputValue = '+' + inputNumbersValue.substring(0, 16);
+            if (inputNumbersValue.length > 11) {
+                inputNumbersValue = inputNumbersValue.substring(0, 11);
             }
+
+            formattedInputValue = "+7 (";
+
+            if (inputNumbersValue.length >= 2) {
+                formattedInputValue += inputNumbersValue.substring(1, 4);
+            }
+            if (inputNumbersValue.length >= 5) {
+                formattedInputValue += ") " + inputNumbersValue.substring(4, 7);
+            }
+            if (inputNumbersValue.length >= 8) {
+                formattedInputValue += "-" + inputNumbersValue.substring(7, 9);
+            }
+            if (inputNumbersValue.length >= 10) {
+                formattedInputValue += "-" + inputNumbersValue.substring(9, 11);
+            }
+
             input.value = formattedInputValue;
         }
 
         onPhoneKeyDown(e) {
-            let inputValue = e.target.value.replace(/\D/g, '');
+            const inputValue = e.target.value.replace(/\D/g, '');
             if (e.keyCode == 8 && inputValue.length == 1) {
                 e.target.value = "";
             }
         }
 
         onPhonePaste(e) {
-            let input = e.target,
-                inputNumbersValue = input.value.replace(/\D/g, '');
-            let pasted = e.originalEvent.clipboardData || window.clipboardData;
+            const input = e.target;
+            const inputNumbersValue = input.value.replace(/\D/g, '');
+            const pasted = e.originalEvent.clipboardData || window.clipboardData;
             if (pasted) {
-                let pastedText = pasted.getData('Text');
+                const pastedText = pasted.getData('Text');
                 if (/\D/g.test(pastedText)) {
                     input.value = inputNumbersValue;
                 }
@@ -976,9 +997,13 @@ $(function () {
         constructor() {
             this.storageKey = 'dornott_cart';
             this.$form = $('#cart-form');
+            this.$cartBody = $('.cart__body');
             this.$container = $('#cart-items-container');
             this.$cartToggler = $('[data-cart-toggler]');
             this.$addressStep = this.$form.find('.order__step').eq(2);
+            this.$checkoutBtn = $('#checkout-button');
+            this.$paymentContainer = $("#payment-container");
+            this.$cartTitle = $('.cart__title');
 
             this.init();
         }
@@ -1202,14 +1227,14 @@ $(function () {
             const totals = this.calculateTotals();
 
             if (data.length > 0) {
-                this.$form.show();
+                this.$cartBody.show();
                 $('#cart-empty-state').hide();
                 if (!this.$cartToggler.find('.cart-quantity').length) {
                     this.$cartToggler.append('<span class="cart-quantity"></span>');
                 }
                 this.$cartToggler.find('.cart-quantity').text(totals.totalQty);
             } else {
-                this.$form.hide();
+                this.$cartBody.hide();
                 $('#cart-empty-state').show();
                 this.$cartToggler.find('.cart-quantity').remove();
             }
@@ -1265,7 +1290,7 @@ $(function () {
                     <div class="cart__item-block cart__item-block--quantity">
                         <div class="quantity-block">
                             <button type="button" class="quantity-block__down icon-minus"></button>
-                            <input type="text" class="quantity-block__input" value="${item.quantity}">
+                            <input type="number" class="quantity-block__input" value="${item.quantity}">
                             <button type="button" class="quantity-block__up icon-plus"></button>
                         </div>
                     </div>
@@ -1285,17 +1310,100 @@ $(function () {
             this.updateSelectAllState();
         }
 
-        handleSubmit(e) {
+        async handleSubmit(e) {
             e.preventDefault();
             if (this.validateForm()) {
+                this.$checkoutBtn.addClass('_loading');
+
                 const formData = this.$form.serializeArray().filter(item => item.name !== 'select_all');
                 const payload = {
                     order_info: formData,
                     items: this.getData(),
                     totals: this.calculateTotals()
                 };
-                console.log('Final Payload:', payload);
+
+                try {
+                    const response = await fetch('/wp-admin/admin-ajax.php?action=init_tbank_payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success && result.data.paymentUrl) {
+                        this.openPaymentIframe(result.data.paymentUrl);
+                    } else {
+
+                        console.error('Ошибка инициализации платежа', result.data.message);
+                        this.$checkoutBtn.removeClass("_loading");
+                    }
+                } catch (error) {
+                    console.error('Произошла сетевая ошибка:', error);
+                    this.$checkoutBtn.removeClass("_loading");
+                }
             }
+        }
+
+        async openPaymentIframe(paymentUrl) {
+            if (!window.tbankSDK) {
+                console.error("SDK не инициализирован");
+                return;
+            }
+
+            this.$paymentContainer.show();
+            this.$form.hide();
+            this.$cartTitle.text('Оплата заказа');
+
+            try {
+                const MAIN_INTEGRATION_NAME = 'dornott-checkout-frame';
+
+                const iframeConfig = {
+                    onSuccess: async () => {
+                        localStorage.removeItem(this.storageKey);
+                        await this.resetInterface();
+                        Fancybox.close();
+                        Fancybox.show([{
+                            src: "#success-submitting",
+                            type: "inline"
+                        }]);
+                    },
+                    onFail: (error) => {
+                        console.error('Payment Failed:', error);
+                        alert('Оплата не удалась. Пожалуйста, попробуйте еще раз.');
+                        this.resetInterface();
+                    }
+                };
+
+
+                this.currentPaymentWidget = await window.tbankSDK.iframe.create(MAIN_INTEGRATION_NAME, iframeConfig);
+
+                const container = this.$paymentContainer[0];
+                await this.currentPaymentWidget.mount(container, paymentUrl);
+
+            } catch (error) {
+                console.error('Iframe mount error:', error);
+                this.resetInterface();
+            }
+        }
+
+        async resetInterface() {
+            if (this.currentPaymentWidget) {
+                try {
+
+                    await this.currentPaymentWidget.unmount();
+                    this.currentPaymentWidget = null;
+                } catch (e) {
+                    console.warn("Ошибка при unmount:", e);
+                }
+            }
+
+            this.$paymentContainer.hide().html('');
+            this.$form.show();
+            this.$cartTitle.text('Корзина');
+            this.$checkoutBtn.removeClass("_loading");
         }
     }
 
