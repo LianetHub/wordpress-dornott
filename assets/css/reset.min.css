@@ -19,7 +19,6 @@ body {
   margin: 0;
   padding: 0;
   font-size: 16px;
-  scroll-behavior: smooth;
 }
 
 article,
@@ -71,9 +70,11 @@ a {
   border: none;
   color: inherit;
 }
+
 a:focus, a:active {
   outline: none;
 }
+
 a {
   -webkit-tap-highlight-color: transparent;
 }
@@ -168,13 +169,15 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield;
+  /* Firefox */
 }
 
 [type=search] {
   -webkit-appearance: textfield;
   outline-offset: -2px;
 }
+
 [type=search]::-webkit-search-decoration {
   -webkit-appearance: none;
 }

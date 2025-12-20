@@ -28,6 +28,22 @@ if ($('.preloader').length > 0) {
 
 $(function () {
 
+    // Smooth Scroll Anchors
+    $('a[href^="#"]').on('click', function (event) {
+        const target = $(this.getAttribute('href'));
+        const header = $('.header');
+
+        if (target.length) {
+            event.preventDefault();
+
+            const headerHeight = header.outerHeight() || 0;
+            const targetPosition = target.offset().top - headerHeight;
+
+            $('html, body').stop().animate({
+                scrollTop: targetPosition
+            }, 800);
+        }
+    });
 
     //  init Fancybox
     if (typeof Fancybox !== "undefined" && Fancybox !== null) {
