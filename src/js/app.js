@@ -805,7 +805,10 @@ $(function () {
                             window.dornottCart.updateInterface();
                         }
 
-                        Fancybox.close();
+                        const instance = Fancybox.getInstance();
+                        if (instance) {
+                            instance.destroy();
+                        }
                         Fancybox.show([{
                             src: "#success-submitting",
                             type: "inline"
@@ -827,7 +830,10 @@ $(function () {
         }
 
         showErrorPopup() {
-            Fancybox.close();
+            const instance = Fancybox.getInstance();
+            if (instance) {
+                instance.destroy();
+            }
             Fancybox.show([{
                 src: "#error-submitting",
                 type: "inline"
@@ -1380,7 +1386,11 @@ $(function () {
                                 localStorage.removeItem(this.storageKey);
 
                                 await this.resetInterface();
-                                Fancybox.close();
+                                const instance = Fancybox.getInstance();
+                                if (instance) {
+                                    instance.destroy();
+                                }
+
 
                                 const $successPopup = $('#success-order');
                                 if (OrderId) {
