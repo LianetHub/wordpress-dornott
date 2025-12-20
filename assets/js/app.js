@@ -728,35 +728,44 @@ $(function () {
 
                 if (response.ok) {
                     const result = await response.json();
-                    $form[0].reset();
-                    $form.find('.form__file-preview').remove();
-                    $form.find('.uploaded').removeClass('uploaded');
 
-                    if (window.dornottCart && $form.attr('id') === 'cart-form') {
-                        localStorage.removeItem(window.dornottCart.storageKey);
-                        window.dornottCart.updateInterface();
+                    if (result.success) {
+                        $form[0].reset();
+                        $form.find('.form__file-preview').remove();
+                        $form.find('.uploaded').removeClass('uploaded');
+
+                        if (window.dornottCart && $form.attr('id') === 'cart-form') {
+                            localStorage.removeItem(window.dornottCart.storageKey);
+                            window.dornottCart.updateInterface();
+                        }
+
+                        Fancybox.close();
+                        Fancybox.show([{
+                            src: "#success-submitting",
+                            type: "inline"
+                        }]);
+                    } else {
+                        console.error('Ошибка логики сервера:', result.data.message);
+                        this.showErrorPopup();
                     }
-
-                    Fancybox.show([{
-                        src: "#success-submitting",
-                        type: "inline"
-                    }]);
                 } else {
-                    console.error('Ошибка сервера');
-                    Fancybox.show([{
-                        src: "#error-submitting",
-                        type: "inline"
-                    }]);
+                    console.error('Ошибка сервера (HTTP статус)');
+                    this.showErrorPopup();
                 }
             } catch (error) {
                 console.error('Ошибка сети', error);
-                Fancybox.show([{
-                    src: "#error-submitting",
-                    type: "inline"
-                }]);
+                this.showErrorPopup();
             } finally {
                 $submitBtn.removeClass(this.selectors.loadingClass);
             }
+        }
+
+        showErrorPopup() {
+            Fancybox.close();
+            Fancybox.show([{
+                src: "#error-submitting",
+                type: "inline"
+            }]);
         }
 
         validateField($field) {

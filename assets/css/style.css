@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "Arimo";
-  src: url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Arimo-VariableFont_wght.woff") format("woff");
+  font-family: "Comfortaa";
+  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
   font-weight: 100 900;
   font-stretch: 75% 125%;
   font-style: normal;
@@ -16,16 +16,8 @@
 }
 
 @font-face {
-  font-family: "PTSans";
-  font-display: swap;
-  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
-  font-weight: 700;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Comfortaa";
-  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
+  font-family: "Arimo";
+  src: url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Arimo-VariableFont_wght.woff") format("woff");
   font-weight: 100 900;
   font-stretch: 75% 125%;
   font-style: normal;
@@ -35,9 +27,17 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
-  font-weight: 400;
+  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
+  font-weight: 700;
   font-style: italic;
+}
+
+@font-face {
+  font-family: "PTSans";
+  font-display: swap;
+  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
 }
 
 @font-face {
@@ -51,9 +51,9 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
+  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
 }
 
 .checkbox__input:checked + .checkbox__text::before,
@@ -343,15 +343,7 @@
   height: 100vh;
   background: #4e3e2e;
   opacity: 1;
-  -webkit-transition: all 0.3s ease;
-  transition: all 0.3s ease;
-  -webkit-transition-duration: 500ms;
-          transition-duration: 500ms;
-  -webkit-transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
-          transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
   z-index: 200;
-  -webkit-transition-delay: 0.25s;
-          transition-delay: 0.25s;
 }
 
 .preloader::before,
@@ -380,6 +372,14 @@
 body.is-loaded .preloader {
   left: calc(-100% - 12.5rem);
   visibility: hidden;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  -webkit-transition-duration: 500ms;
+          transition-duration: 500ms;
+  -webkit-transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+          transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+  -webkit-transition-delay: 0.25s;
+          transition-delay: 0.25s;
 }
 
 .preloader__inner {
@@ -3370,6 +3370,11 @@ body {
 
 .reviews__pagination .swiper-pagination-current {
   font-size: 2rem;
+}
+
+.reviews__switcher {
+  -ms-flex-item-align: start;
+      align-self: flex-start;
 }
 
 .reviews__content {
