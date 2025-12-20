@@ -39,12 +39,29 @@ function disable_wc_pages()
     }
 }
 
-add_action('admin_menu', 'hide_wc_admin_menus', 99);
+add_action('init', function () {
+    if (class_exists('WooCommerce')) {
+        update_option('woocommerce_coming_soon', 'no');
+        update_option('woocommerce_store_pages_only', 'no');
+    }
+});
+
+add_action('admin_menu', 'hide_wc_admin_menus', 999);
 function hide_wc_admin_menus()
 {
+    remove_menu_page('woocommerce');
     remove_menu_page('wc-admin&path=/analytics/overview');
-    remove_menu_page('admin.php?page=wc-settings&tab=checkout&from=PAYMENTS_MENU_ITEM');
     remove_menu_page('woocommerce-marketing');
+    remove_menu_page('wc-admin&path=/payments/overview');
+    remove_menu_page('admin.php?page=wc-settings&tab=checkout');
+    remove_menu_page('admin.php?page=wc-settings&tab=checkout&from=PAYMENTS_MENU_ITEM');
+
+    remove_submenu_page('edit.php?post_type=product', 'product_attributes');
+    remove_submenu_page('edit.php?post_type=product', 'edit-tags.php?taxonomy=product_cat&post_type=product');
+    remove_submenu_page('edit.php?post_type=product', 'edit-tags.php?taxonomy=product_tag&post_type=product');
+    remove_submenu_page('edit.php?post_type=product', 'edit-tags.php?taxonomy=product_brand&post_type=product');
+    remove_submenu_page('edit.php?post_type=product', 'edit-tags.php?taxonomy=pwb-brand&post_type=product');
+    remove_submenu_page('edit.php?post_type=product', 'product-reviews');
 }
 
 add_action('wp_enqueue_scripts', 'dequeue_unnecessary_wc_scripts', 99);
@@ -71,21 +88,26 @@ function custom_disable_product_pages($args)
     $args['has_archive']         = false;
     $args['rewrite']             = false;
     $args['query_var']           = false;
+    $args['supports']            = array('title', 'editor', 'thumbnail');
 
     return $args;
 }
 
-add_filter('woocommerce_taxonomy_args_product_cat', 'custom_disable_product_taxonomy_archives');
-add_filter('woocommerce_taxonomy_args_product_tag', 'custom_disable_product_taxonomy_archives');
-function custom_disable_product_taxonomy_archives($args)
+add_action('init', 'custom_remove_product_taxonomies', 100);
+function custom_remove_product_taxonomies()
 {
-    $args['public']              = false;
-    $args['publicly_queryable']  = false;
-    $args['rewrite']             = false;
-    $args['query_var']           = false;
-    $args['show_ui']             = true;
+    unregister_taxonomy_for_object_type('product_cat', 'product');
+    unregister_taxonomy_for_object_type('product_tag', 'product');
+    unregister_taxonomy_for_object_type('product_brand', 'product');
+    unregister_taxonomy_for_object_type('pwb-brand', 'product');
+}
 
-    return $args;
+add_action('init', 'custom_remove_product_features', 999);
+function custom_remove_product_features()
+{
+    remove_post_type_support('product', 'comments');
+    remove_post_type_support('product', 'reviews');
+    remove_post_type_support('product', 'excerpt');
 }
 
 add_filter('wpseo_sitemap_exclude_post_type', 'custom_exclude_product_from_sitemap', 10, 2);
@@ -100,7 +122,8 @@ function custom_exclude_product_from_sitemap($exclude, $post_type)
 add_filter('wpseo_sitemap_exclude_taxonomy', 'custom_exclude_product_taxonomy_from_sitemap', 10, 2);
 function custom_exclude_product_taxonomy_from_sitemap($exclude, $taxonomy)
 {
-    if ($taxonomy === 'product_cat' || $taxonomy === 'product_tag') {
+    $taxonomies = array('product_cat', 'product_tag', 'product_brand', 'pwb-brand');
+    if (in_array($taxonomy, $taxonomies)) {
         return true;
     }
     return $exclude;
@@ -113,4 +136,11 @@ function custom_remove_wc_query_vars($vars)
     unset($vars['product_cat']);
     unset($vars['product_tag']);
     return $vars;
+}
+
+add_filter('woocommerce_product_tabs', 'custom_remove_product_tabs', 98);
+function custom_remove_product_tabs($tabs)
+{
+    unset($tabs['reviews']);
+    return $tabs;
 }

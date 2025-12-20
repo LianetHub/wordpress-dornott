@@ -193,18 +193,18 @@ add_action('phpmailer_init', 'configure_smtp_mailer');
 
 function configure_smtp_mailer($phpmailer)
 {
-	if (!defined('SMTP_HOST') || !defined('SMTP_USERNAME') || !defined('SMTP_PASSWORD')) {
+	if (!$_ENV['SMTP_HOST'] || !$_ENV['SMTP_USERNAME'] || !$_ENV['SMTP_PASSWORD']) {
 		return;
 	}
 
 	$phpmailer->isSMTP();
-	$phpmailer->Host       = SMTP_HOST;
+	$phpmailer->Host       = $_ENV['SMTP_HOST'];
 	$phpmailer->SMTPAuth   = true;
 	$phpmailer->Port       = 465;
-	$phpmailer->Username   = SMTP_USERNAME;
-	$phpmailer->Password   = SMTP_PASSWORD;
+	$phpmailer->Username   = $_ENV['SMTP_USERNAME'];
+	$phpmailer->Password   = $_ENV['SMTP_PASSWORD'];
 	$phpmailer->SMTPSecure = 'ssl';
-	$phpmailer->From       = SMTP_USERNAME;
+	$phpmailer->From       = $_ENV['SMTP_USERNAME'];
 	$phpmailer->FromName   = get_bloginfo('name');
 }
 
