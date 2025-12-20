@@ -137,7 +137,7 @@ $address = get_field('address', 'option') ?? '';
                 </div>
             </div>
         </form>
-        <div id="payment-container" style="display: none; min-height: 550px; width: 100%;"></div>
+        <div id="payment-container" class="cart__payment-widget" style="display: none;"></div>
     </div>
 </div>
 <script src="https://integrationjs.tbank.ru/integration.js" onload="onPaymentIntegrationLoad()" async></script>

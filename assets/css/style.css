@@ -624,10 +624,15 @@ body.is-loaded .preloader {
 
 .cart {
   max-width: 80rem;
+  width: 100%;
   border-radius: 1.5rem;
   background: #fff;
   text-align: left;
   padding: 1.75rem 1rem;
+}
+
+.cart.open-payment {
+  background: #f6f7f8;
 }
 
 .cart__title {
@@ -946,6 +951,11 @@ body.is-loaded .preloader {
   width: 2rem;
   height: 2rem;
   font-size: 2rem;
+}
+
+.cart__payment-widget {
+  min-height: 31.25rem;
+  width: 100%;
 }
 
 .order {

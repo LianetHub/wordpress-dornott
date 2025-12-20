@@ -7,10 +7,14 @@
 
 .cart {
 	max-width: rem(1280);
+	width: 100%;
 	border-radius: 1.5rem;
 	background: #fff;
 	text-align: left;
 	padding: rem(28) 1rem;
+	&.open-payment {
+		background: #f6f7f8;
+	}
 	@media (min-width: $md4) {
 		padding: 2rem;
 	}
@@ -338,6 +342,11 @@
 				color: #d92d20;
 			}
 		}
+	}
+	// .cart__payment-widget
+	&__payment-widget {
+		min-height: rem(500);
+		width: 100%;
 	}
 }
 

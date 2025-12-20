@@ -995,6 +995,7 @@ $(function () {
 
     class DornottCart {
         constructor() {
+            this.$cartModal = $("#cart");
             this.storageKey = 'dornott_cart';
             this.$form = $('#cart-form');
             this.$cartBody = $('.cart__body');
@@ -1353,6 +1354,7 @@ $(function () {
                 return;
             }
 
+            this.$cartModal.addClass('open-payment');
             this.$paymentContainer.show();
             this.$form.hide();
             this.$cartTitle.text('Оплата заказа');
@@ -1404,6 +1406,7 @@ $(function () {
             this.$form.show();
             this.$cartTitle.text('Корзина');
             this.$checkoutBtn.removeClass("_loading");
+            this.$cartModal.removeClass('open-payment');
         }
     }
 
