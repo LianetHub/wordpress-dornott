@@ -193,32 +193,52 @@ add_action('phpmailer_init', 'configure_smtp_mailer');
 
 function configure_smtp_mailer($phpmailer)
 {
-	if (!$_ENV['SMTP_HOST'] || !$_ENV['SMTP_USERNAME'] || !$_ENV['SMTP_PASSWORD']) {
+	if (!isset($_ENV['SMTP_HOST']) || !isset($_ENV['SMTP_USERNAME']) || !isset($_ENV['SMTP_PASSWORD'])) {
 		return;
 	}
 
 	$phpmailer->isSMTP();
-	$phpmailer->Host       = $_ENV['SMTP_HOST'];
-	$phpmailer->SMTPAuth   = true;
-	$phpmailer->Port       = 465;
-	$phpmailer->Username   = $_ENV['SMTP_USERNAME'];
-	$phpmailer->Password   = $_ENV['SMTP_PASSWORD'];
+	$phpmailer->Host = $_ENV['SMTP_HOST'];
+	$phpmailer->SMTPAuth = true;
+	$phpmailer->Port = 465;
+	$phpmailer->Username = $_ENV['SMTP_USERNAME'];
+	$phpmailer->Password = $_ENV['SMTP_PASSWORD'];
 	$phpmailer->SMTPSecure = 'ssl';
-	$phpmailer->From       = $_ENV['SMTP_USERNAME'];
-	$phpmailer->FromName   = get_bloginfo('name');
+	$phpmailer->SMTPOptions = [
+		'ssl' => [
+			'verify_peer' => false,
+			'verify_peer_name' => false,
+			'allow_self_signed' => true
+		]
+	];
 }
 
 add_filter('wp_mail_from', 'custom_mail_from_email');
-add_filter('wp_mail_from_name', 'custom_mail_from_name');
-
 function custom_mail_from_email($original_email)
 {
-	return 'no-reply@dornott.ru';
+	return $_ENV['SMTP_USERNAME'] ?? 'no-reply@dornott.ru';
 }
 
+add_filter('wp_mail_from_name', 'custom_mail_from_name');
 function custom_mail_from_name($original_name)
 {
 	return 'Dornott - Уведомления';
+}
+
+function get_form_recipients()
+{
+	$recipients = [];
+	if (function_exists('get_field')) {
+		$emails_repeater = get_field('send_email', 'option');
+		if (is_array($emails_repeater)) {
+			foreach ($emails_repeater as $row) {
+				if (!empty($row['email'])) {
+					$recipients[] = sanitize_email($row['email']);
+				}
+			}
+		}
+	}
+	return empty($recipients) ? get_option('admin_email') : implode(', ', $recipients);
 }
 
 add_action('wp_ajax_send_contact_form', 'handle_universal_form');
@@ -258,7 +278,7 @@ function handle_universal_form()
 	<?php endif; ?>
 	<hr>
 	<p><small>Отправлено с сайта dornott.ru</small></p>
-	<?php
+<?php
 	$message = ob_get_clean();
 
 	$attachments = [];
@@ -273,7 +293,7 @@ function handle_universal_form()
 		}
 	}
 
-	$to = get_option('admin_email');
+	$to = get_form_recipients();
 	$mail_sent = wp_mail($to, $subject, $message, $headers, $attachments);
 
 	if (!empty($attachments)) {
@@ -289,40 +309,7 @@ function handle_universal_form()
 	}
 }
 
-add_action('wp_ajax_process_checkout', 'handle_checkout_form');
-add_action('wp_ajax_nopriv_process_checkout', 'handle_checkout_form');
-
-function handle_checkout_form()
-{
-	$data = $_POST;
-
-	$to = get_option('admin_email');
-	$subject = 'Новый заказ через корзину (Ожидает оплаты)';
-	$headers = ['Content-Type: text/html; charset=UTF-8'];
-
-	ob_start();
-	?>
-	<h3>Детали заказа из корзины</h3>
-	<p><strong>ФИО:</strong> <?php echo esc_html($data['username']); ?></p>
-	<p><strong>Телефон:</strong> <?php echo esc_html($data['phone']); ?></p>
-	<p><strong>Email:</strong> <?php echo esc_html($data['email']); ?></p>
-	<p><strong>Город:</strong> <?php echo esc_html($data['city']); ?></p>
-	<p><strong>Адрес:</strong> <?php echo esc_html($data['address']); ?></p>
-	<p><strong>Доставка:</strong> <?php echo esc_html($data['delivery'] === 'cdek' ? 'СДЭК' : 'Самовывоз'); ?></p>
-	<p><strong>Комментарий:</strong> <?php echo nl2br(esc_html($data['message'])); ?></p>
-	<hr>
-	<h4>Данные для оплаты будут сформированы здесь</h4>
-<?php
-	$message = ob_get_clean();
-
-	wp_mail($to, $subject, $message, $headers);
-
-	wp_send_json_success([
-		'message' => 'Заказ принят, перенаправляем на оплату...',
-		'redirect_url' => '#'
-	]);
-}
-
+// Payment Service
 
 add_action('wp_ajax_init_tbank_payment', 'handle_tbank_init');
 add_action('wp_ajax_nopriv_init_tbank_payment', 'handle_tbank_init');
