@@ -343,6 +343,14 @@
 				}
 			}
 		}
+		&.icon-max {
+			border-radius: 0.4rem;
+			@media (any-hover: hover) {
+				&:hover {
+					background-color: #161f8a;
+				}
+			}
+		}
 	}
 }
 

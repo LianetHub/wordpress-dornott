@@ -8,11 +8,11 @@
 }
 
 @font-face {
-  font-family: "PTSans";
+  font-family: "icons";
   font-display: swap;
-  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
-  font-weight: 700;
-  font-style: italic;
+  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
@@ -25,11 +25,11 @@
 }
 
 @font-face {
-  font-family: "icons";
+  font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
+  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
   font-weight: 400;
-  font-style: normal;
+  font-style: italic;
 }
 
 @font-face {
@@ -43,17 +43,17 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
+  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
 }
 
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
+  src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
   font-weight: 400;
-  font-style: italic;
+  font-style: normal;
 }
 
 .header__menu .menu__link::before,
@@ -98,6 +98,10 @@
 
 .icon-minus:before {
   content: "\e912";
+}
+
+.icon-max:before {
+  content: "\e915";
 }
 
 .icon-arrow-left:before,
@@ -1396,6 +1400,10 @@ body.is-loaded .preloader {
   -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
   z-index: -1;
+}
+
+.socials__link.icon-max {
+  border-radius: 0.4rem;
 }
 
 .quantity-block {
@@ -5812,6 +5820,10 @@ body.preloading {
 
   .socials__link.icon-vk:hover {
     background-color: #2688eb;
+  }
+
+  .socials__link.icon-max:hover {
+    background-color: #161f8a;
   }
 
   .quantity-block__up:hover,

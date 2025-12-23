@@ -16,6 +16,7 @@ $social_whatsapp = get_field('whatsapp', $option_page);
 $social_youtube = get_field('youtube', $option_page);
 $social_rutube = get_field('rutube', $option_page);
 $social_vk = get_field('vk', $option_page);
+$social_max = get_field('max', $option_page);
 
 // Политики
 $privacy_policy =  get_field('privacy_policy', $option_page);
@@ -118,6 +119,9 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                 <?php endif; ?>
                 <?php if ($social_rutube): ?>
                     <a href="<?php echo esc_url($social_rutube); ?>" aria-label="Следите за нами в Rutube" class="socials__link icon-rutube"></a>
+                <?php endif; ?>
+                <?php if ($social_max): ?>
+                    <a href="<?php echo esc_url($social_max); ?>" aria-label="Следите за нами в Max" class="socials__link icon-max"></a>
                 <?php endif; ?>
             </div>
 

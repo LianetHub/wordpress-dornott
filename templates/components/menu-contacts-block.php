@@ -5,9 +5,10 @@ $phone = get_field('tel', $option_page);
 $email = get_field('email', $option_page);
 $social_telegram = get_field('telegram', $option_page);
 $social_whatsapp = get_field('whatsapp', $option_page);
+$social_max = get_field('max', $option_page);
 
 $has_main_contacts = $phone || $email;
-$has_messengers = $social_telegram || $social_whatsapp;
+$has_messengers = $social_telegram || $social_whatsapp || $social_max;
 $has_contacts = $has_main_contacts || $has_messengers;
 
 $privacy_policy = get_field('privacy_policy', $option_page);
@@ -46,6 +47,9 @@ $has_policy_links = $privacy_policy || $data_protection || $payment_delivery;
                                 <?php endif; ?>
                                 <?php if ($social_whatsapp): ?>
                                     <a href="<?php echo esc_url($social_whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
+                                <?php endif; ?>
+                                <?php if ($social_max): ?>
+                                    <a href="<?php echo esc_url($social_max); ?>" aria-label="Следите за нами в Max" class="socials__link icon-max"></a>
                                 <?php endif; ?>
                             </div>
                         </div>

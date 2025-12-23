@@ -640,6 +640,7 @@
     $map_coords = get_field('coords', 'option') ?? '';
     $telegram = get_field('telegram', 'option') ?? '';
     $whatsapp = get_field('whatsapp', 'option') ?? '';
+    $max = get_field('max', 'option') ?? '';
     $privacy_txt = get_field('privacy_txt', 'option') ?? '';
     $placemarker_logo_url = get_field('placemarker_logo', 'option') ?? '';
 ?>
@@ -709,20 +710,23 @@
                             </li>
                         <?php endif; ?>
 
-                        <?php if ($phone || $telegram || $whatsapp): ?>
+                        <?php if ($phone || $telegram || $whatsapp || $max): ?>
                             <li class="contacts__list-item">
                                 <div class="contacts__caption">Телефон</div>
                                 <?php if ($phone): ?>
                                     <a href="tel:<?php echo esc_attr(preg_replace('/[^\d\+]/', '', $phone)); ?>" class="contacts__link"><?php echo esc_html($phone); ?></a>
                                 <?php endif; ?>
 
-                                <?php if ($telegram || $whatsapp): ?>
+                                <?php if ($telegram || $whatsapp || $max): ?>
                                     <div class="contacts__socials socials">
                                         <?php if ($telegram): ?>
                                             <a href="<?php echo esc_url($telegram); ?>" aria-label="Следите за нами в Telegram" class="socials__link icon-telegram"></a>
                                         <?php endif; ?>
                                         <?php if ($whatsapp): ?>
                                             <a href="<?php echo esc_url($whatsapp); ?>" aria-label="Следите за нами в WhatsApp" class="socials__link icon-whatsapp"></a>
+                                        <?php endif; ?>
+                                        <?php if ($max): ?>
+                                            <a href="<?php echo esc_url($max); ?>" aria-label="Следите за нами в Max" class="socials__link icon-max"></a>
                                         <?php endif; ?>
                                     </div>
                                 <?php endif; ?>

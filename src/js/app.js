@@ -777,7 +777,7 @@ $(function () {
             });
         }
 
-        async sendForm($form) {
+        async sendForm($form, isSilent = false) {
             console.log('submit from form controller');
             const url = $form.attr('action');
             const method = $form.attr('method') || 'POST';
@@ -796,6 +796,7 @@ $(function () {
                     const result = await response.json();
 
                     if (result.success) {
+
                         $form[0].reset();
                         $form.find('.form__file-preview').remove();
                         $form.find('.uploaded').removeClass('uploaded');
@@ -805,14 +806,23 @@ $(function () {
                             window.dornottCart.updateInterface();
                         }
 
-                        const instance = Fancybox.getInstance();
-                        if (instance) {
-                            instance.destroy();
+                        if (!isSilent) {
+
+                            const instance = Fancybox.getInstance();
+                            if (instance) {
+                                instance.destroy();
+                            }
+
+                            Fancybox.show([{
+                                src: "#success-submitting",
+                                type: "inline"
+                            }]);
+
+                            if (typeof ym === 'function') {
+                                ym(105964434, 'reachGoal', 'sendmail');
+                            }
                         }
-                        Fancybox.show([{
-                            src: "#success-submitting",
-                            type: "inline"
-                        }]);
+
                     } else {
                         console.error('Ошибка логики сервера:', result.data.message);
                         this.showErrorPopup();
@@ -1341,7 +1351,7 @@ $(function () {
                     const result = await response.json();
 
                     if (result.success && result.data.paymentUrl) {
-                        this.openPaymentIframe(result.data.paymentUrl, result.data.OrderId);
+                        this.openPaymentIframe(result.data.paymentUrl, result.data.orderId);
                     } else {
 
                         console.error('Ошибка инициализации платежа', result.data.message);
@@ -1365,6 +1375,11 @@ $(function () {
             this.$form.hide();
             this.$cartTitle.text('Оплата заказа');
 
+
+            if (OrderId) {
+                this.$form.find('input[name="order_id"]').val(OrderId);
+            }
+
             try {
                 const MAIN_INTEGRATION_NAME = 'dornott-checkout-frame';
 
@@ -1382,15 +1397,38 @@ $(function () {
                             console.log("T-Bank Payment Status:", status);
 
                             if (status === 'SUCCESS') {
-                                window.formController.sendForm(this.$form);
+
+                                let cartDataForEmail = [];
+                                try {
+                                    const storageRaw = localStorage.getItem(this.storageKey);
+                                    if (storageRaw) {
+                                        const storageData = JSON.parse(storageRaw);
+                                        if (Array.isArray(storageData)) {
+                                            cartDataForEmail = storageData;
+                                        } else if (storageData && storageData.items) {
+                                            cartDataForEmail = storageData.items;
+                                        }
+                                    }
+                                } catch (e) { console.error('Error reading cart for email', e); }
+
+                                this.$form.find('input[name="cart_items"]').val(JSON.stringify(cartDataForEmail));
+
+                                if (window.formController) {
+                                    await window.formController.sendForm(this.$form, true);
+                                }
+
+                                if (typeof ym === 'function') {
+                                    ym(105964434, 'reachGoal', 'payment_ok')
+                                }
+
                                 localStorage.removeItem(this.storageKey);
 
                                 await this.resetInterface();
+
                                 const instance = Fancybox.getInstance();
                                 if (instance) {
                                     instance.destroy();
                                 }
-
 
                                 const $successPopup = $('#success-order');
                                 if (OrderId) {
@@ -1404,22 +1442,18 @@ $(function () {
                                 }]);
 
                             } else if (['REJECTED', 'CANCELED', 'EXPIRED', 'PROCESSING_ERROR'].includes(status)) {
-                                console.log('work script status', status);
 
                                 const message = statusMessages[status] || statusMessages['default'];
 
                                 await this.resetInterface();
-
 
                                 const instance = Fancybox.getInstance();
                                 if (instance) {
                                     instance.destroy();
                                 }
 
-
                                 const $errorPopup = $('#error-order');
                                 $errorPopup.find('.popup__subtitle').text(message);
-
 
                                 setTimeout(() => {
                                     Fancybox.show([{

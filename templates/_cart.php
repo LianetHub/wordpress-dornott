@@ -8,7 +8,12 @@ $address = get_field('address', 'option') ?? '';
         <button type="button" data-fancybox-close data-goto-catalog class="btn btn-primary">Перейти к покупкам</button>
     </div>
     <div class="cart__body" style="display: none;">
-        <form action="#" id="cart-form" class="cart__form">
+        <form action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST" id="cart-form" class="cart__form">
+            <input type="hidden" name="cart_items" value="">
+            <input type="hidden" name="order_id" value="">
+            <input type="hidden" name="delivery_type" value="">
+            <input type="hidden" name="full_address" value="">
+            <input type="hidden" name="action" value="send_order_form">
             <div class="cart__main">
                 <div class="cart__products">
                     <div class="cart__products-header">
