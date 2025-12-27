@@ -275,6 +275,7 @@ function handle_universal_form()
 	$city     = sanitize_text_field($data['city'] ?? '');
 	$address  = sanitize_text_field($data['address'] ?? '');
 	$delivery = sanitize_text_field($data['delivery'] ?? '');
+	$delivery_price = sanitize_text_field($data['delivery_price'] ?? '');
 	$message_text = nl2br(sanitize_textarea_field($data['message'] ?? ''));
 
 	ob_start();
@@ -343,10 +344,21 @@ function handle_universal_form()
 								<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo number_format($item_sum, 0, '.', ' '); ?> ₽</td>
 							</tr>
 						<?php endforeach; ?>
+
+						<?php
+						$delivery_price = isset($data['delivery_price']) ? intval($data['delivery_price']) : 0;
+						if ($delivery_price > 0):
+							$total_sum += $delivery_price;
+						?>
+							<tr>
+								<td colspan="3" style="padding: 10px; border: 1px solid #ddd; font-style: italic;">Доставка</td>
+								<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo number_format($delivery_price, 0, '.', ' '); ?> ₽</td>
+							</tr>
+						<?php endif; ?>
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Итого товары:</td>
+							<td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Итого к оплате:</td>
 							<td style="padding: 10px; text-align: right; font-weight: bold;"><?php echo number_format($total_sum, 0, '.', ' '); ?> ₽</td>
 						</tr>
 					</tfoot>

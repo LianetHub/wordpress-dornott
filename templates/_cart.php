@@ -1,5 +1,5 @@
 <?php
-$address = get_field('address', 'option') ?? '';
+$address = get_field('pickup_address', 'option') ?? '';
 ?>
 <div class="popup popup--white popup--large cart" id="cart">
     <h2 class="cart__title">Корзина</h2>
@@ -11,7 +11,7 @@ $address = get_field('address', 'option') ?? '';
         <form action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="POST" id="cart-form" class="cart__form">
             <input type="hidden" name="cart_items" value="">
             <input type="hidden" name="order_id" value="">
-            <input type="hidden" name="delivery_type" value="">
+            <input type="hidden" name="delivery_price" value="">
             <input type="hidden" name="full_address" value="">
             <input type="hidden" name="action" value="send_order_form">
             <div class="cart__main">
@@ -52,31 +52,57 @@ $address = get_field('address', 'option') ?? '';
                     <div class="order__step">
                         <div class="order__caption">Способ доставки:</div>
                         <div class="order__step-options">
+                            <?php
+                            $pickup_address = get_field('pickup_address', 'option') ?? '';
+                            ?>
+
                             <label class="order__step-option">
                                 <input type="radio" name="delivery" value="pickup" data-price="0" checked class="order__step-input hidden" hidden>
                                 <span class="order__card">
                                     <span class="order__card-header">
                                         <span class="order__step-header-title">Самовывоз со склада Dornott</span>
                                     </span>
-                                    <span class="order__card-body"><?php echo esc_html($address); ?></span>
+                                    <span class="order__card-body"><?php echo esc_html($pickup_address); ?></span>
                                     <span class="order__card-info">0 ₽</span>
                                 </span>
                             </label>
-                            <label class="order__step-option">
-                                <input type="radio" name="delivery" value="cdek" data-price="290" class="order__step-input hidden" hidden>
-                                <span class="order__card">
-                                    <span class="order__card-header">
-                                        <span class="order__step-header-title">Доставка ТК</span>
-                                        <span class="order__step-logo">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/cdek.svg" alt="Лого">
+
+                            <?php if (have_rows('delivery', 'option')): ?>
+                                <?php while (have_rows('delivery', 'option')): the_row();
+                                    $name = get_sub_field('company_name');
+                                    $logo = get_sub_field('company_logo');
+                                    $desc = get_sub_field('company_description');
+                                    $price = get_sub_field('company_delivery_price');
+                                    $slug = sanitize_title($name);
+                                ?>
+                                    <label class="order__step-option">
+                                        <input type="radio"
+                                            name="delivery"
+                                            value="<?php echo esc_attr($slug); ?>"
+                                            data-price="<?php echo esc_attr($price); ?>"
+                                            class="order__step-input hidden"
+                                            hidden>
+                                        <span class="order__card">
+                                            <span class="order__card-header">
+                                                <span class="order__step-header-title">Доставка <?php echo esc_html($name); ?></span>
+                                                <?php if ($logo): ?>
+                                                    <span class="order__step-logo">
+                                                        <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']); ?>">
+                                                    </span>
+                                                <?php endif; ?>
+                                            </span>
+                                            <?php if ($desc): ?>
+                                                <span class="order__card-body">
+                                                    <?php echo wp_kses_post($desc); ?>
+                                                </span>
+                                            <?php endif; ?>
+                                            <span class="order__card-info green">
+                                                <?php echo $price > 0 ? number_format($price, 0, '.', ' ') . ' ₽' : 'Бесплатно'; ?>
+                                            </span>
                                         </span>
-                                    </span>
-                                    <span class="order__card-body">
-                                        Мы отправим вам товар обычной доставкой любой транспортной компанией. По умолчанию отправляем СДЭК, если нужна другая, укажите ниже.
-                                    </span>
-                                    <span class="order__card-info green">290 ₽</span>
-                                </span>
-                            </label>
+                                    </label>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="order__step">

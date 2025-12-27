@@ -1268,6 +1268,8 @@ $(function () {
             $('#delivery-price').text(`${totals.deliveryPrice.toLocaleString()} ₽`);
             $('#final-price').text(`${totals.finalPrice.toLocaleString()} ₽`);
 
+            this.$form.find('input[name="delivery_price"]').val(totals.deliveryPrice);
+
             this.renderItems(data);
             this.syncButtons(data);
         }
