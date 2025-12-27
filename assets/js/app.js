@@ -364,6 +364,8 @@ $(function () {
     }
 
     if ($('.product-card').length) {
+        const hasCursor = window.matchMedia('(hover: hover)').matches;
+
         $('.product-card').each(function (index, element) {
             const $slider = $(element).find('.product-card__slider');
             if (!$slider.length) return;
@@ -372,7 +374,7 @@ $(function () {
 
             const swiper = new Swiper($slider[0], {
                 slidesPerView: 1,
-                speed: 0,
+                speed: hasCursor ? 0 : 400,
                 lazy: true,
                 watchOverflow: true,
                 pagination: {
@@ -394,6 +396,10 @@ $(function () {
                     display: 'flex',
                     zIndex: 10
                 });
+
+                if (!hasCursor) {
+                    $areasWrapper[0].style.setProperty('pointer-events', 'none', 'important');
+                }
 
                 for (let i = 0; i < slidesCount; i++) {
                     const $area = $('<div class="product-card__hover-area"></div>');

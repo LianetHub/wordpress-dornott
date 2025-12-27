@@ -12,7 +12,7 @@
 	left: 0;
 	margin: auto;
 	width: 100vw;
-	height: 100vh;
+	height: 100dvh;
 	background: #4e3e2e;
 	opacity: 1;
 
@@ -44,6 +44,10 @@
 		transition-duration: 500ms;
 		transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
 		transition-delay: 0.25s;
+	}
+
+	&__logo {
+		max-width: 80vw;
 	}
 
 	// .preloader__inner

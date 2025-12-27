@@ -56,6 +56,12 @@
 		gap: rem(6);
 		z-index: 2;
 	}
+	// .product-card__hover-areas
+	&__hover-areas {
+		@media (any-hover: none) {
+			pointer-events: none !important;
+		}
+	}
 	// .product-card__actions
 	&__actions {
 		display: flex;
