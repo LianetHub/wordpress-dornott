@@ -31,7 +31,18 @@ class Wptuts_Simple_Admin
 	function remove_dashboard_widget()
 	{
 		remove_meta_box('dashboard_primary', 'dashboard', 'side');
-		remove_action('welcome_panel', 'wp_welcome_panel');
+        remove_action('welcome_panel', 'wp_welcome_panel');
+
+        remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
+        remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
+        remove_meta_box('dashboard_activity', 'dashboard', 'normal');
+        remove_meta_box('dashboard_quick_press', 'dashboard', 'side');
+        
+        remove_meta_box('wc_admin_dashboard_setup', 'dashboard', 'normal');
+        
+        remove_meta_box('wpseo-dashboard-overview', 'dashboard', 'normal');
+        remove_meta_box('wpseo-wincher-dashboard-overview', 'dashboard', 'normal');
+        remove_meta_box('yoast_db_widget', 'dashboard', 'normal');
 	}
 
 	function my_admin_bar_render()
