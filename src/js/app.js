@@ -1406,6 +1406,11 @@ $(function () {
 
                             if (status === 'SUCCESS') {
 
+
+                                if (typeof ym === 'function') {
+                                    ym(105964434, 'reachGoal', 'payment_ok')
+                                }
+
                                 let cartDataForEmail = [];
                                 try {
                                     const storageRaw = localStorage.getItem(this.storageKey);
@@ -1425,9 +1430,6 @@ $(function () {
                                     await window.formController.sendForm(this.$form, true);
                                 }
 
-                                if (typeof ym === 'function') {
-                                    ym(105964434, 'reachGoal', 'payment_ok')
-                                }
 
                                 localStorage.removeItem(this.storageKey);
 

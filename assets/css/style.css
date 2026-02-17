@@ -8,10 +8,10 @@
 }
 
 @font-face {
-  font-family: "PTSans";
+  font-family: "icons";
   font-display: swap;
-  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
-  font-weight: 700;
+  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -27,17 +27,17 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
-  font-weight: 700;
+  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
+  font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
-  font-family: "icons";
+  font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
+  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
 }
 
 @font-face {
@@ -51,9 +51,9 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
-  font-weight: 400;
-  font-style: italic;
+  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
 }
 
 .header__menu .menu__link::before,
@@ -3174,6 +3174,25 @@ body.preloading {
   margin-inline: -1rem;
 }
 
+.cert__image {
+  border-radius: 1.5rem;
+  background: #e9eaeb;
+  color: #000;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+  overflow: hidden;
+  height: 25rem;
+  margin-inline: -1rem;
+}
+
 .steps__header {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -4058,6 +4077,10 @@ body.preloading {
   }
 
   .cert__widget {
+    margin-inline: 0;
+  }
+
+  .cert__image {
     margin-inline: 0;
   }
 
@@ -5106,15 +5129,15 @@ body.preloading {
     left: -4.375rem;
   }
 
-  .cert__offer {
-    padding: 3.6rem 2rem 0 0;
-  }
-
   .cert__subtitle {
     font-size: 1.375rem;
   }
 
   .cert__widget {
+    height: 37.5rem;
+  }
+
+  .cert__image {
     height: 37.5rem;
   }
 

@@ -35,8 +35,11 @@ function theme_enqueue_scripts()
 	wp_enqueue_script('swiper-js', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), null, true);
 	wp_enqueue_script('fancybox-js', get_template_directory_uri() . '/assets/js/libs/fancybox.umd.js', array(), null, true);
 	wp_enqueue_script('app-js', get_template_directory_uri() . '/assets/js/app.min.js', array('jquery'), null, true);
+
+	wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, false);
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_scripts');
+
 
 
 // =========================================================================

@@ -269,8 +269,8 @@
 <?php if (get_field('show_cert')):
     $cert_title = get_field('cert_title');
     $cert_subtitle = get_field('cert_subtitle');
-    $cert_button = get_field('cert_button');
-    $cert_widget = get_field('cert_widget');
+    $cert_btn_text = get_field('cert_btn_text') ?? "Купить сертификат";
+    $cert_image = get_field('cert_image');
 ?>
     <section id="cert" class="cert">
         <div class="container">
@@ -284,26 +284,18 @@
                             <?php echo $cert_subtitle; ?>
                         </p>
                     <?php endif; ?>
-
-                    <?php
-                    $cert_button_group = $cert_button['btn'];
-                    if ($cert_button_group) {
-                        get_template_part('templates/components/button', null, [
-                            'data'  => $cert_button_group,
-                            'class' => 'cert__btn',
-                            'type'  => 'primary',
-                            'icon'  => 'chevron-right'
-                        ]);
-                    }
-                    ?>
+                    <button type="button" class="js_iframe_widget cert__btn btn btn-primary icon-chevron-right"><?= $cert_btn_text ?></button>
+                    <script type="text/javascript">
+                        document.addEventListener("DOMContentLoaded", function() {
+                            IframeWidgetFunctional.init('.js_iframe_widget');
+                        });
+                    </script>
                 </div>
-                <?php if ($cert_widget): ?>
-                    <div class="cert__widget">
-                        <?php echo $cert_widget; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="cert__widget">
-                        Код виджета отсутствует
+                <?php if ($cert_image): ?>
+                    <div class="cert__image">
+                        <img src="<?php echo esc_url($cert_image['url']); ?>"
+                            alt="<?php echo esc_attr($cert_image['alt']); ?>"
+                            class="cover-image">
                     </div>
                 <?php endif; ?>
             </div>

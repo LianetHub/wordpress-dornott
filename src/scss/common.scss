@@ -62,7 +62,9 @@ body {
 		opacity: 0;
 		visibility: hidden;
 		pointer-events: none;
-		transition: opacity 0.3s ease, visibility 0.3s ease;
+		transition:
+			opacity 0.3s ease,
+			visibility 0.3s ease;
 		cursor: pointer;
 	}
 }
@@ -407,7 +409,10 @@ body {
 		padding: 1.5rem;
 		display: flex;
 		flex-direction: column;
-		transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+		transition:
+			background-color 0.3s ease,
+			box-shadow 0.3s ease,
+			color 0.3s ease;
 		@media (max-width: $md4) {
 			height: rem(310);
 		}
@@ -637,9 +642,6 @@ body {
 	// .cert__offer
 	&__offer {
 		padding: 0 2rem 0 0;
-		@media (min-width: $md2) {
-			padding: 3.6rem 2rem 0 0;
-		}
 	}
 	// .cert__title
 	&__title {
@@ -671,6 +673,25 @@ body {
 		font-weight: 700;
 		line-height: 120%;
 		letter-spacing: -0.045rem;
+		height: 25rem;
+		margin-inline: -1rem;
+		@media (min-width: $md5) {
+			margin-inline: 0;
+		}
+		@media (min-width: $md2) {
+			height: 37.5rem;
+		}
+	}
+	// .cert__image
+	&__image {
+		border-radius: 1.5rem;
+		background: #e9eaeb;
+		color: #000;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		overflow: hidden;
 		height: 25rem;
 		margin-inline: -1rem;
 		@media (min-width: $md5) {
@@ -746,7 +767,9 @@ body {
 		border-radius: 1rem;
 		background: #e9eaeb;
 		flex-shrink: 0;
-		transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+		transition:
+			width 0.3s ease-in-out,
+			background-color 0.3s ease-in-out;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
