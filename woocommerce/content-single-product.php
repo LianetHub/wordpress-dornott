@@ -245,7 +245,7 @@ $other_products = wc_get_products([
 	<section class="catalog catalog--related">
 		<div class="container">
 			<h2 class="catalog__title title">Другие товары</h2>
-			<ul class="catalog__grid products">
+			<ul class="catalog__grid">
 				<?php
 				foreach ($other_products as $other_product) {
 					$post_object = get_post($other_product->get_id());

@@ -12,4 +12,4 @@
 
 defined('ABSPATH') || exit;
 ?>
-<ul class="catalog__grid products">
+<ul class="catalog__grid">

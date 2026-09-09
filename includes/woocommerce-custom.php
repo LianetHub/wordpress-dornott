@@ -49,7 +49,6 @@ add_action('init', function () {
 add_action('admin_menu', 'hide_wc_admin_menus', 999);
 function hide_wc_admin_menus()
 {
-    remove_menu_page('woocommerce');
     remove_menu_page('wc-admin&path=/analytics/overview');
     remove_menu_page('woocommerce-marketing');
     remove_menu_page('wc-admin&path=/payments/overview');

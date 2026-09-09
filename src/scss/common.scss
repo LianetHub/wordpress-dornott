@@ -603,6 +603,15 @@ body {
 		row-gap: rem(24);
 		margin-top: 2rem;
 
+		> li {
+			min-width: 0;
+			width: auto;
+			max-width: 100%;
+			float: none;
+			margin: 0;
+			padding-top: 0;
+		}
+
 		@media (min-width: $md5) {
 			margin-top: rem(48);
 			grid-template-columns: repeat(2, 1fr);

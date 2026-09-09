@@ -177,7 +177,7 @@
 
         if ($products_query->have_posts()) :
         ?>
-            <ul class="catalog__grid products columns-3">
+            <ul class="catalog__grid">
                 <?php
                 while ($products_query->have_posts()) :
                     $products_query->the_post();

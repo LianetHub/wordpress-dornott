@@ -720,11 +720,11 @@ body:not(.preloading) .preloader {
   transition: color 0.3s ease;
 }
 
-.product {
+section.product {
   padding-top: 5rem;
 }
 
-.product .breadcrumbs {
+section.product .breadcrumbs {
   margin-bottom: 0.9375rem;
 }
 
@@ -3283,6 +3283,15 @@ body.no-preloader .preloader {
   margin-top: 2rem;
 }
 
+.catalog__grid > li {
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+  float: none;
+  margin: 0;
+  padding-top: 0;
+}
+
 .special-offer {
   background: #2d3623;
   color: #fff;
@@ -4680,7 +4689,7 @@ body.no-preloader .preloader {
 }
 
 @media (min-width: 991.98px) {
-  .product {
+  section.product {
     padding-top: 6.25rem;
   }
 
@@ -4989,7 +4998,7 @@ body.no-preloader .preloader {
     max-width: 80rem;
   }
 
-  .product {
+  section.product {
     padding-top: 12.5rem;
   }
 

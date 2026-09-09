@@ -186,7 +186,7 @@
 	}
 }
 
-.product {
+section.product {
 	padding-top: 5rem;
 
 	@media (min-width: $md3) {
@@ -200,6 +200,9 @@
 	.breadcrumbs {
 		margin-bottom: rem(15);
 	}
+}
+
+.product {
 
 	// .product__body
 	&__body {
