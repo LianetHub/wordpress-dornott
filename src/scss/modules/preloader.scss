@@ -6,7 +6,6 @@
 @use "icons";
 
 .preloader {
-	// display: none;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -37,7 +36,9 @@
 		border-color: transparent transparent transparent #fff;
 		right: rem(-200);
 	}
-	body.is-loaded & {
+	body.is-loaded &,
+	body.no-preloader &,
+	body:not(.preloading) & {
 		left: calc(-100% - rem(200));
 		visibility: hidden;
 		transition: all 0.3s ease;

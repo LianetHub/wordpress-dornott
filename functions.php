@@ -22,7 +22,7 @@ function theme_enqueue_styles()
 	wp_enqueue_style('swiper', get_template_directory_uri() . '/assets/css/libs/swiper-bundle.min.css');
 	wp_enqueue_style('fancybox', get_template_directory_uri() . '/assets/css/libs/fancybox.css');
 	wp_enqueue_style('reset', get_template_directory_uri() . '/assets/css/reset.min.css');
-	wp_enqueue_style('main-style', get_template_directory_uri() . '/assets/css/style.min.css');
+	wp_enqueue_style('main-style', get_template_directory_uri() . '/assets/css/style.min.css', array(), filemtime(get_template_directory() . '/assets/css/style.min.css'));
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles');
 
@@ -34,7 +34,7 @@ function theme_enqueue_scripts()
 	wp_enqueue_script('jquery', get_template_directory_uri() . '/assets/js/libs/jquery-3.7.1.min.js', array(), null, true);
 	wp_enqueue_script('swiper-js', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), null, true);
 	wp_enqueue_script('fancybox-js', get_template_directory_uri() . '/assets/js/libs/fancybox.umd.js', array(), null, true);
-	wp_enqueue_script('app-js', get_template_directory_uri() . '/assets/js/app.min.js', array('jquery'), null, true);
+	wp_enqueue_script('app-js', get_template_directory_uri() . '/assets/js/app.min.js', array('jquery'), filemtime(get_template_directory() . '/assets/js/app.min.js'), true);
 
 	wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, false);
 }
@@ -178,7 +178,12 @@ add_filter('disable_wpseo_json_ld_search', '__return_true');
 
 function dornott_is_preloader_enabled()
 {
-	$stored = get_option('options_show_preloader', '1');
+	if (function_exists('get_field')) {
+		$value = get_field('show_preloader', 'option');
+		return $value === true || $value === 1 || $value === '1';
+	}
+
+	$stored = get_option('options_show_preloader');
 	return $stored === '1' || $stored === 1 || $stored === true;
 }
 
@@ -186,6 +191,9 @@ function add_preloading_body_class($classes)
 {
 	if (dornott_is_preloader_enabled()) {
 		$classes[] = 'preloading';
+	} else {
+		$classes[] = 'no-preloader';
+		$classes[] = 'is-loaded';
 	}
 	return $classes;
 }

@@ -51,17 +51,20 @@ $image_args = [
 	'loading' => 'lazy',
 ];
 
+$slide_link_open = '<a href="' . esc_url($permalink) . '" class="product-card__link">';
+$slide_link_close = '</a>';
+
 if ($image_id) {
 	$image_html = wp_get_attachment_image($image_id, $image_size, false, $image_args);
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '<span class="swiper-lazy-preloader"></span></div>';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . $slide_link_close . '<span class="swiper-lazy-preloader"></span></div>';
 } else {
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . wc_placeholder_img($image_size, $image_args) . '<span class="swiper-lazy-preloader"></span></div>';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . wc_placeholder_img($image_size, $image_args) . $slide_link_close . '<span class="swiper-lazy-preloader"></span></div>';
 }
 
 if (!empty($gallery_ids)) {
 	foreach ($gallery_ids as $gallery_image_id) {
 		$image_html = wp_get_attachment_image($gallery_image_id, $image_size, false, $image_args);
-		$slides_html .= '<div class="product-card__slide swiper-slide">' . $image_html . '<span class="swiper-lazy-preloader"></span></div>';
+		$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . $slide_link_close . '<span class="swiper-lazy-preloader"></span></div>';
 	}
 }
 
@@ -181,7 +184,9 @@ if ($is_variable) {
 	</div>
 	<div class="product-card__details">
 		<h3 class="product-card__title">
-			<?php echo esc_html($product->get_name()); ?>
+			<a href="<?php echo esc_url($permalink); ?>">
+				<?php echo esc_html($product->get_name()); ?>
+			</a>
 		</h3>
 
 		<?php if ($is_variable) : ?>

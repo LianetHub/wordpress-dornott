@@ -79,18 +79,31 @@ function dequeue_unnecessary_wc_scripts()
     wp_dequeue_script('wc-add-to-cart-variation');
 }
 
-add_filter('woocommerce_register_post_type_product', 'custom_disable_product_pages');
-function custom_disable_product_pages($args)
+add_action('woocommerce_product_query', 'dornott_catalog_product_query');
+function dornott_catalog_product_query($q)
 {
-    $args['public']              = false;
-    $args['publicly_queryable']  = false;
-    $args['exclude_from_search'] = true;
-    $args['has_archive']         = false;
-    $args['rewrite']             = false;
-    $args['query_var']           = false;
-    $args['supports']            = array('title', 'editor', 'thumbnail');
+    if (is_admin()) {
+        return;
+    }
 
-    return $args;
+    $q->set('posts_per_page', -1);
+    $q->set('orderby', 'menu_order');
+    $q->set('order', 'ASC');
+}
+
+add_action('init', 'dornott_flush_product_rewrites', 999);
+function dornott_flush_product_rewrites()
+{
+    if (!class_exists('WooCommerce')) {
+        return;
+    }
+
+    if (get_option('dornott_flush_product_rewrites') === '1') {
+        return;
+    }
+
+    flush_rewrite_rules(false);
+    update_option('dornott_flush_product_rewrites', '1');
 }
 
 add_action('init', 'custom_remove_product_taxonomies', 100);
@@ -110,15 +123,6 @@ function custom_remove_product_features()
     remove_post_type_support('product', 'excerpt');
 }
 
-add_filter('wpseo_sitemap_exclude_post_type', 'custom_exclude_product_from_sitemap', 10, 2);
-function custom_exclude_product_from_sitemap($exclude, $post_type)
-{
-    if ($post_type === 'product') {
-        return true;
-    }
-    return $exclude;
-}
-
 add_filter('wpseo_sitemap_exclude_taxonomy', 'custom_exclude_product_taxonomy_from_sitemap', 10, 2);
 function custom_exclude_product_taxonomy_from_sitemap($exclude, $taxonomy)
 {
@@ -132,7 +136,6 @@ function custom_exclude_product_taxonomy_from_sitemap($exclude, $taxonomy)
 add_filter('woocommerce_get_query_vars', 'custom_remove_wc_query_vars', 99);
 function custom_remove_wc_query_vars($vars)
 {
-    unset($vars['product']);
     unset($vars['product_cat']);
     unset($vars['product_tag']);
     return $vars;

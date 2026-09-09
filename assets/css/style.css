@@ -1,18 +1,18 @@
 @font-face {
+  font-family: "icons";
+  font-display: swap;
+  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
   font-family: "Comfortaa";
   src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
   font-weight: 100 900;
   font-stretch: 75% 125%;
   font-style: normal;
   font-display: swap;
-}
-
-@font-face {
-  font-family: "icons";
-  font-display: swap;
-  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
 }
 
 @font-face {
@@ -27,9 +27,9 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
-  font-weight: 400;
-  font-style: italic;
+  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
 }
 
 @font-face {
@@ -43,16 +43,16 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
+  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
   font-weight: 400;
-  font-style: normal;
+  font-style: italic;
 }
 
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
-  font-weight: 700;
+  src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -387,7 +387,9 @@
   right: -12.5rem;
 }
 
-body.is-loaded .preloader {
+body.is-loaded .preloader,
+body.no-preloader .preloader,
+body:not(.preloading) .preloader {
   left: calc(-100% - 12.5rem);
   visibility: hidden;
   -webkit-transition: all 0.3s ease;
@@ -582,6 +584,115 @@ body.is-loaded .preloader {
 .product-card__footer {
   margin-top: auto;
   padding-top: 0.5rem;
+  border-top: 0.0625rem solid #d5d7da;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.product-card__link {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.product-card__title a {
+  color: inherit;
+  -webkit-transition: color 0.3s ease;
+  transition: color 0.3s ease;
+}
+
+.product {
+  padding-top: 5rem;
+}
+
+.product__body {
+  display: -ms-grid;
+  display: grid;
+  gap: 2rem;
+}
+
+.product__gallery {
+  position: relative;
+  min-width: 0;
+  border-radius: 1rem;
+  background: #414651;
+  overflow: hidden;
+}
+
+.product__slider {
+  aspect-ratio: 1;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.product__slide {
+  height: 100%;
+  width: 100%;
+}
+
+.product__pagination {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.75rem;
+  z-index: 2;
+}
+
+.product__labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 0.375rem;
+  z-index: 2;
+}
+
+.product__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.product__actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.product__description {
+  color: #535862;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 157.143%;
+}
+
+.product__footer {
+  margin-top: auto;
+  padding-top: 1rem;
   border-top: 0.0625rem solid #d5d7da;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2771,6 +2882,14 @@ body.preloading {
   overflow: hidden;
 }
 
+body.no-preloader:not(.menu-lock) {
+  overflow: visible;
+}
+
+body.no-preloader .preloader {
+  display: none !important;
+}
+
 .wrapper {
   position: relative;
   width: 100%;
@@ -3013,6 +3132,10 @@ body.preloading {
   line-height: 157.143%;
 }
 
+.catalog--page {
+  padding-top: 5rem;
+}
+
 .catalog__title {
   text-align: center;
 }
@@ -3022,6 +3145,12 @@ body.preloading {
   text-align: center;
   font-size: 1rem;
   line-height: 160%;
+}
+
+.catalog__empty {
+  margin-top: 2rem;
+  text-align: center;
+  color: #535862;
 }
 
 .catalog__grid {
@@ -4427,6 +4556,19 @@ body.preloading {
 }
 
 @media (min-width: 991.98px) {
+  .product {
+    padding-top: 6.25rem;
+  }
+
+  .product__body {
+    -ms-grid-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: start;
+  }
+
   .title {
     font-size: 2.75rem;
   }
@@ -4526,6 +4668,10 @@ body.preloading {
   .about__benefits {
     -ms-grid-columns: (1fr)[3];
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .catalog--page {
+    padding-top: 6.25rem;
   }
 
   .catalog__grid {
@@ -4717,6 +4863,10 @@ body.preloading {
 @media (min-width: 1199.98px) {
   .popup.popup--large.cart {
     max-width: 80rem;
+  }
+
+  .product {
+    padding-top: 12.5rem;
   }
 
   .cart__form {
@@ -5112,6 +5262,10 @@ body.preloading {
 
   .about__benefit-icon {
     margin-bottom: 3.9375rem;
+  }
+
+  .catalog--page {
+    padding-top: 12.5rem;
   }
 
   .catalog__grid {
@@ -5821,6 +5975,10 @@ body.preloading {
 @media (any-hover: hover) {
   .product-card:hover {
     border-color: #717680;
+  }
+
+  .product-card__title a:hover {
+    color: #ffbb4e;
   }
 
   .cart__item-remove:hover {

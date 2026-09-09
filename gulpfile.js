@@ -50,6 +50,7 @@ const dev = gulp.series(reset, mainTasks, gulp.parallel(watcher, server));
 const build = gulp.series(reset, mainTasks);
 const deployZIP = gulp.series(reset, mainTasks, zip);
 
+export { scss, js };
 export { dev };
 export { build };
 export { deployZIP };

@@ -129,7 +129,7 @@
                 "id": ""
             },
             "message": "",
-            "default_value": 1,
+            "default_value": 0,
             "allow_in_bindings": 0,
             "ui_on_text": "Да",
             "ui_off_text": "Нет",

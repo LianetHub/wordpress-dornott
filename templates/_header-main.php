@@ -6,7 +6,7 @@ $logo = get_field('logo', $option_page);
 
 <div class="header__content">
     <?php if ($logo): ?>
-        <a href="#" class="header__logo">
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="header__logo">
             <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
         </a>
     <?php endif; ?>

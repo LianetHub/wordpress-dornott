@@ -38,6 +38,12 @@ body {
 	&.preloading {
 		overflow: hidden;
 	}
+	&.no-preloader:not(.menu-lock) {
+		overflow: visible;
+	}
+	&.no-preloader .preloader {
+		display: none !important;
+	}
 }
 // ==================ОБОЛОЧКА==============================
 .wrapper {
@@ -472,6 +478,15 @@ body {
 }
 
 .catalog {
+	&--page {
+		padding-top: 5rem;
+		@media (min-width: $md3) {
+			padding-top: rem(100);
+		}
+		@media (min-width: $md2) {
+			padding-top: rem(200);
+		}
+	}
 	// .catalog__title
 	&__title {
 		text-align: center;
@@ -483,7 +498,12 @@ body {
 		font-size: 1rem;
 		line-height: 160%;
 	}
-	// .catalog__grid
+	// .catalog__empty
+	&__empty {
+		margin-top: 2rem;
+		text-align: center;
+		color: #535862;
+	}
 	&__grid {
 		display: grid;
 		column-gap: rem(16);
