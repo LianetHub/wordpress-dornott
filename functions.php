@@ -174,6 +174,7 @@ add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 
 //фикс ошибок микроразметки
 add_filter('disable_wpseo_json_ld_search', '__return_true');
+add_filter('wpseo_breadcrumb_separator', '__return_empty_string');
 
 
 function dornott_is_preloader_enabled()

@@ -571,6 +571,10 @@ body {
 		@media (min-width: $md2) {
 			padding-top: rem(200);
 		}
+
+		.breadcrumbs {
+			margin-bottom: rem(15);
+		}
 	}
 
 	// .catalog__title

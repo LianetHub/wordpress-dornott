@@ -116,6 +116,7 @@ $other_products = wc_get_products([
 
 <section class="product" data-product-id="<?php echo esc_attr($product_id); ?>">
 	<div class="container">
+		<?php include TEMPLATE_PATH . 'components/breadcrumbs.php'; ?>
 		<div class="product__body">
 			<div class="product__gallery">
 				<div class="product__slider swiper">

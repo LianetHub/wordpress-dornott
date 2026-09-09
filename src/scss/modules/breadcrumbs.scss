@@ -6,54 +6,95 @@
 @use "icons";
 
 .breadcrumbs {
-	display: none;
-	@media (min-width: $md4) {
-		display: block;
-	}
-	padding: 0 !important;
-	.page-template-front-page & {
-		display: none;
+	position: relative;
+	z-index: 3;
+
+	// .breadcrumbs__list
+	&__list {
+		display: flex;
+		align-items: center;
+		flex-wrap: nowrap;
+		overflow: hidden;
+		white-space: nowrap;
+		gap: 0.5rem;
 	}
 
-	.icon-home {
-		width: rem(40);
-		height: rem(40);
-		flex-shrink: 0;
-		display: flex;
-		justify-content: center;
+	// .breadcrumbs__item
+	&__item {
+		display: inline-flex;
 		align-items: center;
-		& span {
-			display: none;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
+
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 142.857%;
+		gap: 0.25rem;
+
+		@media (min-width: $md5) {
+			gap: 0.5rem;
 		}
-	}
-	&__body {
-		font-size: 1.3125rem;
-		& > span {
-			display: flex;
-			flex-wrap: wrap;
-			gap: rem(20);
-			& > span {
+
+		&:not(:last-child) {
+			flex-shrink: 1;
+
+			&::before {
+				order: 1;
+				width: 1rem;
+				height: 1rem;
+				font-size: 1rem;
 				display: flex;
+				justify-content: center;
 				align-items: center;
-				gap: rem(20);
-				&::before {
-					order: 1;
-					font-size: rem(14);
-				}
-				&:not(.breadcrumb_last) {
-					&::before {
-						@extend %ic, .icon-arrow;
-					}
-				}
+				color: #a4a7ae;
+				@extend %ic, .icon-chevron-right;
 			}
 		}
-		& a {
+
+		&:not(:last-child) {
+			flex-shrink: 0;
+			overflow: visible;
+			text-overflow: clip;
+		}
+	}
+
+	// .breadcrumbs__link
+	&__link {
+		@extend .breadcrumbs__current;
+		color: #1570ef;
+
+		&.icon-home {
+			width: 1.25rem;
+			height: 1.25rem;
+			font-size: 1.25rem;
+			flex-shrink: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: #a4a7ae;
+		}
+
+		&:is(a) {
 			transition: color 0.3s ease;
+
 			@media (any-hover: hover) {
 				&:hover {
 					color: $accent;
 				}
 			}
+		}
+	}
+
+	// .breadcrumbs__current
+	&__current {
+		word-break: break-all;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		&[aria-current="page"] {
+			color: #717680;
 		}
 	}
 }

@@ -17,6 +17,7 @@ get_header();
 
 <section class="catalog catalog--page">
 	<div class="container">
+		<?php include TEMPLATE_PATH . 'components/breadcrumbs.php'; ?>
 		<h1 class="catalog__title title"><?php woocommerce_page_title(); ?></h1>
 
 		<?php if (woocommerce_product_loop()) : ?>
