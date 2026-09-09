@@ -15,9 +15,11 @@
 	max-width: 100%;
 	border: 1px solid #fff;
 	transition: border-color 0.3s ease;
+
 	@media (any-hover: none) {
 		border-color: #717680;
 	}
+
 	@media (any-hover: hover) {
 		&:hover {
 			border-color: #717680;
@@ -25,8 +27,8 @@
 	}
 
 	// .product-card__slide
-	&__slide {
-	}
+	&__slide {}
+
 	// .product-card__header
 	&__header {
 		position: relative;
@@ -35,16 +37,19 @@
 		border-radius: 1rem;
 		background: #414651;
 	}
+
 	// .product-card__slider
 	&__slider {
 		aspect-ratio: 1;
 		border-radius: 1rem;
 	}
+
 	// .product-card__slide
 	&__slide {
 		height: 100%;
 		width: 100%;
 	}
+
 	// .product-card__labels
 	&__labels {
 		position: absolute;
@@ -56,30 +61,34 @@
 		gap: rem(6);
 		z-index: 2;
 	}
+
 	// .product-card__hover-areas
 	&__hover-areas {
 		@media (any-hover: none) {
 			pointer-events: none !important;
 		}
 	}
+
 	// .product-card__actions
 	&__actions {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
+
 	// .product-card__sku
 	&__sku {
 		color: #1570ef;
 		font-size: 0.875rem;
 		line-height: 157.143%;
 	}
+
 	// .product-card__pagination
-	&__pagination {
-	}
+	&__pagination {}
+
 	// .product-card__details
-	&__details {
-	}
+	&__details {}
+
 	// .product-card__title
 	&__title {
 		color: #483a2e;
@@ -89,10 +98,12 @@
 		line-height: 120%;
 		letter-spacing: -0.045rem;
 		font-size: 1.375rem;
+
 		@media (min-width: $md1) {
 			font-size: 1.5rem;
 		}
 	}
+
 	// .product-card__variations
 	&__variations {
 		margin-top: 0.75rem;
@@ -100,19 +111,21 @@
 		flex-wrap: wrap;
 		gap: rem(4);
 	}
+
 	// .product-card__variations-label
-	&__variations-label {
-	}
+	&__variations-label {}
+
 	// .product-card__variations-input
 	&__variations-input {
 		&:checked {
-			& ~ .product-card__variations-btn {
+			&~.product-card__variations-btn {
 				background: #473e36;
 				border-color: #473e36;
 				color: #fff;
 			}
 		}
 	}
+
 	// .product-card__variations-btn
 	&__variations-btn {
 		padding: rem(3) rem(7);
@@ -123,6 +136,7 @@
 		cursor: pointer;
 		user-select: none;
 	}
+
 	// .product-card__description
 	&__description {
 		margin-top: 0.75rem;
@@ -138,6 +152,7 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}
+
 	// .product-card__footer
 	&__footer {
 		margin-top: auto;
@@ -147,19 +162,22 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+
 	// .product-card__price
-	&__price {
-	}
+	&__price {}
+
 	// .product-card__link
 	&__link {
 		display: block;
 		height: 100%;
 		width: 100%;
 	}
+
 	// .product-card__title
 	&__title a {
 		color: inherit;
 		transition: color 0.3s ease;
+
 		@media (any-hover: hover) {
 			&:hover {
 				color: $accent;
@@ -170,9 +188,11 @@
 
 .product {
 	padding-top: 5rem;
+
 	@media (min-width: $md3) {
 		padding-top: rem(100);
 	}
+
 	@media (min-width: $md2) {
 		padding-top: rem(200);
 	}
@@ -181,12 +201,14 @@
 	&__body {
 		display: grid;
 		gap: 2rem;
+
 		@media (min-width: $md3) {
 			grid-template-columns: 1fr 1fr;
 			gap: 3rem;
 			align-items: start;
 		}
 	}
+
 	// .product__gallery
 	&__gallery {
 		position: relative;
@@ -195,17 +217,20 @@
 		background: #414651;
 		overflow: hidden;
 	}
+
 	// .product__slider
 	&__slider {
 		aspect-ratio: 1;
 		border-radius: 1rem;
 		overflow: hidden;
 	}
+
 	// .product__slide
 	&__slide {
 		height: 100%;
 		width: 100%;
 	}
+
 	// .product__pagination
 	&__pagination {
 		position: absolute;
@@ -214,6 +239,7 @@
 		bottom: 0.75rem;
 		z-index: 2;
 	}
+
 	// .product__labels
 	&__labels {
 		position: absolute;
@@ -225,6 +251,7 @@
 		gap: rem(6);
 		z-index: 2;
 	}
+
 	// .product__info
 	&__info {
 		display: flex;
@@ -232,12 +259,14 @@
 		gap: 0.75rem;
 		min-width: 0;
 	}
+
 	// .product__actions
 	&__actions {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
+
 	// .product__description
 	&__description {
 		color: #535862;
@@ -245,6 +274,7 @@
 		font-weight: 400;
 		line-height: 157.143%;
 	}
+
 	// .product__footer
 	&__footer {
 		margin-top: auto;
@@ -266,17 +296,21 @@
 	display: flex;
 	align-items: center;
 	gap: rem(6);
+
 	&__icon {
 		width: 1rem;
 		height: 1rem;
 		flex-shrink: 0;
+
 		& img {
 			width: 100%;
 		}
 	}
+
 	&--red {
 		color: #d92d20;
 	}
+
 	&--yellow {
 		color: #f79009;
 	}
