@@ -115,6 +115,27 @@
             "new_lines": "br"
         },
         {
+            "key": "field_68c0b3e4d5f01",
+            "label": "Показывать прелоадер",
+            "name": "show_preloader",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Экран загрузки при открытии сайта",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "acf-field--preloader-toggle",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 1,
+            "allow_in_bindings": 0,
+            "ui_on_text": "Да",
+            "ui_off_text": "Нет",
+            "ui": 1
+        },
+        {
             "key": "field_692f29ed72861",
             "label": "КОНТАКТНАЯ ИНФОРМАЦИЯ",
             "name": "",
@@ -1253,5 +1274,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1788861359
+    "modified": 1788944460
 }

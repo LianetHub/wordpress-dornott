@@ -47,7 +47,9 @@
 </head>
 
 <body <?php body_class(); ?>>
-    <?php require_once(TEMPLATE_PATH . '_preloader.php'); ?>
+    <?php if (dornott_is_preloader_enabled()) : ?>
+        <?php require_once(TEMPLATE_PATH . '_preloader.php'); ?>
+    <?php endif; ?>
     <div class="wrapper">
         <header class="header">
             <div class="header__body">

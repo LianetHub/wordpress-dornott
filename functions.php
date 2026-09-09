@@ -176,9 +176,17 @@ add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 add_filter('disable_wpseo_json_ld_search', '__return_true');
 
 
+function dornott_is_preloader_enabled()
+{
+	$stored = get_option('options_show_preloader', '1');
+	return $stored === '1' || $stored === 1 || $stored === true;
+}
+
 function add_preloading_body_class($classes)
 {
-	$classes[] = 'preloading';
+	if (dornott_is_preloader_enabled()) {
+		$classes[] = 'preloading';
+	}
 	return $classes;
 }
 add_filter('body_class', 'add_preloading_body_class');
