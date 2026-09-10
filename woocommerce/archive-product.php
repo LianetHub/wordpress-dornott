@@ -16,10 +16,8 @@ get_header();
 ?>
 
 <section class="catalog catalog--page">
+	<?php include TEMPLATE_PATH . '_hero.php'; ?>
 	<div class="container">
-		<?php include TEMPLATE_PATH . 'components/breadcrumbs.php'; ?>
-		<h1 class="catalog__title title"><?php woocommerce_page_title(); ?></h1>
-
 		<?php if (woocommerce_product_loop()) : ?>
 			<?php
 			woocommerce_product_loop_start();

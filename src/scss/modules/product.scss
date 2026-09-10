@@ -161,6 +161,21 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 0.5rem;
+	}
+
+	// .product-card__btns
+	&__btns {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex-shrink: 0;
+
+		.btn.icon-arrow-up-right {
+			width: rem(46);
+			height: rem(42);
+			padding: 0.75rem;
+		}
 	}
 
 	// .product-card__price
@@ -187,18 +202,10 @@
 }
 
 section.product {
-	padding-top: 5rem;
+	padding-top: 0;
 
-	@media (min-width: $md3) {
-		padding-top: rem(100);
-	}
-
-	@media (min-width: $md2) {
-		padding-top: rem(200);
-	}
-
-	.breadcrumbs {
-		margin-bottom: rem(15);
+	.hero--inner + .container {
+		padding-top: rem(48);
 	}
 }
 

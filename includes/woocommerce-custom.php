@@ -90,6 +90,67 @@ function dornott_catalog_product_query($q)
     $q->set('order', 'ASC');
 }
 
+define('DORNOTT_CATALOG_SLUG', 'katalog');
+define('DORNOTT_CATALOG_URL_VERSION', '2');
+
+add_action('init', 'dornott_setup_catalog_permalinks', 0);
+function dornott_setup_catalog_permalinks()
+{
+    if (!class_exists('WooCommerce')) {
+        return;
+    }
+
+    $shop_id = wc_get_page_id('shop');
+    if ($shop_id > 0) {
+        $shop = get_post($shop_id);
+        if ($shop && $shop->post_name !== DORNOTT_CATALOG_SLUG) {
+            wp_update_post(array(
+                'ID'        => $shop_id,
+                'post_name' => DORNOTT_CATALOG_SLUG,
+            ));
+        }
+    }
+
+    $permalinks = (array) get_option('woocommerce_permalinks', array());
+    $desired_base = '/' . DORNOTT_CATALOG_SLUG;
+    $needs_update = ($permalinks['product_base'] ?? '') !== $desired_base
+        || empty($permalinks['use_verbose_page_rules']);
+
+    if ($needs_update) {
+        $permalinks['product_base'] = $desired_base;
+        $permalinks['use_verbose_page_rules'] = true;
+        update_option('woocommerce_permalinks', $permalinks);
+        delete_option('dornott_catalog_url_version');
+    }
+}
+
+add_filter('woocommerce_register_post_type_product', 'dornott_product_post_type_args');
+function dornott_product_post_type_args($args)
+{
+    if (!is_array($args['rewrite'] ?? null)) {
+        $args['rewrite'] = array();
+    }
+
+    $args['rewrite']['slug'] = DORNOTT_CATALOG_SLUG;
+    $args['rewrite']['with_front'] = false;
+
+    return $args;
+}
+
+add_action('init', 'dornott_catalog_rewrite_rules', 6);
+function dornott_catalog_rewrite_rules()
+{
+    if (!class_exists('WooCommerce')) {
+        return;
+    }
+
+    $slug = DORNOTT_CATALOG_SLUG;
+
+    add_rewrite_rule('^' . $slug . '/([^/]+)/?$', 'index.php?product=$matches[1]', 'top');
+    add_rewrite_rule('^' . $slug . '/page/([0-9]+)/?$', 'index.php?post_type=product&paged=$matches[1]', 'top');
+    add_rewrite_rule('^product/([^/]+)/?$', 'index.php?product=$matches[1]', 'top');
+}
+
 add_action('init', 'dornott_flush_product_rewrites', 999);
 function dornott_flush_product_rewrites()
 {
@@ -97,12 +158,62 @@ function dornott_flush_product_rewrites()
         return;
     }
 
-    if (get_option('dornott_flush_product_rewrites') === '1') {
+    if (get_option('dornott_catalog_url_version') === DORNOTT_CATALOG_URL_VERSION) {
         return;
     }
 
     flush_rewrite_rules(false);
-    update_option('dornott_flush_product_rewrites', '1');
+    update_option('dornott_catalog_url_version', DORNOTT_CATALOG_URL_VERSION);
+}
+
+add_action('template_redirect', 'dornott_redirect_legacy_product_urls', 1);
+function dornott_redirect_legacy_product_urls()
+{
+    if (!function_exists('is_product') || !is_product()) {
+        return;
+    }
+
+    $canonical_path = wp_parse_url(get_permalink(), PHP_URL_PATH);
+    $current_path = wp_parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+
+    if (!$canonical_path || !$current_path) {
+        return;
+    }
+
+    $canonical_path = rawurldecode(untrailingslashit($canonical_path));
+    $current_path = rawurldecode(untrailingslashit($current_path));
+
+    if ($current_path !== $canonical_path) {
+        wp_safe_redirect(get_permalink(), 301);
+        exit;
+    }
+}
+
+add_filter('wpseo_breadcrumb_links', 'dornott_product_breadcrumb_links');
+function dornott_product_breadcrumb_links($links)
+{
+    if (!function_exists('is_product') || !is_product()) {
+        return $links;
+    }
+
+    $shop_id = wc_get_page_id('shop');
+    if ($shop_id <= 0) {
+        return $links;
+    }
+
+    $shop_url = untrailingslashit(get_permalink($shop_id));
+    foreach ($links as $link) {
+        if (!empty($link['url']) && untrailingslashit($link['url']) === $shop_url) {
+            return $links;
+        }
+    }
+
+    array_splice($links, 1, 0, array(array(
+        'url'  => get_permalink($shop_id),
+        'text' => get_the_title($shop_id),
+    )));
+
+    return $links;
 }
 
 add_action('init', 'custom_remove_product_taxonomies', 100);

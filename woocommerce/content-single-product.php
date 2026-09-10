@@ -115,8 +115,8 @@ $other_products = wc_get_products([
 ?>
 
 <section class="product" data-product-id="<?php echo esc_attr($product_id); ?>">
+	<?php include TEMPLATE_PATH . '_hero.php'; ?>
 	<div class="container">
-		<?php include TEMPLATE_PATH . 'components/breadcrumbs.php'; ?>
 		<div class="product__body">
 			<div class="product__gallery">
 				<div class="product__slider swiper">
@@ -176,9 +176,9 @@ $other_products = wc_get_products([
 						aria-label="Добавить в избранное"></button>
 				</div>
 
-				<h1 class="product__title product-card__title title">
+				<p class="product__title product-card__title title">
 					<?php echo esc_html($product->get_name()); ?>
-				</h1>
+				</p>
 
 				<?php if ($is_variable) : ?>
 					<div class="product__variations product-card__variations" data-variations-data="<?php echo esc_attr(wp_json_encode($variations_data)); ?>">

@@ -236,14 +236,20 @@ if ($is_variable) {
 			</div>
 		</div>
 
-		<button
-			class="toggle-to-cart-button btn btn-primary"
-			data-product-id="<?php echo esc_attr($product_id); ?>"
-			<?php if ($is_variable) : ?>
-			data-variation-id="<?php echo esc_attr($initial_product_id); ?>"
-			<?php endif; ?>
-			data-quantity="1"
-			aria-label="Добавить <?php echo esc_attr($product->get_name()); ?> в корзину">
-		</button>
+		<div class="product-card__btns">
+			<button
+				class="toggle-to-cart-button btn btn-primary"
+				data-product-id="<?php echo esc_attr($product_id); ?>"
+				<?php if ($is_variable) : ?>
+				data-variation-id="<?php echo esc_attr($initial_product_id); ?>"
+				<?php endif; ?>
+				data-quantity="1"
+				aria-label="Добавить <?php echo esc_attr($product->get_name()); ?> в корзину">
+			</button>
+			<a href="<?php echo esc_url($permalink); ?>"
+				class="btn btn-secondary icon-arrow-up-right"
+				aria-label="Перейти к товару <?php echo esc_attr($product->get_name()); ?>">
+			</a>
+		</div>
 	</div>
 </li>
