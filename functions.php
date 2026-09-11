@@ -9,6 +9,7 @@ require_once('includes/woocommerce-custom.php');
 // =========================================================================
 
 define('TEMPLATE_PATH', dirname(__FILE__) . '/templates/');
+define('DORNOTT_SMARTCAPTCHA_SITEKEY', 'ysc1_kzIyE344s2faPC2YmCuzMwsjuBxBP8bbf1KqkovV20820e34');
 
 // =========================================================================
 // 2. ENQUEUE STYLES AND SCRIPTS
@@ -34,13 +35,79 @@ function theme_enqueue_scripts()
 	wp_enqueue_script('jquery', get_template_directory_uri() . '/assets/js/libs/jquery-3.7.1.min.js', array(), null, true);
 	wp_enqueue_script('swiper-js', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), null, true);
 	wp_enqueue_script('fancybox-js', get_template_directory_uri() . '/assets/js/libs/fancybox.umd.js', array(), null, true);
-	wp_enqueue_script('app-js', get_template_directory_uri() . '/assets/js/app.min.js', array('jquery'), filemtime(get_template_directory() . '/assets/js/app.min.js'), true);
+
+	$app_deps = array('jquery');
+
+	wp_enqueue_script(
+		'yandex-smartcaptcha',
+		'https://smartcaptcha.cloud.yandex.ru/captcha.js?render=onload&onload=dornottSmartCaptchaOnload',
+		array(),
+		null,
+		true
+	);
+	wp_add_inline_script(
+		'yandex-smartcaptcha',
+		'function dornottSmartCaptchaOnload(){window.dornottSmartCaptchaReady=true;document.dispatchEvent(new CustomEvent("dornott-smartcaptcha-ready"));}',
+		'before'
+	);
+	$app_deps[] = 'yandex-smartcaptcha';
+
+	wp_enqueue_script('app-js', get_template_directory_uri() . '/assets/js/app.min.js', $app_deps, filemtime(get_template_directory() . '/assets/js/app.min.js'), true);
+
+	wp_localize_script('app-js', 'dornott_ajax', array(
+		'captcha_client_key' => $_ENV['SMARTCAPTCHA_CLIENT_KEY'] ?? DORNOTT_SMARTCAPTCHA_SITEKEY,
+	));
 
 	wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, false);
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_scripts');
 
+function dornott_smartcaptcha_html($theme = 'light')
+{
+	printf(
+		'<div class="form__captcha" data-smart-captcha data-theme="%s" style="height: 100px"></div>',
+		esc_attr($theme)
+	);
+}
 
+function dornott_verify_smartcaptcha($token)
+{
+	$secret = $_ENV['SMARTCAPTCHA_SERVER_KEY'] ?? ($_ENV['YANDEX_SMARTCAPTCHA_SECRET'] ?? '');
+	$token = is_string($token) ? trim($token) : '';
+
+	if ($secret === '' || $token === '') {
+		return false;
+	}
+
+	$body_args = array(
+		'secret' => $secret,
+		'token'  => $token,
+	);
+
+	$ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? ($_SERVER['REMOTE_ADDR'] ?? '');
+	if (is_string($ip) && strpos($ip, ',') !== false) {
+		$ip = trim(explode(',', $ip)[0]);
+	}
+	if (filter_var($ip, FILTER_VALIDATE_IP)) {
+		$body_args['ip'] = $ip;
+	}
+
+	$response = wp_remote_post(
+		'https://smartcaptcha.cloud.yandex.ru/validate',
+		array(
+			'timeout' => 5,
+			'body'    => $body_args,
+		)
+	);
+
+	if (is_wp_error($response)) {
+		return false;
+	}
+
+	$body = json_decode(wp_remote_retrieve_body($response), true);
+
+	return isset($body['status']) && $body['status'] === 'ok';
+}
 
 // =========================================================================
 // 3. THEME SUPPORT AND UTILITIES
@@ -274,6 +341,11 @@ function handle_universal_form()
 {
 	$data = $_POST;
 	$action = $_POST['action'] ?? '';
+	$is_paid_order = ($action === 'send_order_form' && !empty($data['order_id']));
+
+	if (!$is_paid_order && !dornott_verify_smartcaptcha($_POST['smart-token'] ?? '')) {
+		wp_send_json_error(['message' => 'Подтвердите, что вы не робот']);
+	}
 
 	$subjects = [
 		'send_contact_form'  => 'Новое сообщение из контактов',
@@ -437,6 +509,19 @@ function handle_tbank_init()
 	$payload = json_decode($request_body, true);
 
 	if (!$payload) wp_send_json_error(['message' => 'Пустой запрос']);
+
+	$captcha_token = '';
+	if (!empty($payload['order_info']) && is_array($payload['order_info'])) {
+		foreach ($payload['order_info'] as $info) {
+			if (($info['name'] ?? '') === 'smart-token') {
+				$captcha_token = $info['value'] ?? '';
+				break;
+			}
+		}
+	}
+	if (!dornott_verify_smartcaptcha($captcha_token)) {
+		wp_send_json_error(['message' => 'Подтвердите, что вы не робот']);
+	}
 
 	$terminal_key = $_ENV['TBANK_TERMINAL_KEY'] ?? '';
 	$secret_key = $_ENV['TBANK_SECRET_KEY'] ?? '';

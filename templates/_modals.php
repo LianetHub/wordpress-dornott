@@ -58,6 +58,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         <label class="popup__form-field form__field">
             <input type="tel" name="phone" data-required class="form__control form__control--dark" placeholder="Телефон">
         </label>
+        <?php dornott_smartcaptcha_html('dark'); ?>
         <div class="popup__form-footer">
             <button type="submit" class="form__btn btn btn-primary btn-sm">
                 <?php echo esc_html($callback_form_btn) ?>
@@ -97,6 +98,7 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         <label class="popup__form-field popup__form-field--large form__field">
             <textarea name="message" class="form__control form__control--dark" placeholder="Если у вас корпоративный заказ, опишите приблизительный объём товаров и сроки..."></textarea>
         </label>
+        <?php dornott_smartcaptcha_html('dark'); ?>
         <div class="popup__form-footer">
             <button type="submit" class="form__btn btn btn-primary btn-sm">
                 <?php echo esc_html($order_form_btn) ?>

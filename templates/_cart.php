@@ -156,6 +156,7 @@ $address = get_field('pickup_address', 'option') ?? '';
                             а также с <a href="#privacy-policy" data-src="#policies" data-fancybox>политикой конфиденциальности</a>
                         </span>
                     </label>
+                    <?php dornott_smartcaptcha_html(); ?>
                     <button type="submit" id="checkout-button" class="btn btn-primary">оплатить заказ</button>
                 </div>
                 <div id="cart-validation-warning" class="cart__warning hidden">

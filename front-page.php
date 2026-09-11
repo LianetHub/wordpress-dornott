@@ -670,6 +670,7 @@
                             </label>
                         </div>
                     </div>
+                    <?php dornott_smartcaptcha_html(); ?>
                     <div class="contacts__form-footer">
                         <button type="submit" class="form__btn btn btn-primary btn-sm">Отправить</button>
                         <div class="form__policy">

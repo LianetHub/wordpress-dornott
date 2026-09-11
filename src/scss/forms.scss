@@ -203,6 +203,24 @@
 		}
 	}
 
+	// .form__captcha
+	&__captcha {
+		width: 100%;
+		height: 100px;
+		margin-top: 0.5rem;
+		margin-bottom: rem(8);
+
+		&[data-theme="dark"] {
+			filter: invert(1);
+		}
+
+		&._error {
+			outline: rem(1) solid #f04438;
+			outline-offset: rem(4);
+			border-radius: 0.75rem;
+		}
+	}
+
 	// .form__btn
 	&__btn {
 		width: 100%;

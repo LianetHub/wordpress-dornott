@@ -104,6 +104,11 @@ $(function () {
 						}
 					}
 				},
+				done: () => {
+					setTimeout(() => {
+						window.formController?.initCaptchas();
+					}, 100);
+				},
 				destroy: (fancyboxRef) => {
 					if (fancyboxRef.getSlide().src === "#cart") {
 						window?.dornottCart.resetInterface();
@@ -861,6 +866,99 @@ $(function () {
 			$(document)
 				.off("click", this.selectors.fileRemove)
 				.on("click", this.selectors.fileRemove, (e) => this.handleFileRemove(e));
+
+			$(document).on("input change", 'input[name="smart-token"]', (e) => {
+				const $form = $(e.target).closest("form");
+				if ($form.length) {
+					this.toggleCaptchaError($form, false);
+				}
+			});
+
+			this.waitForCaptchaApi();
+			document.addEventListener("dornott-smartcaptcha-ready", () => this.initCaptchas());
+		}
+
+		initCaptchas($scope) {
+			const $root = $scope ? ($scope instanceof jQuery ? $scope : $($scope)) : $(document);
+			const clientKey = window.dornott_ajax?.captcha_client_key;
+			const $containers = $root.find("form [data-smart-captcha]");
+
+			if (!clientKey || !window.smartCaptcha) {
+				return false;
+			}
+
+			let rendered = 0;
+
+			$containers.each((_, el) => {
+				if (el.dataset.widgetId !== undefined) {
+					return;
+				}
+
+				try {
+					const widgetId = window.smartCaptcha.render(el, {
+						sitekey: clientKey,
+						hl: "ru",
+						theme: "light",
+					});
+
+					el.dataset.widgetId = String(widgetId);
+					rendered++;
+				} catch (error) {
+					console.error("[SmartCaptcha] ошибка render", error);
+				}
+			});
+
+			return rendered > 0;
+		}
+
+		waitForCaptchaApi() {
+			if (this.initCaptchas()) {
+				return;
+			}
+
+			const timer = setInterval(() => {
+				if (this.initCaptchas()) {
+					clearInterval(timer);
+				}
+			}, 200);
+
+			setTimeout(() => {
+				clearInterval(timer);
+				if (!$("form [data-smart-captcha][data-widget-id]").length && $("form [data-smart-captcha]").length) {
+					console.error("[SmartCaptcha] не удалось инициализировать виджеты за 15 сек");
+				}
+			}, 15000);
+		}
+
+		resetCaptcha($form) {
+			if (!window.smartCaptcha) {
+				return;
+			}
+
+			const container = $form.find("[data-smart-captcha]")[0];
+
+			if (container?.dataset.widgetId !== undefined) {
+				window.smartCaptcha.reset(Number(container.dataset.widgetId));
+			}
+		}
+
+		toggleCaptchaError($form, hasError) {
+			$form.find("[data-smart-captcha]").toggleClass(this.selectors.errorClass, hasError);
+		}
+
+		isCaptchaSolved($form) {
+			if (!$form.find("[data-smart-captcha]").length) {
+				return true;
+			}
+
+			const formData = new FormData($form[0]);
+			if (formData.get("smart-token")) {
+				this.toggleCaptchaError($form, false);
+				return true;
+			}
+
+			this.toggleCaptchaError($form, true);
+			return false;
 		}
 
 		bindSubmit($form) {
@@ -883,6 +981,12 @@ $(function () {
 			const formData = new FormData($form[0]);
 			const $submitBtn = $form.find(this.selectors.submitBtn);
 
+			if ($form.find("[data-smart-captcha]").length && !formData.get("smart-token")) {
+				this.toggleCaptchaError($form, true);
+				return;
+			}
+
+			this.toggleCaptchaError($form, false);
 			$submitBtn.addClass(this.selectors.loadingClass);
 
 			try {
@@ -898,6 +1002,7 @@ $(function () {
 						$form[0].reset();
 						$form.find(".form__file-preview").remove();
 						$form.find(".uploaded").removeClass("uploaded");
+						this.resetCaptcha($form);
 
 						if (window.dornottCart && $form.attr("id") === "cart-form") {
 							localStorage.removeItem(window.dornottCart.storageKey);
@@ -923,6 +1028,7 @@ $(function () {
 						}
 					} else {
 						console.error("Ошибка логики сервера:", result.data.message);
+						this.resetCaptcha($form);
 						this.showErrorPopup();
 					}
 				} else {
@@ -996,6 +1102,10 @@ $(function () {
 					isAllValid = false;
 				}
 			});
+
+			if (window.formController && !window.formController.isCaptchaSolved($form)) {
+				isAllValid = false;
+			}
 
 			return isAllValid;
 		}
@@ -1314,6 +1424,11 @@ $(function () {
 			});
 
 			$("#cart-validation-warning").toggleClass("hidden", isAllValid);
+
+			if (window.formController && !window.formController.isCaptchaSolved(this.$form)) {
+				isAllValid = false;
+			}
+
 			return isAllValid;
 		}
 
@@ -1488,6 +1603,9 @@ $(function () {
 						this.openPaymentIframe(result.data.paymentUrl, result.data.orderId);
 					} else {
 						console.error("Ошибка инициализации платежа", result.data.message);
+						if (window.formController) {
+							window.formController.resetCaptcha(this.$form);
+						}
 						this.$checkoutBtn.removeClass("_loading");
 					}
 				} catch (error) {
