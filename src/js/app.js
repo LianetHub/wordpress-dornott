@@ -1593,7 +1593,7 @@ $(function () {
                             <input type="checkbox" class="checkbox__input hidden" hidden checked>
                             <span class="checkbox__text"></span>
                         </label>
-                        <div class="cart__item-thumb"><img src="${item.image}"></div>
+                        <div class="cart__item-thumb"><img src="${item.image}" class="cover-image"></div>
                         <div class="cart__item-info">
                             <div class="cart__item-sku">${item.sku}</div>
                             <div class="cart__item-name">${item.name}</div>

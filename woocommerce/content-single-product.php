@@ -236,7 +236,7 @@ $other_products = wc_get_products([
 
 			<div class="product__info">
 				<div class="product__actions">
-					<p class="product__title product-card__title title-md">
+					<p class="product__title title-md">
 						<?php echo esc_html($product->get_name()); ?>
 					</p>
 					<button type="button"
@@ -375,3 +375,10 @@ $other_products = wc_get_products([
 		</div>
 	</section>
 <?php endif; ?>
+
+<?php
+get_template_part('templates/sections/special-offer');
+get_template_part('templates/sections/steps');
+get_template_part('templates/sections/reviews');
+get_template_part('templates/sections/contacts');
+?>

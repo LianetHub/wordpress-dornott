@@ -4,6 +4,33 @@ require_once('includes/admin-custom.php');
 require_once('includes/acf-custom.php');
 require_once('includes/woocommerce-custom.php');
 
+if (!function_exists('dornott_front_page_id')) {
+	function dornott_front_page_id()
+	{
+		return (int) get_option('page_on_front');
+	}
+}
+
+if (!function_exists('dornott_sections_context_id')) {
+	function dornott_sections_context_id()
+	{
+		if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')) {
+			return (int) wc_get_page_id('shop');
+		}
+
+		if (function_exists('is_product') && is_product()) {
+			return (int) get_queried_object_id();
+		}
+
+		if (is_front_page()) {
+			return dornott_front_page_id();
+		}
+
+		$id = (int) get_queried_object_id();
+		return $id ?: dornott_front_page_id();
+	}
+}
+
 // =========================================================================
 // 1. CONSTANTS
 // =========================================================================

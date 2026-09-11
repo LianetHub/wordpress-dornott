@@ -5145,11 +5145,6 @@ body.no-preloader .preloader {
     gap: 1.25rem;
   }
 
-  .product__title {
-    font-size: 2rem;
-    letter-spacing: -0.04rem;
-  }
-
   .product__favorite.favorite-btn::before {
     width: 2.25rem;
     height: 2.25rem;
@@ -5181,10 +5176,6 @@ body.no-preloader .preloader {
   }
 
   .title {
-    font-size: 2.75rem;
-  }
-
-  .title-md {
     font-size: 2.75rem;
   }
 
