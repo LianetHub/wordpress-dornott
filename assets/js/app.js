@@ -421,8 +421,104 @@ $(function () {
 		initProductGallery($(this), ".product-card__slider", ".product-card__pagination");
 	});
 
+	const initProductPageGallery = ($product) => {
+		const $gallery = $product.find(".product__gallery");
+		if (!$gallery.length) return;
+
+		const $main = $gallery.find(".product__main");
+		const $link = $main.find(".product__main-link");
+		const $img = $main.find(".product__image");
+		const $zoom = $main.find(".product__zoom");
+		const $thumbs = $gallery.find(".product__thumbs");
+		let gallery = $gallery.data("gallery") || [];
+
+		if (typeof gallery === "string") {
+			try {
+				gallery = JSON.parse(gallery);
+			} catch (e) {
+				gallery = [];
+			}
+		}
+
+		if (!Array.isArray(gallery)) {
+			gallery = [];
+		}
+
+		let currentIndex = 0;
+
+		const setActive = (index) => {
+			const item = gallery[index];
+			if (!item) return;
+
+			currentIndex = index;
+			$link.attr("href", item.full);
+			$img.attr({
+				src: item.single,
+				alt: item.alt || "",
+			});
+			$zoom.css("background-image", `url("${item.full}")`);
+			$thumbs.find(".product__thumb").removeClass("is-active").eq(index).addClass("is-active");
+		};
+
+		$link.on("click", (e) => {
+			e.preventDefault();
+			if (typeof Fancybox === "undefined" || !gallery.length) return;
+
+			Fancybox.show(
+				gallery.map((item) => ({
+					src: item.full,
+					type: "image",
+				})),
+				{
+					startIndex: currentIndex,
+					dragToClose: false,
+				},
+			);
+		});
+
+		if (hasCursor) {
+			$main.on("mouseenter", () => {
+				const item = gallery[currentIndex];
+				if (!item) return;
+
+				$zoom
+					.css({
+						backgroundImage: `url("${item.full}")`,
+						backgroundSize: "250%",
+					})
+					.addClass("is-visible");
+			});
+
+			$main.on("mousemove", (e) => {
+				const rect = $main[0].getBoundingClientRect();
+				if (!rect.width || !rect.height) return;
+
+				const x = ((e.clientX - rect.left) / rect.width) * 100;
+				const y = ((e.clientY - rect.top) / rect.height) * 100;
+				$zoom.css("background-position", `${x}% ${y}%`);
+			});
+
+			$main.on("mouseleave", () => {
+				$zoom.removeClass("is-visible");
+			});
+		}
+
+		if ($thumbs.length) {
+			new Swiper($thumbs[0], {
+				slidesPerView: "auto",
+				spaceBetween: 8,
+				watchOverflow: true,
+				watchSlidesProgress: true,
+			});
+
+			$thumbs.on("click", ".product__thumb", function () {
+				setActive(Number($(this).data("index")));
+			});
+		}
+	};
+
 	$(".product").each(function () {
-		initProductGallery($(this), ".product__slider", ".product__pagination");
+		initProductPageGallery($(this));
 	});
 
 	if ($(".reviews").length) {
@@ -1129,15 +1225,18 @@ $(function () {
 				const regPrice = parseInt($card.find('[data-price-role="regular-price"]').text().replace(/\D/g, "")) || price;
 				const saleText = $card.find(".price-block__sale").text().trim();
 
+				const $qtyInput = $card.find(".quantity-block__input");
+				const quantity = $qtyInput.length ? Math.min(999, Math.max(1, parseInt($qtyInput.val(), 10) || 1)) : 1;
+
 				const product = {
 					id: productId,
 					name: $card.find(".product-card__title").text().trim(),
-					sku: $card.find(".product-card__sku").text().trim(),
+					sku: $card.find(".product-card__sku").text().trim() || String($card.data("sku") || ""),
 					price: price,
 					regular_price: regPrice,
 					sale_label: saleText,
 					image: $card.find(".product-card__image").first().attr("src"),
-					quantity: 1,
+					quantity: quantity,
 				};
 
 				this.addItem(product);
@@ -1160,22 +1259,41 @@ $(function () {
 			$(`.toggle-to-cart-button[data-product-id="${id}"], .toggle-to-cart-button[data-variation-id="${id}"]`).removeClass("active");
 		}
 
+		syncProductQuantity($input, val) {
+			const $product = $input.closest(".product");
+			if ($product.length) {
+				$product.find(".toggle-to-cart-button").attr("data-quantity", val);
+			}
+		}
+
 		changeQty(e, delta) {
 			const $input = $(e.currentTarget).siblings(".quantity-block__input");
-			const id = $(e.currentTarget).closest(".cart__item").data("id");
+			const $cartItem = $(e.currentTarget).closest(".cart__item");
 			let val = parseInt($input.val()) || 1;
 			val = Math.min(999, Math.max(1, val + delta));
 			$input.val(val);
-			this.updateQuantity(id, val);
+
+			if ($cartItem.length) {
+				this.updateQuantity($cartItem.data("id"), val);
+				return;
+			}
+
+			this.syncProductQuantity($input, val);
 		}
 
 		handleQtyInput(e) {
 			const $input = $(e.currentTarget);
-			const id = $input.closest(".cart__item").data("id");
+			const $cartItem = $input.closest(".cart__item");
 			let val = parseInt($input.val().replace(/\D/g, "")) || 1;
 			val = Math.min(999, Math.max(1, val));
 			$input.val(val);
-			this.updateQuantity(id, val);
+
+			if ($cartItem.length) {
+				this.updateQuantity($cartItem.data("id"), val);
+				return;
+			}
+
+			this.syncProductQuantity($input, val);
 		}
 
 		updateQuantity(id, qty) {

@@ -264,7 +264,8 @@
 	}
 	&.active {
 		@extend %active-state-cart-button;
-		&.btn.btn-primary {
+		&.btn.btn-primary,
+		&.btn.btn-secondary {
 			@extend %active-state-cart-button;
 		}
 		&::before {
