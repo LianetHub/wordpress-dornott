@@ -369,18 +369,23 @@ $(function () {
 
 		const swiper = new Swiper($slider[0], {
 			slidesPerView: 1,
-			speed: hasCursor ? 0 : 400,
+			speed: 300,
 			lazy: true,
+			loop: true,
 			watchOverflow: true,
 			pagination: {
 				el: pagination,
 				clickable: true,
 			},
+			navigation: {
+				nextEl: $slider.find(".product-card__next")[0],
+				prevEl: $slider.find(".product-card__prev")[0],
+			},
 		});
 
-		const slidesCount = swiper.slides.length;
+		const realSlidesCount = $slider.find(".swiper-slide:not(.swiper-slide-duplicate)").length;
 
-		if (slidesCount > 1) {
+		if (realSlidesCount > 1) {
 			const $areasWrapper = $('<div class="product-card__hover-areas"></div>');
 			$areasWrapper.css({
 				position: "absolute",
@@ -398,14 +403,14 @@ $(function () {
 
 			const permalink = $root.is(".product-card") ? $root.find(".product-card__title a").attr("href") : null;
 
-			for (let i = 0; i < slidesCount; i++) {
+			for (let i = 0; i < realSlidesCount; i++) {
 				const $area = $('<div class="product-card__hover-area"></div>');
 				$area.css({
 					flex: "1 1 0",
 				});
 
 				$area.on("mouseenter", () => {
-					swiper.slideTo(i);
+					swiper.slideToLoop(i, 0);
 				});
 
 				if (permalink) {
@@ -419,6 +424,12 @@ $(function () {
 			}
 
 			$slider.css("position", "relative").append($areasWrapper);
+
+			if (hasCursor) {
+				$slider.on("mouseleave", () => {
+					swiper.slideToLoop(0, 0);
+				});
+			}
 		}
 	};
 

@@ -233,14 +233,52 @@ function custom_remove_product_features()
     remove_post_type_support('product', 'excerpt');
 }
 
-add_filter('wpseo_sitemap_exclude_taxonomy', 'custom_exclude_product_taxonomy_from_sitemap', 10, 2);
-function custom_exclude_product_taxonomy_from_sitemap($exclude, $taxonomy)
+add_filter('wpseo_sitemap_exclude_post_type', 'dornott_exclude_junk_post_types_from_sitemap', 10, 2);
+function dornott_exclude_junk_post_types_from_sitemap($exclude, $post_type)
 {
-    $taxonomies = array('product_cat', 'product_tag', 'product_brand', 'pwb-brand');
-    if (in_array($taxonomy, $taxonomies)) {
+    if ($post_type === 'post') {
         return true;
     }
     return $exclude;
+}
+
+add_filter('wpseo_sitemap_exclude_taxonomy', 'custom_exclude_product_taxonomy_from_sitemap', 10, 2);
+function custom_exclude_product_taxonomy_from_sitemap($exclude, $taxonomy)
+{
+    $taxonomies = array('category', 'post_tag', 'product_cat', 'product_tag', 'product_brand', 'pwb-brand');
+    if (in_array($taxonomy, $taxonomies, true)) {
+        return true;
+    }
+    return $exclude;
+}
+
+add_filter('wpseo_sitemap_exclude_author', 'dornott_exclude_authors_from_sitemap');
+function dornott_exclude_authors_from_sitemap($users)
+{
+    return array();
+}
+
+add_filter('wp_sitemaps_post_types', 'dornott_exclude_core_sitemap_post_types');
+function dornott_exclude_core_sitemap_post_types($post_types)
+{
+    unset($post_types['post']);
+    return $post_types;
+}
+
+add_filter('wp_sitemaps_taxonomies', 'dornott_exclude_core_sitemap_taxonomies');
+function dornott_exclude_core_sitemap_taxonomies($taxonomies)
+{
+    unset($taxonomies['category'], $taxonomies['post_tag']);
+    return $taxonomies;
+}
+
+add_filter('wp_sitemaps_add_provider', 'dornott_exclude_core_sitemap_users', 10, 2);
+function dornott_exclude_core_sitemap_users($provider, $name)
+{
+    if ($name === 'users') {
+        return false;
+    }
+    return $provider;
 }
 
 add_filter('woocommerce_get_query_vars', 'custom_remove_wc_query_vars', 99);

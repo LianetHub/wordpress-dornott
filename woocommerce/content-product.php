@@ -131,6 +131,8 @@ if ($is_variable) {
 			<div class="swiper-wrapper">
 				<?php echo $slides_html; ?>
 			</div>
+			<button type="button" class="product-card__prev swiper-button-prev" aria-label="Предыдущее изображение"></button>
+			<button type="button" class="product-card__next swiper-button-next" aria-label="Следующее изображение"></button>
 		</div>
 		<div class="product-card__labels">
 			<?php if ($is_on_sale && $sale_percentage > 0) : ?>

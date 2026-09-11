@@ -592,12 +592,49 @@ body:not(.preloading) .preloader {
   min-width: 0;
   max-width: 100%;
   border-radius: 1rem;
+  overflow: hidden;
+}
+
+.product-card__header::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
   background: #414651;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .product-card__slider {
+  position: relative;
+  z-index: 1;
   aspect-ratio: 1;
   border-radius: 1rem;
+}
+
+.product-card__slider .product-card__prev,
+.product-card__slider .product-card__next {
+  position: absolute !important;
+  top: 50% !important;
+  bottom: auto !important;
+  -webkit-transform: translateY(-50%) !important;
+      -ms-transform: translateY(-50%) !important;
+          transform: translateY(-50%) !important;
+  z-index: 11;
+  width: 2rem;
+  height: 1.5rem;
+  -webkit-transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.product-card__slider .product-card__prev {
+  left: 0.5rem !important;
+  right: auto !important;
+}
+
+.product-card__slider .product-card__next {
+  right: 0.5rem !important;
+  left: auto !important;
 }
 
 .product-card__slide {
@@ -4626,6 +4663,12 @@ body.no-preloader .preloader {
     max-width: 46.875rem;
   }
 
+  .product-card__slider .product-card__prev,
+  .product-card__slider .product-card__next {
+    width: 2.25rem;
+    height: 1.75rem;
+  }
+
   .product__thumb {
     width: 5rem;
     height: 5rem;
@@ -6421,6 +6464,26 @@ body.no-preloader .preloader {
     border-color: #717680;
   }
 
+  .product-card__slider .product-card__prev,
+  .product-card__slider .product-card__next {
+    opacity: 0;
+  }
+
+  .product-card__slider .product-card__prev.swiper-button-disabled,
+  .product-card__slider .product-card__next.swiper-button-disabled {
+    opacity: 0;
+  }
+
+  .product-card__slider:hover .product-card__prev,
+  .product-card__slider:hover .product-card__next {
+    opacity: 1;
+  }
+
+  .product-card__slider:hover .product-card__prev.swiper-button-disabled,
+  .product-card__slider:hover .product-card__next.swiper-button-disabled {
+    opacity: 0.7;
+  }
+
   .product-card__title a:hover {
     color: #ffbb4e;
   }
@@ -6613,6 +6676,11 @@ body.no-preloader .preloader {
 @media (any-hover: none) {
   .product-card {
     border-color: #717680;
+  }
+
+  .product-card__slider .product-card__prev,
+  .product-card__slider .product-card__next {
+    opacity: 1;
   }
 
   .product-card__hover-areas {
