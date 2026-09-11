@@ -14,6 +14,7 @@ $address = get_field('pickup_address', 'option') ?? '';
             <input type="hidden" name="delivery_price" value="">
             <input type="hidden" name="full_address" value="">
             <input type="hidden" name="action" value="send_order_form">
+            <?php wp_nonce_field('dornott_cart', '_ajax_nonce', false); ?>
             <div class="cart__main">
                 <div class="cart__products">
                     <div class="cart__products-header">

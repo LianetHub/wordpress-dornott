@@ -13,7 +13,10 @@ export const js = () => {
             mode: 'production',
             output: {
                 filename: 'app.min.js',
-            }
+            },
+            externals: {
+                jquery: 'jQuery',
+            },
         }))
         .pipe(app.gulp.dest(app.path.build.js))
         .pipe(app.gulp.src(app.path.src.js))

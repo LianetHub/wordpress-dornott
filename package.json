@@ -9,7 +9,10 @@
     "build": "gulp build --build",
     "zip": "gulp deployZIP --build",
     "deploy:ftp": "gulp ftpDeployAll",
-    "deploy": "npm run build && git add . && git commit -m \"commit\" && git push"
+    "deploy": "npm run build && git add . && git commit -m \"commit\" && git push",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:php": "php tests/php/cart-payment.php"
   },
   "author": "Liana",
   "license": "ISC",
@@ -53,6 +56,8 @@
     "swiper": "^6.8.4",
     "through2": "^4.0.2",
     "vanillajs-datepicker": "^1.3.4",
+    "vitest": "^3.2.4",
+    "jsdom": "^26.1.0",
     "webp-converter": "2.2.3",
     "webpack": "^5.65.0",
     "webpack-stream": "^7.0.0"

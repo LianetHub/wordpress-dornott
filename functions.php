@@ -3,6 +3,8 @@
 require_once('includes/admin-custom.php');
 require_once('includes/acf-custom.php');
 require_once('includes/woocommerce-custom.php');
+require_once('includes/cart-payment.php');
+require_once('includes/disable-update-http.php');
 
 if (!function_exists('dornott_front_page_id')) {
 	function dornott_front_page_id()
@@ -86,6 +88,8 @@ function theme_enqueue_scripts()
 
 	wp_localize_script('app-js', 'dornott_ajax', array(
 		'captcha_client_key' => $_ENV['SMARTCAPTCHA_CLIENT_KEY'] ?? DORNOTT_SMARTCAPTCHA_SITEKEY,
+		'nonce'              => wp_create_nonce('dornott_cart'),
+		'ajax_url'           => admin_url('admin-ajax.php'),
 	));
 
 	wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, false);
@@ -369,11 +373,22 @@ add_action('wp_ajax_nopriv_send_order_form', 'handle_universal_form');
 
 function handle_universal_form()
 {
+	if (!dornott_verify_ajax_nonce()) {
+		wp_send_json_error(['message' => 'Сессия устарела. Обновите страницу.']);
+	}
+
 	$data = $_POST;
 	$action = $_POST['action'] ?? '';
-	$is_paid_order = ($action === 'send_order_form' && !empty($data['order_id']));
+	$pending = null;
 
-	if (!$is_paid_order && !dornott_verify_smartcaptcha($_POST['smart-token'] ?? '')) {
+	if ($action === 'send_order_form' && !empty($data['order_id'])) {
+		$order_id = sanitize_text_field($data['order_id']);
+		$pending = get_transient(dornott_pending_order_transient_key($order_id));
+
+		if (!$pending || !dornott_verify_tbank_paid($pending)) {
+			wp_send_json_error(['message' => 'Оплата не подтверждена']);
+		}
+	} elseif (!dornott_verify_smartcaptcha($_POST['smart-token'] ?? '')) {
 		wp_send_json_error(['message' => 'Подтвердите, что вы не робот']);
 	}
 
@@ -391,14 +406,27 @@ function handle_universal_form()
 
 	$headers = ['Content-Type: text/html; charset=UTF-8'];
 
-	$username = sanitize_text_field($data['username'] ?? '');
-	$phone    = sanitize_text_field($data['phone'] ?? '');
-	$email    = sanitize_email($data['email'] ?? '');
-	$city     = sanitize_text_field($data['city'] ?? '');
-	$address  = sanitize_text_field($data['address'] ?? '');
-	$delivery = sanitize_text_field($data['delivery'] ?? '');
-	$delivery_price = sanitize_text_field($data['delivery_price'] ?? '');
-	$message_text = nl2br(sanitize_textarea_field($data['message'] ?? ''));
+	if (is_array($pending)) {
+		$username = sanitize_text_field($pending['username'] ?? '');
+		$phone    = sanitize_text_field($pending['phone'] ?? '');
+		$email    = sanitize_email($pending['email'] ?? '');
+		$city     = sanitize_text_field($pending['city'] ?? '');
+		$address  = sanitize_text_field($pending['address'] ?? '');
+		$delivery = sanitize_text_field($pending['delivery'] ?? '');
+		$delivery_price = intval($pending['totals']['deliveryPrice'] ?? 0);
+		$message_text = nl2br(sanitize_textarea_field($pending['message'] ?? ''));
+		$data['cart_items'] = wp_json_encode($pending['items'] ?? []);
+		$data['delivery_price'] = $delivery_price;
+	} else {
+		$username = sanitize_text_field($data['username'] ?? '');
+		$phone    = sanitize_text_field($data['phone'] ?? '');
+		$email    = sanitize_email($data['email'] ?? '');
+		$city     = sanitize_text_field($data['city'] ?? '');
+		$address  = sanitize_text_field($data['address'] ?? '');
+		$delivery = sanitize_text_field($data['delivery'] ?? '');
+		$delivery_price = sanitize_text_field($data['delivery_price'] ?? '');
+		$message_text = nl2br(sanitize_textarea_field($data['message'] ?? ''));
+	}
 
 	ob_start();
 ?>
@@ -522,6 +550,9 @@ function handle_universal_form()
 	}
 
 	if ($mail_sent) {
+		if ($action === 'send_order_form' && !empty($data['order_id'])) {
+			delete_transient(dornott_pending_order_transient_key($data['order_id']));
+		}
 		wp_send_json_success(['message' => 'Сообщение успешно отправлено']);
 	} else {
 		wp_send_json_error(['message' => 'Ошибка при отправке письма']);
@@ -535,44 +566,49 @@ add_action('wp_ajax_nopriv_init_tbank_payment', 'handle_tbank_init');
 
 function handle_tbank_init()
 {
+	if (!dornott_verify_ajax_nonce()) {
+		wp_send_json_error(['message' => 'Сессия устарела. Обновите страницу.']);
+	}
+
 	$request_body = file_get_contents('php://input');
 	$payload = json_decode($request_body, true);
 
-	if (!$payload) wp_send_json_error(['message' => 'Пустой запрос']);
-
-	$captcha_token = '';
-	if (!empty($payload['order_info']) && is_array($payload['order_info'])) {
-		foreach ($payload['order_info'] as $info) {
-			if (($info['name'] ?? '') === 'smart-token') {
-				$captcha_token = $info['value'] ?? '';
-				break;
-			}
-		}
+	if (!$payload) {
+		wp_send_json_error(['message' => 'Пустой запрос']);
 	}
-	if (!dornott_verify_smartcaptcha($captcha_token)) {
+
+	$order_info = $payload['order_info'] ?? [];
+	if (!dornott_verify_smartcaptcha(dornott_order_info_value($order_info, 'smart-token'))) {
 		wp_send_json_error(['message' => 'Подтвердите, что вы не робот']);
+	}
+
+	$resolved = dornott_resolve_cart_items($payload['items'] ?? []);
+	if (!$resolved['ok']) {
+		wp_send_json_error(['message' => $resolved['message']]);
+	}
+
+	$delivery_slug = sanitize_title(dornott_order_info_value($order_info, 'delivery'));
+	$delivery_price = dornott_lookup_delivery_price($delivery_slug, dornott_get_delivery_methods());
+	if ($delivery_price === null) {
+		wp_send_json_error(['message' => 'Выберите способ доставки']);
+	}
+
+	$totals = dornott_recalculate_totals($resolved['items'], $delivery_price);
+	if ($totals['finalPrice'] <= 0) {
+		wp_send_json_error(['message' => 'Некорректная сумма заказа']);
 	}
 
 	$terminal_key = $_ENV['TBANK_TERMINAL_KEY'] ?? '';
 	$secret_key = $_ENV['TBANK_SECRET_KEY'] ?? '';
-
-	$email = '';
-	$raw_phone = '';
-	foreach ($payload['order_info'] as $info) {
-		if ($info['name'] === 'email') $email = $info['value'];
-		if ($info['name'] === 'phone') $raw_phone = $info['value'];
+	if ($terminal_key === '' || $secret_key === '') {
+		wp_send_json_error(['message' => 'Платежный сервис недоступен']);
 	}
 
-	$clean_phone = '+' . preg_replace('/[^0-9]/', '', $raw_phone);
-
-	if (strpos($clean_phone, '+8') === 0) {
-		$clean_phone = '+7' . substr($clean_phone, 2);
-	}
-
-	$order_id = time();
-	$amount = intval($payload['totals']['finalPrice']) * 100;
-
-
+	$email = sanitize_email(dornott_order_info_value($order_info, 'email'));
+	$raw_phone = dornott_order_info_value($order_info, 'phone');
+	$clean_phone = dornott_normalize_phone($raw_phone);
+	$order_id = (string) time();
+	$amount = intval($totals['finalPrice']) * 100;
 
 	$params = [
 		'TerminalKey' => $terminal_key,
@@ -581,80 +617,44 @@ function handle_tbank_init()
 		'Description' => 'Оплата заказа №' . $order_id,
 		'DATA'        => [
 			'Email' => $email,
-			'Phone' => $clean_phone
+			'Phone' => $clean_phone,
 		],
 		'Receipt'     => [
 			'Email'    => $email,
 			'Phone'    => $clean_phone,
 			'Taxation' => 'osn',
-			'Items'    => []
-		]
-	];
-
-
-
-	foreach ($payload['items'] as $item) {
-		$item_amount = intval($item['price']) * intval($item['quantity']) * 100;
-		$params['Receipt']['Items'][] = [
-			'Name'     => mb_strimwidth($item['name'], 0, 128),
-			'Price'    => intval($item['price']) * 100,
-			'Quantity' => intval($item['quantity']),
-			'Amount'   => $item_amount,
-			'Tax'      => 'none'
-		];
-	}
-
-	if (isset($payload['totals']['deliveryPrice']) && $payload['totals']['deliveryPrice'] > 0) {
-		$params['Receipt']['Items'][] = [
-			'Name'     => 'Доставка',
-			'Price'    => intval($payload['totals']['deliveryPrice']) * 100,
-			'Quantity' => 1,
-			'Amount'   => intval($payload['totals']['deliveryPrice']) * 100,
-			'Tax'      => 'none'
-		];
-	}
-
-	$token_params = [
-		'TerminalKey' => (string)$params['TerminalKey'],
-		'Amount'      => (string)$params['Amount'],
-		'OrderId'     => (string)$params['OrderId'],
-		'Description' => (string)$params['Description'],
-		'Password'    => (string)$secret_key
-	];
-
-	ksort($token_params);
-
-	$token_str = '';
-	foreach ($token_params as $val) {
-		$token_str .= (string)$val;
-	}
-
-	$params['Token'] = hash('sha256', $token_str);
-
-	$response = wp_remote_post('https://securepay.tinkoff.ru/v2/Init', [
-		'headers' => [
-			'Content-Type' => 'application/json',
-			'User-Agent'   => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+			'Items'    => dornott_build_receipt_items($resolved['items'], $delivery_price),
 		],
-		'body'    => json_encode($params),
-		'timeout' => 30
+	];
+
+	$result = dornott_tbank_request('Init', $params, $secret_key);
+	if (!$result['ok'] || empty($result['body']['PaymentURL'])) {
+		$error = $result['body']['Message'] ?? 'Ошибка API';
+		$details = $result['body']['Details'] ?? ($result['message'] ?? '');
+		wp_send_json_error(['message' => $result['body'] ? "Банк: $error. $details" : ($result['message'] ?: 'Ошибка API')]);
+	}
+
+	$payment_id = $result['body']['PaymentId'] ?? '';
+	if ($payment_id === '') {
+		wp_send_json_error(['message' => 'Банк не вернул идентификатор платежа']);
+	}
+
+	set_transient(dornott_pending_order_transient_key($order_id), [
+		'order_id'    => $order_id,
+		'payment_id'  => $payment_id,
+		'items'       => $resolved['items'],
+		'totals'      => $totals,
+		'username'    => sanitize_text_field(dornott_order_info_value($order_info, 'username')),
+		'phone'       => sanitize_text_field($raw_phone),
+		'email'       => $email,
+		'city'        => sanitize_text_field(dornott_order_info_value($order_info, 'city')),
+		'address'     => sanitize_text_field(dornott_order_info_value($order_info, 'address')),
+		'delivery'    => $delivery_slug,
+		'message'     => sanitize_textarea_field(dornott_order_info_value($order_info, 'message')),
+	], defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400);
+
+	wp_send_json_success([
+		'paymentUrl' => $result['body']['PaymentURL'],
+		'orderId'    => $order_id,
 	]);
-
-	if (is_wp_error($response)) {
-		wp_send_json_error(['message' => $response->get_error_message()]);
-	}
-
-	$body = json_decode(wp_remote_retrieve_body($response), true);
-
-
-	if (isset($body['Success']) && $body['Success']) {
-		wp_send_json_success([
-			'paymentUrl' => $body['PaymentURL'],
-			'orderId'    => $order_id
-		]);
-	} else {
-		$error = $body['Message'] ?? 'Ошибка API';
-		$details = $body['Details'] ?? '';
-		wp_send_json_error(['message' => "Банк: $error. $details"]);
-	}
 }
