@@ -1461,10 +1461,9 @@ $(function () {
 			$btn.data("variation-id", newId);
 
 			const data = this.getData();
-			$btn.toggleClass(
-				"active",
-				data.some((item) => item.id == newId),
-			);
+			const isActive = data.some((item) => item.id == newId);
+			$btn.toggleClass("active", isActive);
+			this.syncProductCartButtonLabel($btn, isActive);
 		}
 
 		calculateTotals() {
@@ -1526,14 +1525,24 @@ $(function () {
 			}
 		}
 
+		syncProductCartButtonLabel($btn, isActive) {
+			if (!$btn.hasClass("product__cart-btn")) return;
+
+			const addLabel = $btn.attr("data-aria-add");
+			const addedLabel = $btn.attr("data-aria-added");
+
+			if (addLabel && addedLabel) {
+				$btn.attr("aria-label", isActive ? addedLabel : addLabel);
+			}
+		}
+
 		syncButtons(data) {
 			$(".toggle-to-cart-button").each((_, el) => {
 				const $btn = $(el);
 				const id = $btn.data("variation-id") || $btn.data("product-id");
-				$btn.toggleClass(
-					"active",
-					data.some((item) => item.id == id),
-				);
+				const isActive = data.some((item) => item.id == id);
+				$btn.toggleClass("active", isActive);
+				this.syncProductCartButtonLabel($btn, isActive);
 			});
 		}
 

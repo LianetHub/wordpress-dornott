@@ -948,6 +948,18 @@ section.product .hero--inner + .container {
   display: none;
 }
 
+.product__cart-btn.toggle-to-cart-button .product__cart-btn-text--added {
+  display: none;
+}
+
+.product__cart-btn.toggle-to-cart-button.active .product__cart-btn-text--add {
+  display: none;
+}
+
+.product__cart-btn.toggle-to-cart-button.active .product__cart-btn-text--added {
+  display: inline;
+}
+
 .product__specs {
   margin-top: 2.5rem;
 }

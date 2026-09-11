@@ -56,7 +56,7 @@ $address = get_field('pickup_address', 'option') ?? '';
                             $pickup_address = get_field('pickup_address', 'option') ?? '';
                             ?>
 
-                            <label class="order__step-option">
+                            <!-- <label class="order__step-option">
                                 <input type="radio" name="delivery" value="pickup" data-price="0" checked class="order__step-input hidden" hidden>
                                 <span class="order__card">
                                     <span class="order__card-header">
@@ -65,7 +65,7 @@ $address = get_field('pickup_address', 'option') ?? '';
                                     <span class="order__card-body"><?php echo esc_html($pickup_address); ?></span>
                                     <span class="order__card-info">0 ₽</span>
                                 </span>
-                            </label>
+                            </label> -->
 
                             <?php if (have_rows('delivery', 'option')): ?>
                                 <?php while (have_rows('delivery', 'option')): the_row();

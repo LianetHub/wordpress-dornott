@@ -437,6 +437,20 @@ section.product {
 			content: none;
 			display: none;
 		}
+
+		.product__cart-btn-text--added {
+			display: none;
+		}
+
+		&.active {
+			.product__cart-btn-text--add {
+				display: none;
+			}
+
+			.product__cart-btn-text--added {
+				display: inline;
+			}
+		}
 	}
 
 	// .product__specs

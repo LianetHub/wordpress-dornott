@@ -314,8 +314,11 @@ $other_products = wc_get_products([
 							data-variation-id="<?php echo esc_attr($initial_product_id); ?>"
 							<?php endif; ?>
 							data-quantity="1"
+							data-aria-add="Добавить <?php echo esc_attr($product->get_name()); ?> в корзину"
+							data-aria-added="Удалить <?php echo esc_attr($product->get_name()); ?> из корзины"
 							aria-label="Добавить <?php echo esc_attr($product->get_name()); ?> в корзину">
-							Добавить в корзину
+							<span class="product__cart-btn-text product__cart-btn-text--add">Добавить в корзину</span>
+							<span class="product__cart-btn-text product__cart-btn-text--added">В корзине</span>
 						</button>
 					</div>
 				</div>
