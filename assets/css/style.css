@@ -3441,8 +3441,8 @@ body.no-preloader .preloader {
 .hero.hero--inner {
   display: block;
   position: relative;
-  background: #f6f8fa;
-  padding-top: 5rem;
+  background: #f0efec;
+  padding-top: 4.5rem;
 }
 
 .hero.hero--inner .hero__content {
@@ -3452,6 +3452,14 @@ body.no-preloader .preloader {
 .hero.hero--inner .hero__title {
   margin-top: 0.9375rem;
   text-align: left;
+}
+
+.hero.hero--inner .hero__description {
+  margin-top: 0.75rem;
+  max-width: 40rem;
+  font-size: 1rem;
+  line-height: 160%;
+  color: #535862;
 }
 
 .hero.hero--inner .hero__image {
@@ -4859,10 +4867,6 @@ body.no-preloader .preloader {
     left: 0.6875rem;
   }
 
-  .hero.hero--inner.hero--has-poster {
-    background: #f6f8fa;
-  }
-
   .hero.hero--inner.hero--has-poster .hero__content {
     max-width: 50%;
   }
@@ -5145,7 +5149,7 @@ body.no-preloader .preloader {
 
   .hero.hero--inner {
     display: block;
-    padding-top: 6.25rem;
+    padding-top: 5rem;
   }
 
   .about__header {
@@ -5736,16 +5740,16 @@ body.no-preloader .preloader {
   }
 
   .hero.hero--inner {
-    padding-top: 10rem;
-    background: #f6f8fa;
-  }
-
-  .hero.hero--inner.hero--has-poster {
-    background: #f6f8fa;
+    padding-top: 7.5rem;
   }
 
   .hero.hero--inner .hero__content {
-    padding: 1.875rem 0 2.25rem;
+    padding: 0.75rem 0 2.25rem;
+  }
+
+  .hero.hero--inner .hero__description {
+    margin-top: 1rem;
+    font-size: 1.125rem;
   }
 
   .about__image {

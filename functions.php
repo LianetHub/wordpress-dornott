@@ -16,6 +16,9 @@ define('DORNOTT_SMARTCAPTCHA_SITEKEY', 'ysc1_kzIyE344s2faPC2YmCuzMwsjuBxBP8bbf1K
 // =========================================================================
 
 add_theme_support('title-tag');
+add_action('after_setup_theme', function () {
+	add_post_type_support('page', 'excerpt');
+});
 
 // Enqueue theme styles (CSS)
 function theme_enqueue_styles()

@@ -92,6 +92,35 @@ function dornott_catalog_product_query($q)
 
 define('DORNOTT_CATALOG_SLUG', 'katalog');
 define('DORNOTT_CATALOG_URL_VERSION', '2');
+define('DORNOTT_SHOP_EXCERPT', 'Пледы и аксессуары из органического кашемира с отделкой из меха соболя и рыси — тепло природы в каждом изделии.');
+
+add_action('init', 'dornott_seed_shop_excerpt', 20);
+function dornott_seed_shop_excerpt()
+{
+    if (!class_exists('WooCommerce') || get_option('dornott_shop_excerpt_seeded') === '1') {
+        return;
+    }
+
+    $shop_id = wc_get_page_id('shop');
+    if ($shop_id <= 0) {
+        return;
+    }
+
+    $excerpt = trim((string) get_post_field('post_excerpt', $shop_id));
+    if ($excerpt !== '') {
+        update_option('dornott_shop_excerpt_seeded', '1');
+        return;
+    }
+
+    $result = wp_update_post([
+        'ID'           => $shop_id,
+        'post_excerpt' => DORNOTT_SHOP_EXCERPT,
+    ], true);
+
+    if (!is_wp_error($result)) {
+        update_option('dornott_shop_excerpt_seeded', '1');
+    }
+}
 
 add_action('init', 'dornott_setup_catalog_permalinks', 0);
 function dornott_setup_catalog_permalinks()

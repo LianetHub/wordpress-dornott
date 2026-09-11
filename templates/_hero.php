@@ -16,6 +16,16 @@ $hide_image_context = (function_exists('is_shop') && is_shop())
 
 $has_thumbnail = $current_id && has_post_thumbnail($current_id) && !$hide_image_context;
 $hero_class = $has_thumbnail ? ' hero--has-poster' : '';
+
+$hero_excerpt = '';
+if (function_exists('is_shop') && is_shop() && $current_id) {
+	$hero_excerpt = get_post_field('post_excerpt', $current_id);
+	$hero_excerpt = is_string($hero_excerpt) ? trim($hero_excerpt) : '';
+
+	if ($hero_excerpt === '' && defined('DORNOTT_SHOP_EXCERPT')) {
+		$hero_excerpt = DORNOTT_SHOP_EXCERPT;
+	}
+}
 ?>
 
 <section id="hero" class="hero hero--inner<?php echo $hero_class; ?>">
@@ -42,6 +52,10 @@ $hero_class = $has_thumbnail ? ' hero--has-poster' : '';
 				}
 				?>
 			</h1>
+
+			<?php if ($hero_excerpt !== '') : ?>
+				<p class="hero__description"><?php echo esc_html($hero_excerpt); ?></p>
+			<?php endif; ?>
 
 			<?php if ($has_thumbnail) : ?>
 				<div class="hero__image">

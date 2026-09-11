@@ -373,36 +373,23 @@ body {
 	&.hero--inner {
 		display: block;
 		position: relative;
-		background:
-
-			#f6f8fa;
-		padding-top: 5rem;
+		background: #f0efec;
+		padding-top: 4.5rem;
 
 		@media (min-width: $md3) {
 			display: block;
-			padding-top: rem(100);
+			padding-top: rem(80);
 		}
 
 		@media (min-width: $md2) {
-			padding-top: rem(160);
-			background:
-
-				#f6f8fa;
+			padding-top: rem(120);
 		}
 
 		&.hero--has-poster {
 			@media (min-width: $md4) {
-				background:
-					#f6f8fa;
-
 				.hero__content {
 					max-width: 50%;
 				}
-			}
-
-			@media (min-width: $md2) {
-				background:
-					#f6f8fa;
 			}
 		}
 
@@ -410,7 +397,7 @@ body {
 			padding: rem(0) 0 rem(45);
 
 			@media (min-width: $md2) {
-				padding: rem(30) 0 rem(36);
+				padding: rem(12) 0 rem(36);
 			}
 		}
 
@@ -420,6 +407,19 @@ body {
 
 			@media (max-width: $md5) {
 				font-size: 1.75rem;
+			}
+		}
+
+		.hero__description {
+			margin-top: rem(12);
+			max-width: rem(640);
+			font-size: 1rem;
+			line-height: 160%;
+			color: #535862;
+
+			@media (min-width: $md2) {
+				margin-top: rem(16);
+				font-size: 1.125rem;
 			}
 		}
 
