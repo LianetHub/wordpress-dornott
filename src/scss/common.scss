@@ -727,6 +727,23 @@ body {
 		}
 	}
 
+	&.special-offer--presentation {
+		// background: #483a2e;
+		background: transparent;
+		color: #181d27;
+		padding: 0;
+
+		&::before {
+			transform: scaleX(-1);
+		}
+
+		.special-offer__image-wrapper {
+			@media (max-width: $md3) {
+				margin-top: 0;
+			}
+		}
+	}
+
 	// .special-offer__body
 	&__body {
 		display: grid;
@@ -838,6 +855,7 @@ body {
 			border-radius: 2rem;
 		}
 	}
+
 }
 
 .cert {

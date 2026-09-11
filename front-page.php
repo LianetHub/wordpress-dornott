@@ -266,6 +266,54 @@
     </section>
 <?php endif; ?>
 
+<?php if (get_field('show_presentation')) :
+    $presentation_title = get_field('presentation_title');
+    $presentation_subtitle = get_field('presentation_subtitle');
+    $presentation_btn_text = get_field('presentation_btn_text') ?: 'Скачать презентацию';
+    $presentation_file = get_field('presentation_file');
+    $presentation_image = get_field('presentation_image');
+    $presentation_file_url = is_array($presentation_file) ? ($presentation_file['url'] ?? '') : $presentation_file;
+?>
+    <section id="presentation" class="special-offer special-offer--presentation">
+        <div class="container">
+            <div class="special-offer__body">
+                <div class="special-offer__image-wrapper">
+                    <?php if ($presentation_image) : ?>
+                        <div class="special-offer__image">
+                            <img src="<?php echo esc_url($presentation_image['url']); ?>"
+                                alt="<?php echo esc_attr($presentation_image['alt']); ?>"
+                                class="cover-image">
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="special-offer__main">
+                    <?php if ($presentation_title) : ?>
+                        <h2 class="special-offer__title title-sm">
+                            <?php echo esc_html($presentation_title); ?>
+                        </h2>
+                    <?php endif; ?>
+
+                    <?php if ($presentation_subtitle) : ?>
+                        <p class="special-offer__subtitle">
+                            <?php echo $presentation_subtitle; ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if ($presentation_file_url) : ?>
+                        <a href="<?php echo esc_url($presentation_file_url); ?>"
+                            class="btn btn-primary icon-chevron-right special-offer__btn"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            <?php echo esc_html($presentation_btn_text); ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
+
 <?php if (get_field('show_cert')):
     $cert_title = get_field('cert_title');
     $cert_subtitle = get_field('cert_subtitle');

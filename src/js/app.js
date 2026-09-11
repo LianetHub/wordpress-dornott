@@ -521,10 +521,32 @@ $(function () {
 
 		if ($thumbs.length) {
 			new Swiper($thumbs[0], {
-				slidesPerView: "auto",
+				slidesPerView: 4,
 				spaceBetween: 8,
 				watchOverflow: true,
 				watchSlidesProgress: true,
+				breakpoints: {
+					576: {
+						slidesPerView: 5,
+						spaceBetween: 8,
+					},
+					768: {
+						slidesPerView: 6,
+						spaceBetween: 10,
+					},
+					992: {
+						slidesPerView: 4,
+						spaceBetween: 10,
+					},
+					1200: {
+						slidesPerView: 5,
+						spaceBetween: 12,
+					},
+					1400: {
+						slidesPerView: 6,
+						spaceBetween: 12,
+					},
+				},
 			});
 
 			$thumbs.on("click", ".product__thumb", function () {
@@ -1469,6 +1491,7 @@ $(function () {
 			$card.find('[data-price-role="regular-price"]').html($input.data("regular-price-html"));
 
 			const newId = $input.val();
+			$btn.attr("data-variation-id", newId);
 			$btn.data("variation-id", newId);
 
 			const data = this.getData();
@@ -1538,6 +1561,9 @@ $(function () {
 
 		syncProductCartButtonLabel($btn, isActive) {
 			if (!$btn.hasClass("product__cart-btn")) return;
+
+			$btn.find(".product__cart-btn-text--add").toggle(!isActive);
+			$btn.find(".product__cart-btn-text--added").toggle(isActive);
 
 			const addLabel = $btn.attr("data-aria-add");
 			const addedLabel = $btn.attr("data-aria-added");

@@ -236,33 +236,35 @@ $other_products = wc_get_products([
 
 			<div class="product__info">
 				<div class="product__actions">
+					<p class="product__title product-card__title title-md">
+						<?php echo esc_html($product->get_name()); ?>
+					</p>
 					<button type="button"
-						class="favorite-btn"
+						class="favorite-btn product__favorite"
 						aria-label="Добавить в избранное"></button>
 				</div>
 
-				<p class="product__title product-card__title title">
-					<?php echo esc_html($product->get_name()); ?>
-				</p>
-
 				<?php if ($is_variable) : ?>
-					<div class="product__variations product-card__variations" data-variations-data="<?php echo esc_attr(wp_json_encode($variations_data)); ?>">
-						<?php foreach ($variations_data as $variation_id => $data) : ?>
-							<label class="product-card__variations-label <?php echo !$data['is_in_stock'] ? 'out-of-stock' : ''; ?>">
-								<input type="radio"
-									name="variation-<?php echo esc_attr($product_id); ?>"
-									value="<?php echo esc_attr($variation_id); ?>"
-									data-price-html="<?php echo esc_attr($data['price_html']); ?>"
-									data-regular-price-html="<?php echo esc_attr($data['regular_price_html']); ?>"
-									<?php checked($variation_id, $first_variation_id); ?>
-									<?php disabled(!$data['is_in_stock']); ?>
-									class="product-card__variations-input hidden"
-									hidden>
-								<span class="product-card__variations-btn">
-									<?php echo esc_html($data['attribute_label']); ?>
-								</span>
-							</label>
-						<?php endforeach; ?>
+					<div class="product__sizes">
+						<span class="product__sizes-label">Размер</span>
+						<div class="product__variations product-card__variations" data-variations-data="<?php echo esc_attr(wp_json_encode($variations_data)); ?>">
+							<?php foreach ($variations_data as $variation_id => $data) : ?>
+								<label class="product-card__variations-label <?php echo !$data['is_in_stock'] ? 'out-of-stock' : ''; ?>">
+									<input type="radio"
+										name="variation-<?php echo esc_attr($product_id); ?>"
+										value="<?php echo esc_attr($variation_id); ?>"
+										data-price-html="<?php echo esc_attr($data['price_html']); ?>"
+										data-regular-price-html="<?php echo esc_attr($data['regular_price_html']); ?>"
+										<?php checked($variation_id, $first_variation_id); ?>
+										<?php disabled(!$data['is_in_stock']); ?>
+										class="product-card__variations-input hidden"
+										hidden>
+									<span class="product-card__variations-btn">
+										<?php echo esc_html($data['attribute_label']); ?>
+									</span>
+								</label>
+							<?php endforeach; ?>
+						</div>
 					</div>
 				<?php endif; ?>
 
@@ -326,17 +328,31 @@ $other_products = wc_get_products([
 		</div>
 
 		<?php if (!empty($specs_rows)) : ?>
+			<?php
+			$specs_mid = (int) ceil(count($specs_rows) / 2);
+			$specs_columns = [
+				array_slice($specs_rows, 0, $specs_mid),
+				array_slice($specs_rows, $specs_mid),
+			];
+			?>
 			<div class="product__specs">
 				<h2 class="product__specs-title">Характеристики</h2>
-				<ul class="product__specs-list">
-					<?php foreach ($specs_rows as $spec) : ?>
-						<li class="product__specs-row">
-							<span class="product__specs-name"><?php echo esc_html($spec['name']); ?></span>
-							<span class="product__specs-dots" aria-hidden="true"></span>
-							<span class="product__specs-value"><?php echo esc_html($spec['value']); ?></span>
-						</li>
+				<div class="product__specs-cols">
+					<?php foreach ($specs_columns as $specs_column) : ?>
+						<?php if (empty($specs_column)) : ?>
+							<?php continue; ?>
+						<?php endif; ?>
+						<ul class="product__specs-list">
+							<?php foreach ($specs_column as $spec) : ?>
+								<li class="product__specs-row">
+									<span class="product__specs-name"><?php echo esc_html($spec['name']); ?></span>
+									<span class="product__specs-dots" aria-hidden="true"></span>
+									<span class="product__specs-value"><?php echo esc_html($spec['value']); ?></span>
+								</li>
+							<?php endforeach; ?>
+						</ul>
 					<?php endforeach; ?>
-				</ul>
+				</div>
 			</div>
 		<?php endif; ?>
 	</div>
