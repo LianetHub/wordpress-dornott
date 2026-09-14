@@ -231,6 +231,27 @@ class Dornott_Menu_Walker extends Walker_Nav_Menu
 	}
 }
 
+function append_presentation_to_nav($items, $args)
+{
+	if ($args->theme_location !== 'general_menu') {
+		return $items;
+	}
+
+	$url = function_exists('dornott_get_presentation_file_url') ? dornott_get_presentation_file_url() : '';
+	if ($url === '') {
+		return $items;
+	}
+
+	$items .= sprintf(
+		'<li class="menu__item menu__item--presentation"><a href="%s" class="menu__link" target="_blank" rel="noopener noreferrer">%s</a></li>',
+		esc_url($url),
+		esc_html('Скачать презентацию')
+	);
+
+	return $items;
+}
+add_filter('wp_nav_menu_items', 'append_presentation_to_nav', 9, 2);
+
 function append_contacts_to_nav($items, $args)
 {
 	if ($args->theme_location === 'general_menu') {

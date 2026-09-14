@@ -44,5 +44,6 @@ get_template_part('templates/sections/special-offer');
 get_template_part('templates/sections/steps');
 get_template_part('templates/sections/reviews');
 get_template_part('templates/sections/gift');
+get_template_part('templates/sections/presentation');
 get_template_part('templates/sections/contacts');
 get_footer();

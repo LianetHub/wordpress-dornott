@@ -3698,18 +3698,6 @@ body.no-preloader .preloader {
   background-position: center 60%;
 }
 
-.special-offer.special-offer--presentation {
-  background: transparent;
-  color: #181d27;
-  padding: 0;
-}
-
-.special-offer.special-offer--presentation::before {
-  -webkit-transform: scaleX(-1);
-      -ms-transform: scaleX(-1);
-          transform: scaleX(-1);
-}
-
 .special-offer__body {
   display: -ms-grid;
   display: grid;
@@ -6418,10 +6406,6 @@ body.no-preloader .preloader {
 }
 
 @media (max-width: 991.98px) {
-  .special-offer.special-offer--presentation .special-offer__image-wrapper {
-    margin-top: 0;
-  }
-
   .special-offer__image-wrapper {
     margin-top: 5.3125rem;
   }

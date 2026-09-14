@@ -136,6 +136,45 @@
             "ui": 1
         },
         {
+            "key": "field_69d7c1a082800",
+            "label": "ПРЕЗЕНТАЦИЯ",
+            "name": "",
+            "aria-label": "",
+            "type": "accordion",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "open": 0,
+            "multi_expand": 0,
+            "endpoint": 0
+        },
+        {
+            "key": "field_69d7c1a082806",
+            "label": "Файл презентации",
+            "name": "presentation_file",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "PDF откроется в новой вкладке. Пункт «Скачать презентацию» появится в меню, если файл задан.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "pdf",
+            "allow_in_bindings": 0
+        },
+        {
             "key": "field_692f29ed72861",
             "label": "КОНТАКТНАЯ ИНФОРМАЦИЯ",
             "name": "",
@@ -1274,5 +1313,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1788944460
+    "modified": 1789398000
 }

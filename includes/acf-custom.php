@@ -92,6 +92,35 @@ add_filter('acf/location/rule_match/woo_page_shop', function ($match, $rule, $sc
 	return ($rule['operator'] === '!=') ? !$is_shop : $is_shop;
 }, 10, 3);
 
+function dornott_get_presentation_file_url()
+{
+	$file = function_exists('get_field') ? get_field('presentation_file', 'option') : null;
+
+	if (is_array($file) && !empty($file['url'])) {
+		return (string) $file['url'];
+	}
+
+	if (is_string($file) && $file !== '') {
+		return $file;
+	}
+
+	$file_id = get_option('options_presentation_file');
+	if (!$file_id && function_exists('dornott_front_page_id')) {
+		$front_id = dornott_front_page_id();
+		if ($front_id > 0) {
+			$file_id = get_post_meta($front_id, 'presentation_file', true);
+		}
+	}
+
+	if (!$file_id) {
+		return '';
+	}
+
+	$url = wp_get_attachment_url((int) $file_id);
+
+	return $url ? $url : '';
+}
+
 function dornott_section_field_names($set = 'all')
 {
 	$catalog = array(
@@ -100,11 +129,22 @@ function dornott_section_field_names($set = 'all')
 		'about_description',
 		'about_image',
 		'about_benefits',
+	);
+
+	$gift = array(
 		'show_gift',
 		'gift_title',
 		'gift_subtitle',
 		'gift_button',
 		'gift_image',
+	);
+
+	$presentation = array(
+		'show_presentation',
+		'presentation_title',
+		'presentation_subtitle',
+		'presentation_btn_text',
+		'presentation_image',
 	);
 
 	$shared = array(
@@ -129,12 +169,22 @@ function dornott_section_field_names($set = 'all')
 		'contacts_form',
 	);
 
+	$shared = array_merge($gift, $presentation, $shared);
+
 	if ($set === 'catalog') {
 		return array_merge($catalog, $shared);
 	}
 
 	if ($set === 'product') {
 		return $shared;
+	}
+
+	if ($set === 'presentation') {
+		return $presentation;
+	}
+
+	if ($set === 'gift') {
+		return $gift;
 	}
 
 	return array_merge($catalog, $shared);
@@ -194,3 +244,101 @@ add_action('init', function () {
 
 	update_option('dornott_independent_sections_seeded', '1', false);
 }, 40);
+
+function dornott_enable_section_toggles_if_empty($target_id, $field_names)
+{
+	if (!function_exists('get_field') || !function_exists('update_field')) {
+		return;
+	}
+
+	$target_id = is_int($target_id) || ctype_digit((string) $target_id)
+		? (int) $target_id
+		: $target_id;
+
+	foreach ($field_names as $name) {
+		$value = get_field($name, $target_id, false);
+		if ($value === null || $value === false || $value === '' || $value === '0' || $value === 0) {
+			update_field($name, 1, $target_id);
+		}
+	}
+}
+
+function dornott_migrate_presentation_file_to_options($front_id)
+{
+	$existing = get_option('options_presentation_file');
+	if ($existing) {
+		return;
+	}
+
+	$from_front = null;
+	if (function_exists('get_field')) {
+		$existing_field = get_field('presentation_file', 'option', false);
+		if ($existing_field) {
+			return;
+		}
+		$from_front = get_field('presentation_file', $front_id, false);
+	}
+
+	if (!$from_front) {
+		$from_front = get_post_meta($front_id, 'presentation_file', true);
+	}
+
+	if (!$from_front) {
+		return;
+	}
+
+	if (function_exists('update_field')) {
+		update_field('field_69d7c1a082806', $from_front, 'option');
+	}
+
+	if (!get_option('options_presentation_file')) {
+		update_option('options_presentation_file', $from_front, false);
+		update_option('_options_presentation_file', 'field_69d7c1a082806', false);
+	}
+}
+
+add_action('init', function () {
+	if (get_option('dornott_presentation_sections_seeded') === '1') {
+		return;
+	}
+
+	if (!function_exists('get_field') || !function_exists('update_field')) {
+		return;
+	}
+
+	$front_id = dornott_front_page_id();
+	if ($front_id <= 0) {
+		return;
+	}
+
+	dornott_migrate_presentation_file_to_options($front_id);
+
+	$presentation_fields = dornott_section_field_names('presentation');
+	$gift_fields = dornott_section_field_names('gift');
+	$toggle_fields = array('show_presentation', 'show_gift', 'show_order_steps');
+
+	$shop_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('shop') : 0;
+	if ($shop_id > 0) {
+		dornott_copy_section_fields($front_id, $shop_id, $presentation_fields);
+		dornott_enable_section_toggles_if_empty($shop_id, $toggle_fields);
+	}
+
+	dornott_enable_section_toggles_if_empty($front_id, $toggle_fields);
+
+	if (function_exists('wc_get_products')) {
+		$products = wc_get_products(array(
+			'status' => 'publish',
+			'limit'  => -1,
+			'return' => 'ids',
+		));
+
+		foreach ($products as $product_id) {
+			$product_id = (int) $product_id;
+			dornott_copy_section_fields($front_id, $product_id, $presentation_fields);
+			dornott_copy_section_fields($front_id, $product_id, $gift_fields);
+			dornott_enable_section_toggles_if_empty($product_id, $toggle_fields);
+		}
+	}
+
+	update_option('dornott_presentation_sections_seeded', '1', false);
+}, 41);
