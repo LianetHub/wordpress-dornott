@@ -86,4 +86,37 @@
 		font-size: 1.25rem;
 		line-height: 150%;
 	}
+
+	&.preloader--inner {
+		background: rgba($dark, 0.7);
+
+		&::before,
+		&::after {
+			content: none;
+			display: none;
+		}
+
+		.preloader__percentage,
+		.preloader__text {
+			display: none;
+		}
+
+		body.is-loaded &,
+		body.no-preloader &,
+		body:not(.preloading) & {
+			left: 0;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+			transition: opacity 0.4s ease, visibility 0.4s ease;
+			transition-delay: 0s;
+		}
+	}
+}
+
+body.preloading:not(.home):not(.front-page),
+body.preloading:has(.preloader--inner) {
+	.header {
+		z-index: 210;
+	}
 }

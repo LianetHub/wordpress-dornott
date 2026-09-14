@@ -1,4 +1,4 @@
-<div class="preloader">
+<div class="preloader<?php echo is_front_page() ? '' : ' preloader--inner'; ?>">
     <noscript>
         <style>
             .preloader {

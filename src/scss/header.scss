@@ -72,7 +72,7 @@
 	}
 	// .header__logo
 	&__logo {
-		position: relative;
+		position: fixed;
 		z-index: $ui-index-2;
 		display: block;
 		max-width: rem(142);

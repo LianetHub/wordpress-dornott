@@ -8,24 +8,34 @@ function releasePreloader() {
 }
 
 if ($("body").hasClass("preloading") && $(".preloader").length > 0) {
-	let counting = setInterval(function () {
-		let loader = $("#percentage");
-		let currval = parseInt(loader.text());
+	if ($(".preloader").hasClass("preloader--inner")) {
+		const hideInner = () => setTimeout(releasePreloader, 150);
 
-		if (currval < 90) {
-			loader.text(++currval);
-		} else if (currval < 95 && document.readyState === "interactive") {
-			loader.text(95);
-		} else if (currval < 99 && document.readyState === "complete") {
-			loader.text(99);
+		if (document.readyState === "complete") {
+			hideInner();
+		} else {
+			$(window).on("load", hideInner);
 		}
+	} else {
+		let counting = setInterval(function () {
+			let loader = $("#percentage");
+			let currval = parseInt(loader.text());
 
-		if (currval >= 99 && document.readyState === "complete") {
-			clearInterval(counting);
-			loader.text(100);
-			setTimeout(releasePreloader, 300);
-		}
-	}, 20);
+			if (currval < 90) {
+				loader.text(++currval);
+			} else if (currval < 95 && document.readyState === "interactive") {
+				loader.text(95);
+			} else if (currval < 99 && document.readyState === "complete") {
+				loader.text(99);
+			}
+
+			if (currval >= 99 && document.readyState === "complete") {
+				clearInterval(counting);
+				loader.text(100);
+				setTimeout(releasePreloader, 300);
+			}
+		}, 20);
+	}
 } else {
 	releasePreloader();
 }
