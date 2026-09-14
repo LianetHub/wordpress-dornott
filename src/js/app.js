@@ -1,6 +1,6 @@
 import { DornottCart } from "./modules/cart.js";
 
-"use strict";
+("use strict");
 
 // preloader
 function releasePreloader() {

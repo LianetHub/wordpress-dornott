@@ -142,6 +142,48 @@
 
 <?php get_template_part('templates/sections/special-offer'); ?>
 
+
+
+<?php if (get_field('show_cert')):
+    $cert_title = get_field('cert_title');
+    $cert_subtitle = get_field('cert_subtitle');
+    $cert_btn_text = get_field('cert_btn_text') ?? "Купить сертификат";
+    $cert_image = get_field('cert_image');
+?>
+    <section id="cert" class="cert">
+        <div class="container">
+            <div class="cert__body">
+                <div class="cert__offer">
+                    <?php if ($cert_title): ?>
+                        <h2 class="cert__title title"><?php echo $cert_title; ?></h2>
+                    <?php endif; ?>
+                    <?php if ($cert_subtitle): ?>
+                        <p class="cert__subtitle">
+                            <?php echo $cert_subtitle; ?>
+                        </p>
+                    <?php endif; ?>
+                    <button type="button" class="js_iframe_widget cert__btn btn btn-primary icon-chevron-right"><?= $cert_btn_text ?></button>
+                    <script type="text/javascript">
+                        document.addEventListener("DOMContentLoaded", function() {
+                            IframeWidgetFunctional.init('.js_iframe_widget');
+                        });
+                    </script>
+                </div>
+                <?php if ($cert_image): ?>
+                    <div class="cert__image">
+                        <img src="<?php echo esc_url($cert_image['url']); ?>"
+                            alt="<?php echo esc_attr($cert_image['alt']); ?>"
+                            class="cover-image">
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
+
+<?php get_template_part('templates/sections/steps'); ?>
+<?php get_template_part('templates/sections/reviews'); ?>
+<?php get_template_part('templates/sections/gift'); ?>
 <?php if (get_field('show_presentation')) :
     $presentation_title = get_field('presentation_title');
     $presentation_subtitle = get_field('presentation_subtitle');
@@ -189,47 +231,6 @@
         </div>
     </section>
 <?php endif; ?>
-
-<?php if (get_field('show_cert')):
-    $cert_title = get_field('cert_title');
-    $cert_subtitle = get_field('cert_subtitle');
-    $cert_btn_text = get_field('cert_btn_text') ?? "Купить сертификат";
-    $cert_image = get_field('cert_image');
-?>
-    <section id="cert" class="cert">
-        <div class="container">
-            <div class="cert__body">
-                <div class="cert__offer">
-                    <?php if ($cert_title): ?>
-                        <h2 class="cert__title title"><?php echo $cert_title; ?></h2>
-                    <?php endif; ?>
-                    <?php if ($cert_subtitle): ?>
-                        <p class="cert__subtitle">
-                            <?php echo $cert_subtitle; ?>
-                        </p>
-                    <?php endif; ?>
-                    <button type="button" class="js_iframe_widget cert__btn btn btn-primary icon-chevron-right"><?= $cert_btn_text ?></button>
-                    <script type="text/javascript">
-                        document.addEventListener("DOMContentLoaded", function() {
-                            IframeWidgetFunctional.init('.js_iframe_widget');
-                        });
-                    </script>
-                </div>
-                <?php if ($cert_image): ?>
-                    <div class="cert__image">
-                        <img src="<?php echo esc_url($cert_image['url']); ?>"
-                            alt="<?php echo esc_attr($cert_image['alt']); ?>"
-                            class="cover-image">
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </section>
-<?php endif; ?>
-
-<?php get_template_part('templates/sections/steps'); ?>
-<?php get_template_part('templates/sections/reviews'); ?>
-<?php get_template_part('templates/sections/gift'); ?>
 <?php get_template_part('templates/sections/contacts'); ?>
 
 <?php get_footer(); ?>

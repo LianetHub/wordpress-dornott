@@ -530,8 +530,8 @@
                         "class": "",
                         "id": ""
                     },
-                    "display_format": "d/m/Y",
-                    "return_format": "d/m/Y",
+                    "display_format": "d\/m\/Y",
+                    "return_format": "d\/m\/Y",
                     "first_day": 1,
                     "allow_in_bindings": 0,
                     "parent_repeater": "field_6933267c08a30"
@@ -573,6 +573,7 @@
                         "id": ""
                     },
                     "layout": "block",
+                    "parent_repeater": "field_6933267c08a30",
                     "sub_fields": [
                         {
                             "key": "field_693327b108a35",
@@ -757,8 +758,7 @@
                                 }
                             ]
                         }
-                    ],
-                    "parent_repeater": "field_6933267c08a30"
+                    ]
                 }
             ]
         },
@@ -943,5 +943,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1789200000
+    "modified": 1789137268
 }
