@@ -54,37 +54,63 @@ function theme_enqueue_styles()
 {
 	wp_enqueue_style('swiper', get_template_directory_uri() . '/assets/css/libs/swiper-bundle.min.css');
 	wp_enqueue_style('fancybox', get_template_directory_uri() . '/assets/css/libs/fancybox.css');
-	wp_enqueue_style('reset', get_template_directory_uri() . '/assets/css/reset.min.css');
 	wp_enqueue_style('main-style', get_template_directory_uri() . '/assets/css/style.min.css', array(), filemtime(get_template_directory() . '/assets/css/style.min.css'));
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles');
+
+function dornott_defer_library_styles($html, $handle)
+{
+	$deferred = array('swiper', 'fancybox');
+	if (!in_array($handle, $deferred, true)) {
+		return $html;
+	}
+
+	$noscript = $html;
+
+	if (preg_match('/\smedia=/', $html)) {
+		$html = preg_replace("/\smedia=(['\"])all\\1/", ' media="print" onload="this.media=\'all\'"', $html, 1);
+	} else {
+		$html = preg_replace("/\srel=(['\"])stylesheet\\1/", ' rel="stylesheet" media="print" onload="this.media=\'all\'"', $html, 1);
+	}
+
+	return $html . '<noscript>' . $noscript . '</noscript>';
+}
+add_filter('style_loader_tag', 'dornott_defer_library_styles', 10, 2);
 
 
 // Enqueue theme scripts (JS)
 function theme_enqueue_scripts()
 {
-	wp_deregister_script('jquery');
-	wp_enqueue_script('jquery', get_template_directory_uri() . '/assets/js/libs/jquery-3.7.1.min.js', array(), null, true);
-	wp_enqueue_script('swiper-js', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), null, true);
-	wp_enqueue_script('fancybox-js', get_template_directory_uri() . '/assets/js/libs/fancybox.umd.js', array(), null, true);
+	$defer = array(
+		'in_footer' => true,
+		'strategy'  => 'defer',
+	);
 
-	$app_deps = array('jquery');
+	wp_deregister_script('jquery');
+	wp_enqueue_script('jquery', get_template_directory_uri() . '/assets/js/libs/jquery-3.7.1.min.js', array(), null, $defer);
+	wp_enqueue_script('swiper-js', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), null, $defer);
+	wp_enqueue_script('fancybox-js', get_template_directory_uri() . '/assets/js/libs/fancybox.umd.js', array(), null, $defer);
 
 	wp_enqueue_script(
 		'yandex-smartcaptcha',
 		'https://smartcaptcha.cloud.yandex.ru/captcha.js?render=onload&onload=dornottSmartCaptchaOnload',
 		array(),
 		null,
-		true
+		$defer
 	);
 	wp_add_inline_script(
 		'yandex-smartcaptcha',
 		'function dornottSmartCaptchaOnload(){window.dornottSmartCaptchaReady=true;document.dispatchEvent(new CustomEvent("dornott-smartcaptcha-ready"));}',
 		'before'
 	);
-	$app_deps[] = 'yandex-smartcaptcha';
 
-	wp_enqueue_script('app-js', get_template_directory_uri() . '/assets/js/app.min.js', $app_deps, filemtime(get_template_directory() . '/assets/js/app.min.js'), true);
+	wp_enqueue_script(
+		'app-js',
+		get_template_directory_uri() . '/assets/js/app.min.js',
+		array('jquery', 'swiper-js', 'fancybox-js'),
+		filemtime(get_template_directory() . '/assets/js/app.min.js'),
+		$defer
+	);
 
 	wp_localize_script('app-js', 'dornott_ajax', array(
 		'captcha_client_key' => $_ENV['SMARTCAPTCHA_CLIENT_KEY'] ?? DORNOTT_SMARTCAPTCHA_SITEKEY,
@@ -93,7 +119,9 @@ function theme_enqueue_scripts()
 		'home_url'           => home_url('/'),
 	));
 
-	wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, false);
+	if (is_front_page()) {
+		wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, $defer);
+	}
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_scripts');
 
