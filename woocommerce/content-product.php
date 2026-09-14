@@ -45,26 +45,47 @@ $gallery_ids = $product->get_gallery_image_ids();
 $image_size = 'woocommerce_single';
 
 $slides_html = '';
+$gallery_items = [];
 
 $image_args = [
 	'class'   => 'product-card__image cover-image',
 	'loading' => 'lazy',
 ];
 
-$slide_link_open = '<a href="' . esc_url($permalink) . '" class="product-card__link">';
-$slide_link_close = '</a>';
+$append_product_card_slide = static function ($attachment_id) use (&$slides_html, &$gallery_items, $image_size, $image_args, $product) {
+	$full_url = $attachment_id ? wp_get_attachment_image_url($attachment_id, 'full') : '';
+	$image_html = $attachment_id
+		? wp_get_attachment_image($attachment_id, $image_size, false, $image_args)
+		: wc_placeholder_img($image_size, $image_args);
+
+	if (!$full_url) {
+		$full_url = wc_placeholder_img_src($image_size);
+	}
+
+	if (!$full_url) {
+		return;
+	}
+
+	$gallery_items[] = [
+		'full' => $full_url,
+		'alt'  => $attachment_id
+			? (get_post_meta($attachment_id, '_wp_attachment_image_alt', true) ?: $product->get_name())
+			: $product->get_name(),
+	];
+
+	$slide_link_open = '<a href="' . esc_url($full_url) . '" class="product-card__link" aria-label="Открыть изображение">';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . '</a><span class="swiper-lazy-preloader"></span></div>';
+};
 
 if ($image_id) {
-	$image_html = wp_get_attachment_image($image_id, $image_size, false, $image_args);
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . $slide_link_close . '<span class="swiper-lazy-preloader"></span></div>';
+	$append_product_card_slide($image_id);
 } else {
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . wc_placeholder_img($image_size, $image_args) . $slide_link_close . '<span class="swiper-lazy-preloader"></span></div>';
+	$append_product_card_slide(0);
 }
 
 if (!empty($gallery_ids)) {
 	foreach ($gallery_ids as $gallery_image_id) {
-		$image_html = wp_get_attachment_image($gallery_image_id, $image_size, false, $image_args);
-		$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . $slide_link_close . '<span class="swiper-lazy-preloader"></span></div>';
+		$append_product_card_slide($gallery_image_id);
 	}
 }
 
@@ -127,7 +148,7 @@ if ($is_variable) {
 ?>
 <li <?php wc_product_class('product-card', $product); ?> data-product-id="<?php echo esc_attr($product_id); ?>">
 	<div class="product-card__header">
-		<div class="product-card__slider swiper">
+		<div class="product-card__slider swiper" data-gallery="<?php echo esc_attr(wp_json_encode($gallery_items)); ?>">
 			<div class="swiper-wrapper">
 				<?php echo $slides_html; ?>
 			</div>

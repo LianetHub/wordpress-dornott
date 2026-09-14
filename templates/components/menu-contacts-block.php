@@ -19,7 +19,7 @@ $has_policy_links = $privacy_policy || $data_protection || $payment_delivery;
 ?>
 
 <li class="menu__item menu__item--parent">
-    <a href="#contacts" class="menu__link">Контакты</a>
+    <a href="<?php echo esc_url(function_exists('dornott_resolve_section_anchor_url') ? dornott_resolve_section_anchor_url('#contacts') : '#contacts'); ?>" class="menu__link">Контакты</a>
     <button type="button" aria-label="Открыть подменю" class="menu__arrow icon-chevron-down"></button>
     <div class="submenu">
         <ul class="submenu__list">

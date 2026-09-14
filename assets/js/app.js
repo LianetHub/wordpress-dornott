@@ -30,32 +30,86 @@ if ($("body").hasClass("preloading") && $(".preloader").length > 0) {
 	releasePreloader();
 }
 
+function getHomePathname() {
+	const homeUrl = window.dornott_ajax?.home_url || `${window.location.origin}/`;
+	try {
+		const pathname = new URL(homeUrl, window.location.origin).pathname.replace(/\/+$/, "");
+		return pathname === "" ? "/" : pathname;
+	} catch {
+		return "/";
+	}
+}
+
+function normalizePathname(pathname) {
+	const path = String(pathname || "/").replace(/\/+$/, "");
+	return path === "" ? "/" : path;
+}
+
+function scrollToHashTarget($target) {
+	const header = $(".header");
+	const headerHeight = header.outerHeight() || 0;
+	const targetPosition = $target.offset().top - headerHeight;
+
+	$("html, body").stop().animate(
+		{
+			scrollTop: targetPosition,
+		},
+		800,
+	);
+}
+
+function getSamePageHashTarget(href) {
+	if (!href || href === "#" || href.startsWith("mailto:") || href.startsWith("tel:")) {
+		return null;
+	}
+
+	let url;
+	try {
+		url = new URL(href, window.location.href);
+	} catch {
+		return null;
+	}
+
+	if (url.origin !== window.location.origin || !url.hash || url.hash === "#") {
+		return null;
+	}
+
+	const $target = $(url.hash);
+	if (!$target.length) {
+		return null;
+	}
+
+	const homePath = getHomePathname();
+	const urlPath = normalizePathname(url.pathname);
+	const currentPath = normalizePathname(window.location.pathname);
+	const isFrontPage = document.body.classList.contains("home") || document.body.classList.contains("front-page");
+	const isPureHash = href.charAt(0) === "#";
+	const pointsToHome = isPureHash || urlPath === homePath;
+
+	// Menu "Главная" is /#hero. Inner pages also have #hero — keep navigating home.
+	if (url.hash === "#hero" && !isPureHash && pointsToHome && !isFrontPage) {
+		return null;
+	}
+
+	if (isPureHash || urlPath === currentPath || pointsToHome) {
+		return $target;
+	}
+
+	return null;
+}
+
 $(function () {
 	// Smooth Scroll Anchors
-	$('a[href^="#"]')
-		.not("[data-fancybox]")
-		.on("click", function (event) {
-			const href = this.getAttribute("href");
+	$(document).on("click", 'a[href*="#"]', function (event) {
+		if (this.hasAttribute("data-fancybox")) return;
+		if (this.target && this.target !== "_self") return;
 
-			if (href === "#") return;
+		const $target = getSamePageHashTarget(this.getAttribute("href"));
+		if (!$target) return;
 
-			const target = $(href);
-			const header = $(".header");
-
-			if (target.length) {
-				event.preventDefault();
-
-				const headerHeight = header.outerHeight() || 0;
-				const targetPosition = target.offset().top - headerHeight;
-
-				$("html, body").stop().animate(
-					{
-						scrollTop: targetPosition,
-					},
-					800,
-				);
-			}
-		});
+		event.preventDefault();
+		scrollToHashTarget($target);
+	});
 
 	//  init Fancybox
 	if (typeof Fancybox !== "undefined" && Fancybox !== null) {
@@ -90,19 +144,9 @@ $(function () {
 					const targetElement = event.target;
 
 					if (targetElement && targetElement.hasAttribute("data-goto-catalog")) {
-						const target = $("#catalog");
-						const header = $(".header");
-
-						if (target.length) {
-							const headerHeight = header.outerHeight() || 0;
-							const targetPosition = target.offset().top - headerHeight;
-
-							$("html, body").stop().animate(
-								{
-									scrollTop: targetPosition,
-								},
-								800,
-							);
+						const $catalog = $("#catalog");
+						if ($catalog.length) {
+							scrollToHashTarget($catalog);
 						}
 					}
 				},
@@ -363,11 +407,56 @@ $(function () {
 
 	const hasCursor = window.matchMedia("(hover: hover)").matches;
 
+	const parseGalleryData = ($el) => {
+		let gallery = $el.data("gallery") || [];
+
+		if (typeof gallery === "string") {
+			try {
+				gallery = JSON.parse(gallery);
+			} catch (e) {
+				gallery = [];
+			}
+		}
+
+		return Array.isArray(gallery) ? gallery : [];
+	};
+
+	const openFancyboxGallery = (gallery, startIndex = 0) => {
+		if (typeof Fancybox === "undefined" || !gallery.length) return;
+
+		Fancybox.show(
+			gallery.map((item) => ({
+				src: item.full || item.src || item,
+				type: "image",
+			})),
+			{
+				startIndex,
+				dragToClose: false,
+			},
+		);
+	};
+
+	const getProductCardGallery = ($slider) => {
+		const gallery = parseGalleryData($slider);
+
+		if (gallery.length) return gallery;
+
+		return $slider
+			.find(".swiper-slide:not(.swiper-slide-duplicate) .product-card__image")
+			.map((_, img) => ({
+				full: img.currentSrc || img.src,
+				alt: img.alt || "",
+			}))
+			.get()
+			.filter((item) => item.full);
+	};
+
 	const initProductGallery = ($root, sliderSelector, paginationSelector) => {
 		const $slider = $root.find(sliderSelector);
 		if (!$slider.length) return;
 
 		const pagination = $root.find(paginationSelector)[0];
+		const gallery = getProductCardGallery($slider);
 
 		const swiper = new Swiper($slider[0], {
 			slidesPerView: 1,
@@ -383,6 +472,15 @@ $(function () {
 				nextEl: $slider.find(".product-card__next")[0],
 				prevEl: $slider.find(".product-card__prev")[0],
 			},
+		});
+
+		const openCardGallery = (index) => {
+			openFancyboxGallery(gallery, index);
+		};
+
+		$slider.on("click", ".product-card__link", (e) => {
+			e.preventDefault();
+			openCardGallery(swiper.realIndex || 0);
 		});
 
 		const realSlidesCount = $slider.find(".swiper-slide:not(.swiper-slide-duplicate)").length;
@@ -403,8 +501,6 @@ $(function () {
 				$areasWrapper[0].style.setProperty("pointer-events", "none", "important");
 			}
 
-			const permalink = $root.is(".product-card") ? $root.find(".product-card__title a").attr("href") : null;
-
 			for (let i = 0; i < realSlidesCount; i++) {
 				const $area = $('<div class="product-card__hover-area"></div>');
 				$area.css({
@@ -415,12 +511,10 @@ $(function () {
 					swiper.slideToLoop(i, 0);
 				});
 
-				if (permalink) {
-					$area.css("cursor", "pointer");
-					$area.on("click", () => {
-						window.location.href = permalink;
-					});
-				}
+				$area.on("click", (e) => {
+					e.preventDefault();
+					openCardGallery(i);
+				});
 
 				$areasWrapper.append($area);
 			}
@@ -448,19 +542,7 @@ $(function () {
 		const $img = $main.find(".product__image");
 		const $zoom = $main.find(".product__zoom");
 		const $thumbs = $gallery.find(".product__thumbs");
-		let gallery = $gallery.data("gallery") || [];
-
-		if (typeof gallery === "string") {
-			try {
-				gallery = JSON.parse(gallery);
-			} catch (e) {
-				gallery = [];
-			}
-		}
-
-		if (!Array.isArray(gallery)) {
-			gallery = [];
-		}
+		const gallery = parseGalleryData($gallery);
 
 		let currentIndex = 0;
 
@@ -480,18 +562,7 @@ $(function () {
 
 		$link.on("click", (e) => {
 			e.preventDefault();
-			if (typeof Fancybox === "undefined" || !gallery.length) return;
-
-			Fancybox.show(
-				gallery.map((item) => ({
-					src: item.full,
-					type: "image",
-				})),
-				{
-					startIndex: currentIndex,
-					dragToClose: false,
-				},
-			);
+			openFancyboxGallery(gallery, currentIndex);
 		});
 
 		if (hasCursor) {

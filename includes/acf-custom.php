@@ -75,6 +75,109 @@ if (!function_exists('dornott_sections_context_id')) {
 	}
 }
 
+function dornott_normalize_url_path($path)
+{
+	$path = untrailingslashit((string) $path);
+	return ($path === '') ? '/' : $path;
+}
+
+function dornott_url_path_is_home($path)
+{
+	$home_path = dornott_normalize_url_path((string) wp_parse_url(home_url('/'), PHP_URL_PATH));
+	return dornott_normalize_url_path($path) === $home_path;
+}
+
+function dornott_current_page_has_section_anchor($anchor)
+{
+	$anchor = sanitize_title($anchor);
+	if ($anchor === '') {
+		return false;
+	}
+
+	$is_front = is_front_page();
+	$is_shop = function_exists('is_shop') && is_shop();
+	$is_product = function_exists('is_product') && is_product();
+	$is_product_taxonomy = function_exists('is_product_taxonomy') && is_product_taxonomy();
+	$has_inner_hero = $is_shop || $is_product || $is_product_taxonomy;
+	$has_shared_stack = $is_front || $is_shop || $is_product || $is_product_taxonomy;
+
+	$context_id = dornott_sections_context_id();
+	$field_on = static function ($name) use ($context_id) {
+		return $context_id > 0 && function_exists('get_field') && (bool) get_field($name, $context_id);
+	};
+
+	switch ($anchor) {
+		case 'hero':
+			return $is_front || $has_inner_hero;
+		case 'about':
+			return ($is_front || $is_shop) && $field_on('show_about');
+		case 'catalog':
+			return $is_front;
+		case 'cert':
+			return $is_front && $field_on('show_cert');
+		case 'steps':
+			return $has_shared_stack && $field_on('show_order_steps');
+		case 'reviews':
+			return $has_shared_stack && $field_on('show_reviews');
+		case 'gift':
+			return $has_shared_stack && $field_on('show_gift');
+		case 'presentation':
+			return $has_shared_stack && $field_on('show_presentation');
+		case 'contacts':
+			return $has_shared_stack && $field_on('show_contacts');
+		default:
+			return false;
+	}
+}
+
+function dornott_resolve_section_anchor_url($url)
+{
+	$url = trim((string) $url);
+	if ($url === '' || $url === '#') {
+		return $url;
+	}
+
+	$parts = wp_parse_url($url);
+	if (!is_array($parts) || empty($parts['fragment'])) {
+		return $url;
+	}
+
+	$scheme = isset($parts['scheme']) ? strtolower($parts['scheme']) : '';
+	if (in_array($scheme, array('mailto', 'tel', 'javascript'), true)) {
+		return $url;
+	}
+
+	$host = $parts['host'] ?? '';
+	if ($host !== '') {
+		$home_host = (string) wp_parse_url(home_url('/'), PHP_URL_HOST);
+		if ($home_host !== '' && strcasecmp($host, $home_host) !== 0) {
+			return $url;
+		}
+	}
+
+	$fragment = $parts['fragment'];
+	$path = $parts['path'] ?? '';
+	$is_pure_hash = isset($url[0]) && $url[0] === '#';
+	$points_to_home = $is_pure_hash || dornott_url_path_is_home($path);
+
+	if (!$points_to_home) {
+		return $url;
+	}
+
+	$home_hash_url = home_url('/#' . $fragment);
+
+	// Inner pages also have #hero (page title). Menu "Главная" must keep going to the front page.
+	if ($fragment === 'hero' && !$is_pure_hash) {
+		return is_front_page() ? '#hero' : $home_hash_url;
+	}
+
+	if (dornott_current_page_has_section_anchor($fragment)) {
+		return '#' . $fragment;
+	}
+
+	return $home_hash_url;
+}
+
 add_filter('acf/location/rule_types', function ($choices) {
 	$choices['WooCommerce']['woo_page_shop'] = 'Страница каталога';
 	return $choices;

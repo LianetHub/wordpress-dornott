@@ -54,6 +54,7 @@
 		z-index: 1;
 		aspect-ratio: 1;
 		border-radius: 1rem;
+		cursor: zoom-in;
 
 		.product-card__prev,
 		.product-card__next {
@@ -64,6 +65,7 @@
 			z-index: 11;
 			width: rem(32);
 			height: rem(24);
+			cursor: pointer;
 			transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 
 			@media (min-width: $md4) {
@@ -129,9 +131,16 @@
 
 	// .product-card__hover-areas
 	&__hover-areas {
+		cursor: zoom-in;
+
 		@media (any-hover: none) {
 			pointer-events: none !important;
 		}
+	}
+
+	// .product-card__hover-area
+	&__hover-area {
+		cursor: zoom-in;
 	}
 
 	// .product-card__actions
@@ -251,6 +260,7 @@
 		display: block;
 		height: 100%;
 		width: 100%;
+		cursor: zoom-in;
 	}
 
 	// .product-card__title

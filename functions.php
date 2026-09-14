@@ -90,6 +90,7 @@ function theme_enqueue_scripts()
 		'captcha_client_key' => $_ENV['SMARTCAPTCHA_CLIENT_KEY'] ?? DORNOTT_SMARTCAPTCHA_SITEKEY,
 		'nonce'              => wp_create_nonce('dornott_cart'),
 		'ajax_url'           => admin_url('admin-ajax.php'),
+		'home_url'           => home_url('/'),
 	));
 
 	wp_enqueue_script('digift-widget', 'https://dornott.digift.ru/script', array(), null, false);
@@ -230,6 +231,13 @@ class Dornott_Menu_Walker extends Walker_Nav_Menu
 		$output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
 	}
 }
+
+add_filter('nav_menu_link_attributes', function ($atts, $item) {
+	if (!empty($atts['href']) && function_exists('dornott_resolve_section_anchor_url')) {
+		$atts['href'] = dornott_resolve_section_anchor_url($atts['href']);
+	}
+	return $atts;
+}, 10, 2);
 
 function append_presentation_to_nav($items, $args)
 {
