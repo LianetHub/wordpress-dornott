@@ -113,10 +113,3 @@
 		}
 	}
 }
-
-body.preloading:not(.home):not(.front-page),
-body.preloading:has(.preloader--inner) {
-	.header {
-		z-index: 210;
-	}
-}

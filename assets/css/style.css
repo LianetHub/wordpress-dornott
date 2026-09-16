@@ -203,15 +203,6 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "Arimo";
-  src: url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Arimo-VariableFont_wght.woff") format("woff");
-  font-weight: 100 900;
-  font-stretch: 75% 125%;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: "icons";
   font-display: swap;
   src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
@@ -220,8 +211,8 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "Comfortaa";
-  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
+  font-family: "Arimo";
+  src: url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Arimo-VariableFont_wght.woff") format("woff");
   font-weight: 100 900;
   font-stretch: 75% 125%;
   font-style: normal;
@@ -242,6 +233,15 @@ input[type=number] {
   src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
   font-weight: 700;
   font-style: italic;
+}
+
+@font-face {
+  font-family: "Comfortaa";
+  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -693,11 +693,6 @@ body:not(.preloading) .preloader.preloader--inner {
   transition: opacity 0.4s ease, visibility 0.4s ease;
   -webkit-transition-delay: 0s;
           transition-delay: 0s;
-}
-
-body.preloading:not(.home):not(.front-page) .header,
-body.preloading:has(.preloader--inner) .header {
-  z-index: 210;
 }
 
 .breadcrumbs {
@@ -3075,6 +3070,7 @@ section.product .hero--inner + .container {
 }
 
 .header__logo {
+  top: 1.5rem;
   position: fixed;
   z-index: 2;
   display: block;

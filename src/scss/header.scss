@@ -65,13 +65,13 @@
 			left: 0;
 			width: 100%;
 			z-index: $ui-index-1;
-
 			padding: 0;
 			top: 1.25rem;
 		}
 	}
 	// .header__logo
 	&__logo {
+		top: 1.5rem;
 		position: fixed;
 		z-index: $ui-index-2;
 		display: block;
