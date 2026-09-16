@@ -12,7 +12,7 @@
     </noscript>
     <div class="preloader__inner">
         <div class="preloader__logo">
-            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/logo-white.svg" alt="Лого">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/logo-white.svg" width="429" height="301" alt="Лого" fetchpriority="low" decoding="async">
         </div>
         <span class="preloader__percentage">
             <span id="percentage">0</span>%

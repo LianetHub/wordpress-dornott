@@ -54,7 +54,9 @@ if (get_field('show_order_steps', $context_id)):
                                 <div class="steps__item-content">
                                     <?php if ($item_image): ?>
                                         <div class="steps__item-image">
-                                            <img src="<?php echo esc_url($item_image['url']); ?>" alt="<?php echo esc_attr($item_image['alt']); ?>">
+                                            <?php echo function_exists('dornott_acf_image')
+												? dornott_acf_image($item_image, 'medium_large')
+												: ''; ?>
                                         </div>
                                     <?php endif; ?>
                                     <?php if ($item_title): ?>

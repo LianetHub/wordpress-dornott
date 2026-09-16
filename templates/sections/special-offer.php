@@ -76,9 +76,9 @@ if (get_field('show_special_offer', $context_id)) :
 
                     <?php if ($image) : ?>
                         <div class="special-offer__image">
-                            <img src="<?php echo esc_url($image['url']); ?>"
-                                alt="<?php echo esc_attr($image['alt']); ?>"
-                                class="cover-image">
+                            <?php echo function_exists('dornott_acf_image')
+								? dornott_acf_image($image, 'large', ['class' => 'cover-image'])
+								: ''; ?>
                         </div>
                     <?php endif; ?>
                 </div>

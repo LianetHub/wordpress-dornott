@@ -46,14 +46,30 @@ $image_size = 'woocommerce_single';
 
 $slides_html = '';
 $gallery_items = [];
+$dornott_card_index = (int) ($GLOBALS['dornott_card_index'] ?? 0) + 1;
+$GLOBALS['dornott_card_index'] = $dornott_card_index;
+$is_catalog_loop = (function_exists('is_shop') && is_shop()) || (function_exists('is_product_taxonomy') && is_product_taxonomy());
+$is_lcp_card = $is_catalog_loop && $dornott_card_index === 1;
+$is_eager_card = $is_catalog_loop && $dornott_card_index <= 2;
+$catalog_sizes = function_exists('dornott_catalog_image_sizes') ? dornott_catalog_image_sizes() : '(max-width: 575px) 92vw, 400px';
 
-$image_args = [
-	'class'   => 'product-card__image cover-image',
-	'loading' => 'lazy',
-];
-
-$append_product_card_slide = static function ($attachment_id) use (&$slides_html, &$gallery_items, $image_size, $image_args, $product) {
+$append_product_card_slide = static function ($attachment_id, $is_first_slide) use (&$slides_html, &$gallery_items, $image_size, $product, $is_lcp_card, $is_eager_card, $catalog_sizes) {
 	$full_url = $attachment_id ? wp_get_attachment_image_url($attachment_id, 'full') : '';
+	$image_args = [
+		'class'    => 'product-card__image cover-image',
+		'decoding' => 'async',
+		'sizes'    => $catalog_sizes,
+	];
+
+	if ($is_first_slide && $is_lcp_card) {
+		$image_args['loading'] = 'eager';
+		$image_args['fetchpriority'] = 'high';
+	} elseif ($is_first_slide && $is_eager_card) {
+		$image_args['loading'] = 'eager';
+	} else {
+		$image_args['loading'] = 'lazy';
+	}
+
 	$image_html = $attachment_id
 		? wp_get_attachment_image($attachment_id, $image_size, false, $image_args)
 		: wc_placeholder_img($image_size, $image_args);
@@ -78,14 +94,14 @@ $append_product_card_slide = static function ($attachment_id) use (&$slides_html
 };
 
 if ($image_id) {
-	$append_product_card_slide($image_id);
+	$append_product_card_slide($image_id, true);
 } else {
-	$append_product_card_slide(0);
+	$append_product_card_slide(0, true);
 }
 
 if (!empty($gallery_ids)) {
 	foreach ($gallery_ids as $gallery_image_id) {
-		$append_product_card_slide($gallery_image_id);
+		$append_product_card_slide($gallery_image_id, false);
 	}
 }
 

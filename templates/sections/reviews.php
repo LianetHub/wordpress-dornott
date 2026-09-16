@@ -169,7 +169,9 @@ if (get_field('show_reviews', $context_id)):
                                                 <?php if ($person_thumb || $initials): ?>
                                                     <div class="review-card__thumb">
                                                         <?php if ($person_thumb): ?>
-                                                            <img src="<?php echo esc_url($person_thumb['sizes']['thumbnail']); ?>" alt="<?php echo esc_attr($person_thumb['alt']); ?>" class="cover-image">
+                                                            <?php echo function_exists('dornott_acf_image')
+																? dornott_acf_image($person_thumb, 'thumbnail', ['class' => 'cover-image'])
+																: ''; ?>
                                                         <?php else: ?>
                                                             <span class="review-card__initials"><?php echo esc_html($initials); ?></span>
                                                         <?php endif; ?>
@@ -201,7 +203,9 @@ if (get_field('show_reviews', $context_id)):
                             <div class="swiper-wrapper">
                                 <?php foreach ($reviews_screenshots as $image): ?>
                                     <a href="<?php echo esc_url($image['url']); ?>" data-fancybox="screenshots-reviews" class="reviews__slide swiper-slide">
-                                        <img src="<?php echo esc_url($image['sizes']['large']); ?>" alt="<?php echo esc_attr($image['alt']); ?>">
+                                        <?php echo function_exists('dornott_acf_image')
+											? dornott_acf_image($image, 'large')
+											: ''; ?>
                                     </a>
                                 <?php endforeach; ?>
                             </div>

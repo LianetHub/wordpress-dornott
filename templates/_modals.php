@@ -37,7 +37,9 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 <div class="popup" id="callback">
     <?php if ($white_logo): ?>
         <div class="popup__logo">
-            <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+            <?php echo function_exists('dornott_acf_image')
+				? dornott_acf_image($white_logo, 'full', ['loading' => 'lazy', 'alt' => ($white_logo['alt'] ?? '') ?: 'Логотип «DORNOTT»'])
+				: ''; ?>
         </div>
     <?php endif; ?>
     <?php if ($callback_form_title): ?>
@@ -74,7 +76,9 @@ $privacy_policy = get_field('privacy_policy', $option_page);
 <div class="popup" id="order">
     <?php if ($white_logo): ?>
         <div class="popup__logo">
-            <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+            <?php echo function_exists('dornott_acf_image')
+				? dornott_acf_image($white_logo, 'full', ['loading' => 'lazy', 'alt' => ($white_logo['alt'] ?? '') ?: 'Логотип «DORNOTT»'])
+				: ''; ?>
         </div>
     <?php endif; ?>
     <?php if ($order_form_title): ?>
@@ -265,19 +269,13 @@ $privacy_policy = get_field('privacy_policy', $option_page);
         </nav>
 
         <?php if ($payment_and_delivery_policy): ?>
-            <div class="popup__text article-text" <?php echo $pd_attrs['display_style']; ?>>
-                <?php echo wp_kses_post($payment_and_delivery_policy) ?>
-            </div>
+            <div class="popup__text article-text" data-policy="payment-and-delivery" <?php echo $pd_attrs['display_style']; ?>></div>
         <?php endif; ?>
         <?php if ($data_protection_policy): ?>
-            <div class="popup__text article-text" <?php echo $dp_attrs['display_style']; ?>>
-                <?php echo wp_kses_post($data_protection_policy) ?>
-            </div>
+            <div class="popup__text article-text" data-policy="data-protection" <?php echo $dp_attrs['display_style']; ?>></div>
         <?php endif; ?>
         <?php if ($privacy_policy): ?>
-            <div class="popup__text article-text" <?php echo $pp_attrs['display_style']; ?>>
-                <?php echo wp_kses_post($privacy_policy) ?>
-            </div>
+            <div class="popup__text article-text" data-policy="privacy-policy" <?php echo $pp_attrs['display_style']; ?>></div>
         <?php endif; ?>
 
 

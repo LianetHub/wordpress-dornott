@@ -35,7 +35,9 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
                 <div class="footer__side">
                     <?php if ($white_logo): ?>
                         <a href="#hero" class="footer__logo">
-                            <img src="<?php echo esc_url($white_logo['url']); ?>" alt="<?php echo esc_attr($white_logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+                            <?php echo function_exists('dornott_acf_image')
+								? dornott_acf_image($white_logo, 'full', ['loading' => 'lazy', 'alt' => ($white_logo['alt'] ?? '') ?: 'Логотип «DORNOTT»'])
+								: ''; ?>
                         </a>
                     <?php endif; ?>
                     <?php if ($requisites): ?>
@@ -127,7 +129,7 @@ $footer_button_data = $footer_button_full['btn'] ?? null;
 
             <div class="footer__prod">
                 <a href="https://gektor-studio.com/" target="_blank" rel="noopener" class="footer__prod-link">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/gektor-logo.svg" alt="Студия-разработчик">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/gektor-logo.svg" width="165" height="60" alt="Студия-разработчик" loading="lazy" decoding="async">
                 </a>
             </div>
         </div>

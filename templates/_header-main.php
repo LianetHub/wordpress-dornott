@@ -7,13 +7,19 @@ $logo = get_field('logo', $option_page);
 <div class="header__content">
     <?php if ($logo): ?>
         <a href="<?php echo esc_url(home_url('/#')); ?>" class="header__logo">
-            <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+            <?php echo function_exists('dornott_acf_image')
+				? dornott_acf_image($logo, 'full', ['loading' => 'eager', 'fetchpriority' => 'low', 'alt' => $logo['alt'] ?: 'Логотип «DORNOTT»'])
+				: ''; ?>
         </a>
     <?php endif; ?>
     <div class="header__wrapper">
         <nav aria-label="Меню" class="header__menu menu">
             <div class="menu__logo">
-                <img src="<?php echo esc_url($logo['url']); ?>" alt="<?php echo esc_attr($logo['alt']) ?: 'Логотип «DORNOTT»'; ?>">
+                <?php if ($logo): ?>
+                    <?php echo function_exists('dornott_acf_image')
+						? dornott_acf_image($logo, 'full', ['loading' => 'lazy', 'alt' => $logo['alt'] ?: 'Логотип «DORNOTT»'])
+						: ''; ?>
+                <?php endif; ?>
             </div>
             <?php
             wp_nav_menu(array(

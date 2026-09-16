@@ -9,13 +9,7 @@ function releasePreloader() {
 
 if ($("body").hasClass("preloading") && $(".preloader").length > 0) {
 	if ($(".preloader").hasClass("preloader--inner")) {
-		const hideInner = () => setTimeout(releasePreloader, 150);
-
-		if (document.readyState === "complete") {
-			hideInner();
-		} else {
-			$(window).on("load", hideInner);
-		}
+		releasePreloader();
 	} else {
 		let counting = setInterval(function () {
 			let loader = $("#percentage");
@@ -121,6 +115,42 @@ $(function () {
 		scrollToHashTarget($target);
 	});
 
+	let policiesPromise = null;
+
+	const loadPoliciesOnce = () => {
+		if (policiesPromise) {
+			return policiesPromise;
+		}
+
+		const ajaxUrl = window.dornott_ajax?.ajax_url;
+		if (!ajaxUrl) {
+			policiesPromise = Promise.resolve();
+			return policiesPromise;
+		}
+
+		policiesPromise = fetch(`${ajaxUrl}?action=dornott_get_policies`)
+			.then((response) => response.json())
+			.then((json) => {
+				if (!json?.success || !json.data) {
+					return;
+				}
+
+				const $popup = $("#policies");
+				Object.entries(json.data).forEach(([key, html]) => {
+					$popup.find(`[data-policy="${key}"]`).html(html || "");
+				});
+			})
+			.catch(() => {
+				policiesPromise = null;
+			});
+
+		return policiesPromise;
+	};
+
+	const ensureCaptchaForTarget = ($scope) => {
+		window.formController?.ensureCaptcha?.($scope);
+	};
+
 	//  init Fancybox
 	if (typeof Fancybox !== "undefined" && Fancybox !== null) {
 		Fancybox.bind("[data-fancybox]", {
@@ -128,27 +158,25 @@ $(function () {
 			on: {
 				ready: (fancyboxRef) => {
 					const slide = fancyboxRef.getSlide();
-					if (slide.src === "#policies") {
-						const $container = $(slide.el);
-						const trigger = slide.triggerEl;
+					const $slide = $(slide.contentEl || slide.el);
 
-						if (trigger) {
-							const targetSlug = trigger.getAttribute("href").replace("#", "");
-							const $targetRadio = $container.find(`input[name="policy-type"][value="${targetSlug}"]`);
-							if ($targetRadio.length) {
-								$targetRadio.prop("checked", true).trigger("change");
-							} else {
-								$container.find('input[name="policy-type"]:checked').trigger("change");
-							}
-							setTimeout(() => {
+					if (slide.src === "#policies") {
+						const trigger = slide.triggerEl;
+						loadPoliciesOnce().then(() => {
+							const $container = $("#policies");
+							if (trigger) {
+								const targetSlug = trigger.getAttribute("href").replace("#", "");
+								const $targetRadio = $container.find(`input[name="policy-type"][value="${targetSlug}"]`);
 								if ($targetRadio.length) {
 									$targetRadio.prop("checked", true).trigger("change");
 								} else {
 									$container.find('input[name="policy-type"]:checked').trigger("change");
 								}
-							}, 300);
-						}
+							}
+						});
 					}
+
+					ensureCaptchaForTarget($slide);
 				},
 				close: (fancyboxRef, event) => {
 					const targetElement = event.target;
@@ -160,10 +188,9 @@ $(function () {
 						}
 					}
 				},
-				done: () => {
-					setTimeout(() => {
-						window.formController?.initCaptchas();
-					}, 100);
+				done: (fancyboxRef) => {
+					const slide = fancyboxRef.getSlide();
+					ensureCaptchaForTarget($(slide.contentEl || slide.el));
 				},
 				destroy: (fancyboxRef) => {
 					if (fancyboxRef.getSlide().src === "#cart") {
@@ -471,7 +498,6 @@ $(function () {
 		const swiper = new Swiper($slider[0], {
 			slidesPerView: 1,
 			speed: 300,
-			lazy: true,
 			loop: true,
 			watchOverflow: true,
 			pagination: {
@@ -564,6 +590,8 @@ $(function () {
 			$link.attr("href", item.full);
 			$img.attr({
 				src: item.single,
+				srcset: item.srcset || "",
+				sizes: item.sizes || "",
 				alt: item.alt || "",
 			});
 			$zoom.css("background-image", `url("${item.full}")`);
@@ -990,17 +1018,74 @@ $(function () {
 				}
 			});
 
-			this.waitForCaptchaApi();
-			document.addEventListener("dornott-smartcaptcha-ready", () => this.initCaptchas());
+			this.bindCaptchaTriggers();
+			document.addEventListener("dornott-smartcaptcha-ready", () => {
+				this.initCaptchas(this.pendingCaptchaScope);
+			});
+		}
+
+		loadCaptchaScript() {
+			if (window.smartCaptcha || window.dornottSmartCaptchaLoading) {
+				return;
+			}
+
+			window.dornottSmartCaptchaLoading = true;
+			window.dornottSmartCaptchaOnload = function () {
+				window.dornottSmartCaptchaReady = true;
+				document.dispatchEvent(new CustomEvent("dornott-smartcaptcha-ready"));
+			};
+
+			const script = document.createElement("script");
+			script.src = "https://smartcaptcha.cloud.yandex.ru/captcha.js?render=onload&onload=dornottSmartCaptchaOnload";
+			script.async = true;
+			script.defer = true;
+			document.head.appendChild(script);
+		}
+
+		ensureCaptcha($scope) {
+			this.pendingCaptchaScope = $scope || this.pendingCaptchaScope;
+
+			if (window.smartCaptcha) {
+				this.initCaptchas(this.pendingCaptchaScope);
+				return;
+			}
+
+			this.loadCaptchaScript();
+		}
+
+		bindCaptchaTriggers() {
+			const contactsCaptcha = document.querySelector("#contacts form [data-smart-captcha]");
+			if (contactsCaptcha && "IntersectionObserver" in window) {
+				const observer = new IntersectionObserver(
+					(entries) => {
+						if (entries.some((entry) => entry.isIntersecting)) {
+							this.ensureCaptcha($(contactsCaptcha).closest("form"));
+							observer.disconnect();
+						}
+					},
+					{ rootMargin: "240px 0px" },
+				);
+				observer.observe(contactsCaptcha);
+			}
+
+			$(document).on("focus", "form [data-smart-captcha], form [data-required]", (e) => {
+				const $form = $(e.target).closest("form");
+				if ($form.find("[data-smart-captcha]").length) {
+					this.ensureCaptcha($form);
+				}
+			});
 		}
 
 		initCaptchas($scope) {
-			const $root = $scope ? ($scope instanceof jQuery ? $scope : $($scope)) : $(document);
+			const $root = $scope ? ($scope instanceof jQuery ? $scope : $($scope)) : null;
 			const clientKey = window.dornott_ajax?.captcha_client_key;
-			const $containers = $root.find("form [data-smart-captcha]");
-
-			if (!clientKey || !window.smartCaptcha) {
+			if (!clientKey || !window.smartCaptcha || !$root || !$root.length) {
 				return false;
+			}
+
+			let $containers = $root.find("[data-smart-captcha]");
+			if ($root.is("[data-smart-captcha]")) {
+				$containers = $containers.add($root);
 			}
 
 			let rendered = 0;
@@ -1014,7 +1099,7 @@ $(function () {
 					const widgetId = window.smartCaptcha.render(el, {
 						sitekey: clientKey,
 						hl: "ru",
-						theme: "light",
+						theme: el.dataset.theme || "light",
 					});
 
 					el.dataset.widgetId = String(widgetId);
@@ -1025,25 +1110,6 @@ $(function () {
 			});
 
 			return rendered > 0;
-		}
-
-		waitForCaptchaApi() {
-			if (this.initCaptchas()) {
-				return;
-			}
-
-			const timer = setInterval(() => {
-				if (this.initCaptchas()) {
-					clearInterval(timer);
-				}
-			}, 200);
-
-			setTimeout(() => {
-				clearInterval(timer);
-				if (!$("form [data-smart-captcha][data-widget-id]").length && $("form [data-smart-captcha]").length) {
-					console.error("[SmartCaptcha] не удалось инициализировать виджеты за 15 сек");
-				}
-			}, 15000);
 		}
 
 		resetCaptcha($form) {
@@ -1101,6 +1167,7 @@ $(function () {
 			const $submitBtn = $form.find(this.selectors.submitBtn);
 
 			if (!isSilent && $form.find("[data-smart-captcha]").length && !formData.get("smart-token")) {
+				this.ensureCaptcha($form);
 				this.toggleCaptchaError($form, true);
 				return;
 			}

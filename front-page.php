@@ -100,8 +100,6 @@
     </div>
 </section>
 
-<?php get_template_part('templates/sections/about'); ?>
-
 <section id="catalog" class="catalog">
     <div class="container">
         <h2 class="catalog__title title">Наша продукция</h2>
@@ -138,6 +136,10 @@
         ?>
     </div>
 </section>
+
+
+<?php get_template_part('templates/sections/about'); ?>
+
 
 
 <?php get_template_part('templates/sections/special-offer'); ?>

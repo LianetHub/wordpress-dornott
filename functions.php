@@ -92,19 +92,6 @@ function theme_enqueue_scripts()
 	wp_enqueue_script('fancybox-js', get_template_directory_uri() . '/assets/js/libs/fancybox.umd.js', array(), null, $defer);
 
 	wp_enqueue_script(
-		'yandex-smartcaptcha',
-		'https://smartcaptcha.cloud.yandex.ru/captcha.js?render=onload&onload=dornottSmartCaptchaOnload',
-		array(),
-		null,
-		$defer
-	);
-	wp_add_inline_script(
-		'yandex-smartcaptcha',
-		'function dornottSmartCaptchaOnload(){window.dornottSmartCaptchaReady=true;document.dispatchEvent(new CustomEvent("dornott-smartcaptcha-ready"));}',
-		'before'
-	);
-
-	wp_enqueue_script(
 		'app-js',
 		get_template_directory_uri() . '/assets/js/app.min.js',
 		array('jquery', 'swiper-js', 'fancybox-js'),
@@ -124,6 +111,147 @@ function theme_enqueue_scripts()
 	}
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_scripts');
+
+function dornott_acf_image($image, $size = 'large', $args = [])
+{
+	if (empty($image)) {
+		return '';
+	}
+
+	$id = 0;
+	if (is_numeric($image)) {
+		$id = (int) $image;
+	} elseif (is_array($image)) {
+		$id = (int) ($image['ID'] ?? $image['id'] ?? 0);
+	}
+
+	if ($id <= 0) {
+		return '';
+	}
+
+	$defaults = array(
+		'loading'  => 'lazy',
+		'decoding' => 'async',
+	);
+
+	return wp_get_attachment_image($id, $size, false, array_merge($defaults, $args));
+}
+
+function dornott_catalog_image_sizes()
+{
+	return '(max-width: 575px) 92vw, (max-width: 767px) 46vw, (max-width: 991px) 31vw, 23vw';
+}
+
+function dornott_product_image_sizes()
+{
+	return '(max-width: 991px) 92vw, 560px';
+}
+
+function dornott_preload_front_assets()
+{
+	$theme_uri = get_template_directory_uri();
+	$theme_dir = get_template_directory();
+	$css_path = $theme_dir . '/assets/css/style.min.css';
+	$css_ver = file_exists($css_path) ? filemtime($css_path) : null;
+
+	printf(
+		'<link rel="preload" href="%s" as="style">' . "\n",
+		esc_url($theme_uri . '/assets/css/style.min.css' . ($css_ver ? '?ver=' . $css_ver : ''))
+	);
+
+	$fonts = array(
+		'PTSans-Regular.woff2',
+		'PTSans-Bold.woff2',
+		'Comfortaa-VariableFont_wght.woff2',
+		'icons.woff2',
+	);
+
+	foreach ($fonts as $font_file) {
+		printf(
+			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+			esc_url($theme_uri . '/assets/fonts/' . $font_file)
+		);
+	}
+
+	$lcp = dornott_get_lcp_image();
+	if (!empty($lcp['src'])) {
+		$attrs = sprintf('href="%s" as="image"', esc_url($lcp['src']));
+		if (!empty($lcp['srcset'])) {
+			$attrs .= ' imagesrcset="' . esc_attr($lcp['srcset']) . '"';
+		}
+		if (!empty($lcp['sizes'])) {
+			$attrs .= ' imagesizes="' . esc_attr($lcp['sizes']) . '"';
+		}
+		echo '<link rel="preload" fetchpriority="high" ' . $attrs . '>' . "\n";
+	}
+}
+add_action('wp_head', 'dornott_preload_front_assets', 1);
+
+function dornott_get_lcp_image()
+{
+	$attachment_id = 0;
+	$size = 'woocommerce_single';
+	$sizes = '';
+
+	if (function_exists('is_product') && is_product()) {
+		$product = wc_get_product(get_queried_object_id());
+		if ($product) {
+			$attachment_id = (int) $product->get_image_id();
+			$sizes = dornott_product_image_sizes();
+		}
+	} elseif (function_exists('is_shop') && is_shop()) {
+		global $wp_query;
+		$first_id = 0;
+		if (!empty($wp_query->posts[0]->ID)) {
+			$first_id = (int) $wp_query->posts[0]->ID;
+		}
+		if ($first_id && function_exists('wc_get_product')) {
+			$product = wc_get_product($first_id);
+			if ($product) {
+				$attachment_id = (int) $product->get_image_id();
+				$sizes = dornott_catalog_image_sizes();
+			}
+		}
+	}
+
+	if ($attachment_id <= 0) {
+		return array();
+	}
+
+	$src = wp_get_attachment_image_url($attachment_id, $size);
+	if (!$src) {
+		$src = wp_get_attachment_image_url($attachment_id, 'woocommerce_single')
+			?: wp_get_attachment_image_url($attachment_id, 'medium_large');
+	}
+
+	return array(
+		'src'    => $src ?: '',
+		'srcset' => wp_get_attachment_image_srcset($attachment_id, $size) ?: '',
+		'sizes'  => $sizes,
+	);
+}
+
+add_filter('image_editor_output_format', function ($formats) {
+	$formats['image/jpeg'] = 'image/webp';
+	$formats['image/png'] = 'image/webp';
+	return $formats;
+});
+
+function dornott_get_policies()
+{
+	$option_page = 'option';
+	$payment = function_exists('get_field') ? (string) get_field('payment_and_delivery_policy', $option_page) : '';
+	$data = function_exists('get_field') ? (string) get_field('data_protection_policy', $option_page) : '';
+	$privacy = function_exists('get_field') ? (string) get_field('privacy_policy', $option_page) : '';
+
+	wp_send_json_success(array(
+		'payment-and-delivery' => wp_kses_post($payment),
+		'data-protection'      => wp_kses_post($data),
+		'privacy-policy'       => wp_kses_post($privacy),
+	));
+}
+add_action('wp_ajax_dornott_get_policies', 'dornott_get_policies');
+add_action('wp_ajax_nopriv_dornott_get_policies', 'dornott_get_policies');
 
 function dornott_smartcaptcha_html($theme = 'light')
 {
@@ -348,7 +476,7 @@ function dornott_is_preloader_enabled()
 
 function add_preloading_body_class($classes)
 {
-	if (dornott_is_preloader_enabled()) {
+	if (dornott_is_preloader_enabled() && is_front_page()) {
 		$classes[] = 'preloading';
 	} else {
 		$classes[] = 'no-preloader';

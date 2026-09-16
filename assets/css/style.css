@@ -203,16 +203,8 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "icons";
-  font-display: swap;
-  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Arimo";
-  src: url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Arimo-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Arimo-VariableFont_wght.woff") format("woff");
+  font-family: "Comfortaa";
+  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
   font-weight: 100 900;
   font-stretch: 75% 125%;
   font-style: normal;
@@ -228,20 +220,11 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "PTSans";
+  font-family: "icons";
   font-display: swap;
-  src: url("../fonts/PTSans-BoldItalic.woff2") format("woff2"), url("../fonts/PTSans-BoldItalic.woff") format("woff");
-  font-weight: 700;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Comfortaa";
-  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
-  font-weight: 100 900;
-  font-stretch: 75% 125%;
+  src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
+  font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
@@ -250,14 +233,6 @@ input[type=number] {
   src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-}
-
-@font-face {
-  font-family: "PTSans";
-  font-display: swap;
-  src: url("../fonts/PTSans-Italic.woff2") format("woff2"), url("../fonts/PTSans-Italic.woff") format("woff");
-  font-weight: 400;
-  font-style: italic;
 }
 
 .header__menu .menu__link::before,
@@ -614,6 +589,11 @@ body:not(.preloading) .preloader {
 
 .preloader__logo {
   max-width: 80vw;
+}
+
+.preloader__logo img {
+  width: 100%;
+  height: auto;
 }
 
 .preloader__inner {
@@ -3070,11 +3050,14 @@ section.product .hero--inner + .container {
 }
 
 .header__logo {
-  top: 1.5rem;
-  position: fixed;
   z-index: 2;
   display: block;
   max-width: 8.875rem;
+}
+
+.header__logo img {
+  width: 100%;
+  height: auto;
 }
 
 .header__content {
@@ -4871,7 +4854,7 @@ body.no-preloader .preloader {
 .article-text blockquote {
   padding-block: 0.5rem;
   border-left: 0.125rem solid #ffbb4e;
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   line-height: 150%;
   display: block;
@@ -5850,6 +5833,11 @@ body.no-preloader .preloader {
     z-index: 1;
     padding: 0;
     top: 1.25rem;
+  }
+
+  .header__logo {
+    top: 1.5rem;
+    position: fixed;
   }
 
   .header__menu {

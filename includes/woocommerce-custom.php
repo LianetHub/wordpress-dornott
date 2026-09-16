@@ -2,7 +2,10 @@
 
 add_action('after_setup_theme', function () {
     add_theme_support('woocommerce');
+    add_image_size('dornott_catalog', 600, 800, true);
 });
+
+add_filter('woocommerce_enable_order_attribution', '__return_false');
 
 add_action('after_setup_theme', 'custom_wc_disable_features', 99);
 
@@ -76,6 +79,10 @@ function dequeue_unnecessary_wc_scripts()
     wp_dequeue_script('wc-cart-fragments');
     wp_dequeue_script('wc-checkout');
     wp_dequeue_script('wc-add-to-cart-variation');
+    wp_dequeue_script('sourcebuster-js');
+    wp_dequeue_script('wc-order-attribution');
+    wp_deregister_script('sourcebuster-js');
+    wp_deregister_script('wc-order-attribution');
 }
 
 add_action('woocommerce_product_query', 'dornott_catalog_product_query');

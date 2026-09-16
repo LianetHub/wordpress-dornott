@@ -80,6 +80,10 @@ export const fontsStyle = () => {
                     fontFileName = fontFileName.replace(/-VariableFont_wght/i, "");
                 }
 
+                if (fontFileName.toLowerCase().includes("arimo") || fontFileName.toLowerCase().includes("italic")) {
+                    continue;
+                }
+
                 if (newFileOnly !== fontFileName) {
                     let fontName = fontFileName.split("-")[0] ? fontFileName.split("-")[0] : fontFileName;
                     let fontWeight = fontFileName.split("-")[1] || '';

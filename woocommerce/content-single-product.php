@@ -34,6 +34,7 @@ $image_id = $product->get_image_id();
 $gallery_ids = $product->get_gallery_image_ids();
 $image_size = 'woocommerce_single';
 $thumb_size = 'woocommerce_gallery_thumbnail';
+$product_sizes = function_exists('dornott_product_image_sizes') ? dornott_product_image_sizes() : '(max-width: 991px) 92vw, 560px';
 
 $gallery_items = [];
 $all_image_ids = [];
@@ -57,8 +58,11 @@ foreach ($all_image_ids as $attachment_id) {
 	}
 
 	$gallery_items[] = [
+		'id'     => $attachment_id,
 		'full'   => $full_url,
 		'single' => $single_url,
+		'srcset' => wp_get_attachment_image_srcset($attachment_id, $image_size) ?: '',
+		'sizes'  => $product_sizes,
 		'thumb'  => $thumb_url,
 		'alt'    => $alt ?: $product->get_name(),
 	];
@@ -169,10 +173,31 @@ $other_products = wc_get_products([
 				<div class="product__stage">
 					<div class="product__main">
 						<a href="<?php echo esc_url($main_item['full']); ?>" class="product__main-link">
-							<img
-								src="<?php echo esc_url($main_item['single']); ?>"
-								alt="<?php echo esc_attr($main_item['alt']); ?>"
-								class="product__image product-card__image cover-image">
+							<?php
+							$main_id = (int) ($main_item['id'] ?? 0);
+							if ($main_id) {
+								echo wp_get_attachment_image($main_id, $image_size, false, [
+									'class'          => 'product__image product-card__image cover-image',
+									'loading'        => 'eager',
+									'fetchpriority'  => 'high',
+									'decoding'       => 'async',
+									'sizes'          => $product_sizes,
+									'alt'            => $main_item['alt'],
+								]);
+							} else {
+								?>
+								<img
+									src="<?php echo esc_url($main_item['single']); ?>"
+									alt="<?php echo esc_attr($main_item['alt']); ?>"
+									width="600"
+									height="800"
+									class="product__image product-card__image cover-image"
+									loading="eager"
+									fetchpriority="high"
+									decoding="async">
+								<?php
+							}
+							?>
 						</a>
 						<div class="product__zoom" aria-hidden="true"></div>
 					</div>
@@ -224,9 +249,24 @@ $other_products = wc_get_products([
 									class="product__thumb swiper-slide<?php echo $index === 0 ? ' is-active' : ''; ?>"
 									data-index="<?php echo esc_attr((string) $index); ?>"
 									aria-label="<?php echo esc_attr(sprintf('Показать фото %d', $index + 1)); ?>">
-									<img
-										src="<?php echo esc_url($item['thumb']); ?>"
-										alt="<?php echo esc_attr($item['alt']); ?>">
+									<?php
+									$thumb_id = (int) ($item['id'] ?? 0);
+									if ($thumb_id) {
+										echo wp_get_attachment_image($thumb_id, $thumb_size, false, [
+											'alt'      => $item['alt'],
+											'loading'  => $index === 0 ? 'eager' : 'lazy',
+											'decoding' => 'async',
+										]);
+									} else {
+										?>
+										<img
+											src="<?php echo esc_url($item['thumb']); ?>"
+											alt="<?php echo esc_attr($item['alt']); ?>"
+											loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
+											decoding="async">
+										<?php
+									}
+									?>
 								</button>
 							<?php endforeach; ?>
 						</div>

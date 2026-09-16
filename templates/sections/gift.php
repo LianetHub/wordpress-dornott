@@ -31,7 +31,9 @@ if (get_field('show_gift', $context_id)):
             <div class="gift__body">
                 <?php if ($gift_image): ?>
                     <div class="gift__image">
-                        <img src="<?php echo esc_url($gift_image['url']); ?>" alt="<?php echo esc_attr($gift_image['alt']); ?>">
+                        <?php echo function_exists('dornott_acf_image')
+							? dornott_acf_image($gift_image, 'large')
+							: ''; ?>
                     </div>
                 <?php endif; ?>
                 <div class="gift__content">

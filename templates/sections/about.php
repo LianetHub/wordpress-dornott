@@ -30,7 +30,9 @@ if (get_field('show_about', $context_id)) :
 
                 <?php if ($about_image) : ?>
                     <div class="about__image">
-                        <img src="<?php echo esc_url($about_image['url']); ?>" alt="<?php echo esc_attr($about_image['alt']); ?>" class="cover-image">
+                        <?php echo function_exists('dornott_acf_image')
+							? dornott_acf_image($about_image, 'large', ['class' => 'cover-image'])
+							: ''; ?>
                     </div>
                 <?php endif; ?>
 
@@ -57,7 +59,9 @@ if (get_field('show_about', $context_id)) :
 
                             <?php if ($icon) : ?>
                                 <div class="about__benefit-icon">
-                                    <img src="<?php echo esc_url($icon['url']); ?>" alt="<?php echo esc_attr($icon['alt']); ?>">
+                                    <?php echo function_exists('dornott_acf_image')
+										? dornott_acf_image($icon, 'thumbnail')
+										: ''; ?>
                                 </div>
                             <?php endif; ?>
 

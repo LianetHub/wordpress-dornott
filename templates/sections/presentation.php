@@ -49,8 +49,9 @@ if (get_field('show_presentation', $context_id)) :
                 </div>
                 <?php if ($presentation_image) : ?>
                     <div class="gift__image">
-                        <img src="<?php echo esc_url($presentation_image['url']); ?>"
-                            alt="<?php echo esc_attr($presentation_image['alt']); ?>">
+                        <?php echo function_exists('dornott_acf_image')
+							? dornott_acf_image($presentation_image, 'large')
+							: ''; ?>
                     </div>
                 <?php endif; ?>
             </div>

@@ -18,26 +18,56 @@
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
-        (function(m, e, t, r, i, k, a) {
-            m[i] = m[i] || function() {
-                (m[i].a = m[i].a || []).push(arguments)
-            };
-            m[i].l = 1 * new Date();
-            for (var j = 0; j < document.scripts.length; j++) {
-                if (document.scripts[j].src === r) {
+        (function() {
+            var loaded = false;
+            var metrikaId = 105964434;
+
+            function loadMetrika(withWebvisor) {
+                if (loaded) {
                     return;
                 }
+                loaded = true;
+
+                (function(m, e, t, r, i, k, a) {
+                    m[i] = m[i] || function() {
+                        (m[i].a = m[i].a || []).push(arguments)
+                    };
+                    m[i].l = 1 * new Date();
+                    for (var j = 0; j < document.scripts.length; j++) {
+                        if (document.scripts[j].src === r) {
+                            return;
+                        }
+                    }
+                    k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+                })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=' + metrikaId, 'ym');
+
+                ym(metrikaId, 'init', {
+                    ssr: true,
+                    webvisor: !!withWebvisor,
+                    clickmap: true,
+                    ecommerce: "dataLayer",
+                    accurateTrackBounce: true,
+                    trackLinks: true
+                });
             }
-            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
-        })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=105964434', 'ym');
-        ym(105964434, 'init', {
-            ssr: true,
-            webvisor: true,
-            clickmap: true,
-            ecommerce: "dataLayer",
-            accurateTrackBounce: true,
-            trackLinks: true
-        });
+
+            function onInteract() {
+                loadMetrika(true);
+            }
+
+            ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function(eventName) {
+                window.addEventListener(eventName, onInteract, {
+                    once: true,
+                    passive: true
+                });
+            });
+
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    loadMetrika(false);
+                }, 10000);
+            });
+        })();
     </script>
     <noscript>
         <div><img src="https://mc.yandex.ru/watch/105964434" style="position:absolute; left:-9999px;" alt="" /></div>
@@ -47,7 +77,7 @@
 </head>
 
 <body <?php body_class(); ?>>
-    <?php if (dornott_is_preloader_enabled()) : ?>
+    <?php if (dornott_is_preloader_enabled() && is_front_page()) : ?>
         <?php require_once(TEMPLATE_PATH . '_preloader.php'); ?>
     <?php endif; ?>
     <div class="wrapper">
