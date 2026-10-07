@@ -510,6 +510,19 @@ $(function () {
 			},
 		});
 
+		$slider.find("img.product-card__image").each(function () {
+			if (this.getAttribute("loading") === "lazy") return;
+			const slide = this.closest(".swiper-slide");
+			const preloader = slide && slide.querySelector(".swiper-lazy-preloader");
+			if (!preloader) return;
+			const hide = () => preloader.remove();
+			if (this.complete) hide();
+			else {
+				this.addEventListener("load", hide, { once: true });
+				this.addEventListener("error", hide, { once: true });
+			}
+		});
+
 		const openCardGallery = (index) => {
 			openFancyboxGallery(gallery, index);
 		};

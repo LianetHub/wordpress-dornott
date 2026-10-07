@@ -132,9 +132,14 @@ function dornott_acf_image($image, $size = 'large', $args = [])
 	$defaults = array(
 		'loading'  => 'lazy',
 		'decoding' => 'async',
+		'sizes'    => '(max-width: 991px) 100vw, 50vw',
 	);
 
-	return wp_get_attachment_image($id, $size, false, array_merge($defaults, $args));
+	add_filter('wp_img_tag_add_auto_sizes', '__return_false');
+	$html = wp_get_attachment_image($id, $size, false, array_merge($defaults, $args));
+	remove_filter('wp_img_tag_add_auto_sizes', '__return_false');
+
+	return $html;
 }
 
 function dornott_catalog_image_sizes()

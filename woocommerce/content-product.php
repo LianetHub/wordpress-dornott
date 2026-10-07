@@ -90,7 +90,11 @@ $append_product_card_slide = static function ($attachment_id, $is_first_slide) u
 	];
 
 	$slide_link_open = '<a href="' . esc_url($full_url) . '" class="product-card__link" aria-label="Открыть изображение">';
-	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . '</a><span class="swiper-lazy-preloader"></span></div>';
+	// Swiper 12 hides .swiper-lazy-preloader only for [loading="lazy"]; eager LCP slides must not get it.
+	$preloader_html = ($image_args['loading'] ?? '') === 'lazy'
+		? '<span class="swiper-lazy-preloader"></span>'
+		: '';
+	$slides_html .= '<div class="product-card__slide swiper-slide">' . $slide_link_open . $image_html . '</a>' . $preloader_html . '</div>';
 };
 
 if ($image_id) {

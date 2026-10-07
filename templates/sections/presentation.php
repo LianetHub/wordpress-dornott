@@ -50,8 +50,10 @@ if (get_field('show_presentation', $context_id)) :
                 <?php if ($presentation_image) : ?>
                     <div class="gift__image">
                         <?php echo function_exists('dornott_acf_image')
-							? dornott_acf_image($presentation_image, 'large')
-							: ''; ?>
+                            ? dornott_acf_image($presentation_image, 'large', [
+                                'sizes' => '(max-width: 991px) 100vw, 50vw',
+                            ])
+                            : ''; ?>
                     </div>
                 <?php endif; ?>
             </div>

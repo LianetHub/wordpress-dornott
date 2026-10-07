@@ -212,14 +212,6 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "PTSans";
-  font-display: swap;
-  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
   font-family: "icons";
   font-display: swap;
   src: url("../fonts/icons.woff2") format("woff2"), url("../fonts/icons.woff") format("woff");
@@ -232,6 +224,14 @@ input[type=number] {
   font-display: swap;
   src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
   font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PTSans";
+  font-display: swap;
+  src: url("../fonts/PTSans-Bold.woff2") format("woff2"), url("../fonts/PTSans-Bold.woff") format("woff");
+  font-weight: 700;
   font-style: normal;
 }
 
@@ -4546,6 +4546,13 @@ body.no-preloader .preloader {
 .gift__image {
   overflow: hidden;
   border-radius: 0.75rem;
+}
+
+.gift__image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  contain-intrinsic-size: none;
 }
 
 .gift__subtitle {

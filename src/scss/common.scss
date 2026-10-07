@@ -1576,6 +1576,13 @@ body {
 		overflow: hidden;
 		border-radius: 0.75rem;
 
+		img {
+			display: block;
+			width: 100%;
+			height: auto;
+			contain-intrinsic-size: none;
+		}
+
 		@media (min-width: $md4) {
 			border-radius: 1.5rem;
 		}
