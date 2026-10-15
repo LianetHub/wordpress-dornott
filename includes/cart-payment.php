@@ -340,11 +340,55 @@ function dornott_tbank_get_state($payment_id)
 	return (string) $result['body']['Status'];
 }
 
-function dornott_verify_tbank_paid($pending)
+function dornott_verify_tbank_paid($pending, $retries = 5, $delay_ms = 400)
 {
 	if (!is_array($pending) || empty($pending['payment_id'])) {
 		return false;
 	}
 
-	return dornott_is_paid_status(dornott_tbank_get_state($pending['payment_id']));
+	$retries = max(1, intval($retries));
+	$delay_ms = max(0, intval($delay_ms));
+
+	for ($i = 0; $i < $retries; $i++) {
+		if (dornott_is_paid_status(dornott_tbank_get_state($pending['payment_id']))) {
+			return true;
+		}
+		if ($i < $retries - 1 && $delay_ms > 0) {
+			usleep($delay_ms * 1000);
+		}
+	}
+
+	return false;
+}
+
+function dornott_tbank_parse_notification()
+{
+	if (!empty($_POST) && is_array($_POST)) {
+		return $_POST;
+	}
+
+	$raw = file_get_contents('php://input');
+	if ($raw === false || $raw === '') {
+		return [];
+	}
+
+	$json = json_decode($raw, true);
+	return is_array($json) ? $json : [];
+}
+
+function dornott_tbank_notification_token_valid($payload, $secret_key)
+{
+	if (!is_array($payload) || $secret_key === '') {
+		return false;
+	}
+
+	$token = (string) ($payload['Token'] ?? '');
+	if ($token === '') {
+		return false;
+	}
+
+	$params = $payload;
+	unset($params['Token']);
+
+	return hash_equals(dornott_tbank_sign($params, $secret_key), $token);
 }

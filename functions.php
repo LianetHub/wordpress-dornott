@@ -561,65 +561,23 @@ add_action('wp_ajax_nopriv_send_callback_form', 'handle_universal_form');
 add_action('wp_ajax_send_order_form', 'handle_universal_form');
 add_action('wp_ajax_nopriv_send_order_form', 'handle_universal_form');
 
-function handle_universal_form()
+add_action('wp_ajax_dornott_tbank_notification', 'handle_tbank_notification');
+add_action('wp_ajax_nopriv_dornott_tbank_notification', 'handle_tbank_notification');
+
+function dornott_render_order_email_html($subject, $fields)
 {
-	if (!dornott_verify_ajax_nonce()) {
-		wp_send_json_error(['message' => 'Сессия устарела. Обновите страницу.']);
-	}
-
-	$data = $_POST;
-	$action = $_POST['action'] ?? '';
-	$pending = null;
-
-	if ($action === 'send_order_form' && !empty($data['order_id'])) {
-		$order_id = sanitize_text_field($data['order_id']);
-		$pending = get_transient(dornott_pending_order_transient_key($order_id));
-
-		if (!$pending || !dornott_verify_tbank_paid($pending)) {
-			wp_send_json_error(['message' => 'Оплата не подтверждена']);
-		}
-	} elseif (!dornott_verify_smartcaptcha($_POST['smart-token'] ?? '')) {
-		wp_send_json_error(['message' => 'Подтвердите, что вы не робот']);
-	}
-
-	$subjects = [
-		'send_contact_form'  => 'Новое сообщение из контактов',
-		'send_callback_form' => 'Заказ обратного звонка',
-		'send_order_form'    => 'Новый оплаченный заказ',
-	];
-
-	$subject = $subjects[$action] ?? 'Новая заявка с сайта';
-
-	if (!empty($data['order_id'])) {
-		$subject .= ' №' . sanitize_text_field($data['order_id']);
-	}
-
-	$headers = ['Content-Type: text/html; charset=UTF-8'];
-
-	if (is_array($pending)) {
-		$username = sanitize_text_field($pending['username'] ?? '');
-		$phone    = sanitize_text_field($pending['phone'] ?? '');
-		$email    = sanitize_email($pending['email'] ?? '');
-		$city     = sanitize_text_field($pending['city'] ?? '');
-		$address  = sanitize_text_field($pending['address'] ?? '');
-		$delivery = sanitize_text_field($pending['delivery'] ?? '');
-		$delivery_price = intval($pending['totals']['deliveryPrice'] ?? 0);
-		$message_text = nl2br(sanitize_textarea_field($pending['message'] ?? ''));
-		$data['cart_items'] = wp_json_encode($pending['items'] ?? []);
-		$data['delivery_price'] = $delivery_price;
-	} else {
-		$username = sanitize_text_field($data['username'] ?? '');
-		$phone    = sanitize_text_field($data['phone'] ?? '');
-		$email    = sanitize_email($data['email'] ?? '');
-		$city     = sanitize_text_field($data['city'] ?? '');
-		$address  = sanitize_text_field($data['address'] ?? '');
-		$delivery = sanitize_text_field($data['delivery'] ?? '');
-		$delivery_price = sanitize_text_field($data['delivery_price'] ?? '');
-		$message_text = nl2br(sanitize_textarea_field($data['message'] ?? ''));
-	}
+	$username = (string) ($fields['username'] ?? '');
+	$phone = (string) ($fields['phone'] ?? '');
+	$email = (string) ($fields['email'] ?? '');
+	$city = (string) ($fields['city'] ?? '');
+	$address = (string) ($fields['address'] ?? '');
+	$delivery = (string) ($fields['delivery'] ?? '');
+	$message_text = (string) ($fields['message_text'] ?? '');
+	$cart_items = $fields['cart_items'] ?? null;
+	$delivery_price = intval($fields['delivery_price'] ?? 0);
 
 	ob_start();
-?>
+	?>
 	<div style="font-family: Arial, sans-serif; color: #333;">
 		<h2 style="border-bottom: 2px solid #eee; padding-bottom: 10px;"><?php echo esc_html($subject); ?></h2>
 
@@ -656,10 +614,7 @@ function handle_universal_form()
 			<?php endif; ?>
 		</table>
 
-		<?php if (!empty($data['cart_items'])):
-			$cart_items = json_decode(stripslashes($data['cart_items']), true);
-			if (is_array($cart_items)):
-		?>
+		<?php if (is_array($cart_items) && !empty($cart_items)): ?>
 				<h3 style="background: #f9f9f9; padding: 10px;">Состав заказа</h3>
 				<table style="width: 100%; border-collapse: collapse; border: 1px solid #eee;">
 					<thead>
@@ -674,20 +629,18 @@ function handle_universal_form()
 						<?php
 						$total_sum = 0;
 						foreach ($cart_items as $item):
-							$item_sum = intval($item['price']) * intval($item['quantity']);
+							$item_sum = intval($item['price'] ?? 0) * intval($item['quantity'] ?? 0);
 							$total_sum += $item_sum;
 						?>
 							<tr>
-								<td style="padding: 10px; border: 1px solid #ddd;"><?php echo esc_html($item['name']); ?></td>
-								<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><?php echo intval($item['quantity']); ?></td>
-								<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo number_format(intval($item['price']), 0, '.', ' '); ?> ₽</td>
+								<td style="padding: 10px; border: 1px solid #ddd;"><?php echo esc_html($item['name'] ?? ''); ?></td>
+								<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><?php echo intval($item['quantity'] ?? 0); ?></td>
+								<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo number_format(intval($item['price'] ?? 0), 0, '.', ' '); ?> ₽</td>
 								<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo number_format($item_sum, 0, '.', ' '); ?> ₽</td>
 							</tr>
 						<?php endforeach; ?>
 
-						<?php
-						$delivery_price = isset($data['delivery_price']) ? intval($data['delivery_price']) : 0;
-						if ($delivery_price > 0):
+						<?php if ($delivery_price > 0):
 							$total_sum += $delivery_price;
 						?>
 							<tr>
@@ -703,8 +656,7 @@ function handle_universal_form()
 						</tr>
 					</tfoot>
 				</table>
-		<?php endif;
-		endif; ?>
+		<?php endif; ?>
 
 		<?php if ($message_text): ?>
 			<div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
@@ -715,8 +667,157 @@ function handle_universal_form()
 
 		<p style="color: #999; font-size: 12px; margin-top: 30px;">Отправлено с сайта dornott.ru</p>
 	</div>
-<?php
-	$message = ob_get_clean();
+	<?php
+	return ob_get_clean();
+}
+
+function dornott_send_paid_order_emails($pending, $order_id)
+{
+	if (!is_array($pending)) {
+		return ['ok' => false, 'message' => 'Заказ не найден'];
+	}
+
+	if (!empty($pending['emails_sent'])) {
+		return ['ok' => true, 'message' => 'already_sent'];
+	}
+
+	$order_id = sanitize_text_field((string) $order_id);
+	$email = sanitize_email($pending['email'] ?? '');
+	$subject = 'Новый оплаченный заказ №' . $order_id;
+	$headers = ['Content-Type: text/html; charset=UTF-8'];
+
+	$message = dornott_render_order_email_html($subject, [
+		'username'       => sanitize_text_field($pending['username'] ?? ''),
+		'phone'          => sanitize_text_field($pending['phone'] ?? ''),
+		'email'          => $email,
+		'city'           => sanitize_text_field($pending['city'] ?? ''),
+		'address'        => sanitize_text_field($pending['address'] ?? ''),
+		'delivery'       => sanitize_text_field($pending['delivery'] ?? ''),
+		'message_text'   => nl2br(sanitize_textarea_field($pending['message'] ?? '')),
+		'cart_items'     => is_array($pending['items'] ?? null) ? $pending['items'] : [],
+		'delivery_price' => intval($pending['totals']['deliveryPrice'] ?? 0),
+	]);
+
+	$to = get_form_recipients();
+	$mail_sent = wp_mail($to, $subject, $message, $headers);
+
+	if ($mail_sent && is_email($email)) {
+		$owner_recipients = array_filter(array_map('trim', explode(',', (string) $to)));
+		if (!in_array($email, $owner_recipients, true)) {
+			wp_mail($email, $subject, $message, $headers);
+		}
+	}
+
+	if ($mail_sent) {
+		$pending['emails_sent'] = true;
+		set_transient(
+			dornott_pending_order_transient_key($order_id),
+			$pending,
+			defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400
+		);
+		return ['ok' => true, 'message' => 'sent'];
+	}
+
+	return ['ok' => false, 'message' => 'Ошибка при отправке письма'];
+}
+
+function handle_tbank_notification()
+{
+	$payload = dornott_tbank_parse_notification();
+	$secret_key = $_ENV['TBANK_SECRET_KEY'] ?? '';
+
+	if (!dornott_tbank_notification_token_valid($payload, $secret_key)) {
+		status_header(403);
+		echo 'FORBIDDEN';
+		wp_die();
+	}
+
+	$status = (string) ($payload['Status'] ?? '');
+	$order_id = sanitize_text_field((string) ($payload['OrderId'] ?? ''));
+
+	if ($order_id !== '' && dornott_is_paid_status($status)) {
+		$pending = get_transient(dornott_pending_order_transient_key($order_id));
+		$payment_id = (string) ($payload['PaymentId'] ?? '');
+
+		if (
+			is_array($pending)
+			&& (empty($pending['payment_id']) || (string) $pending['payment_id'] === $payment_id)
+		) {
+			dornott_send_paid_order_emails($pending, $order_id);
+		}
+	}
+
+	header('Content-Type: text/plain; charset=UTF-8');
+	echo 'OK';
+	wp_die();
+}
+
+function handle_universal_form()
+{
+	if (!dornott_verify_ajax_nonce()) {
+		wp_send_json_error(['message' => 'Сессия устарела. Обновите страницу.']);
+	}
+
+	$data = $_POST;
+	$action = $_POST['action'] ?? '';
+
+	if ($action === 'send_order_form' && !empty($data['order_id'])) {
+		$order_id = sanitize_text_field($data['order_id']);
+		$pending = get_transient(dornott_pending_order_transient_key($order_id));
+
+		if (!$pending || !dornott_verify_tbank_paid($pending)) {
+			wp_send_json_error(['message' => 'Оплата не подтверждена']);
+		}
+
+		$result = dornott_send_paid_order_emails($pending, $order_id);
+		if (!empty($result['ok'])) {
+			wp_send_json_success(['message' => 'Сообщение успешно отправлено']);
+		}
+
+		wp_send_json_error(['message' => $result['message'] ?? 'Ошибка при отправке письма']);
+	}
+
+	if (!dornott_verify_smartcaptcha($_POST['smart-token'] ?? '')) {
+		wp_send_json_error(['message' => 'Подтвердите, что вы не робот']);
+	}
+
+	$subjects = [
+		'send_contact_form'  => 'Новое сообщение из контактов',
+		'send_callback_form' => 'Заказ обратного звонка',
+		'send_order_form'    => 'Новый оплаченный заказ',
+	];
+
+	$subject = $subjects[$action] ?? 'Новая заявка с сайта';
+	$headers = ['Content-Type: text/html; charset=UTF-8'];
+
+	$username = sanitize_text_field($data['username'] ?? '');
+	$phone    = sanitize_text_field($data['phone'] ?? '');
+	$email    = sanitize_email($data['email'] ?? '');
+	$city     = sanitize_text_field($data['city'] ?? '');
+	$address  = sanitize_text_field($data['address'] ?? '');
+	$delivery = sanitize_text_field($data['delivery'] ?? '');
+	$delivery_price = intval($data['delivery_price'] ?? 0);
+	$message_text = nl2br(sanitize_textarea_field($data['message'] ?? ''));
+
+	$cart_items = null;
+	if (!empty($data['cart_items'])) {
+		$decoded = json_decode(stripslashes($data['cart_items']), true);
+		if (is_array($decoded)) {
+			$cart_items = $decoded;
+		}
+	}
+
+	$message = dornott_render_order_email_html($subject, [
+		'username'       => $username,
+		'phone'          => $phone,
+		'email'          => $email,
+		'city'           => $city,
+		'address'        => $address,
+		'delivery'       => $delivery,
+		'message_text'   => $message_text,
+		'cart_items'     => $cart_items,
+		'delivery_price' => $delivery_price,
+	]);
 
 	$attachments = [];
 	if (!empty($_FILES['file']['name'])) {
@@ -740,9 +841,6 @@ function handle_universal_form()
 	}
 
 	if ($mail_sent) {
-		if ($action === 'send_order_form' && !empty($data['order_id'])) {
-			delete_transient(dornott_pending_order_transient_key($data['order_id']));
-		}
 		wp_send_json_success(['message' => 'Сообщение успешно отправлено']);
 	} else {
 		wp_send_json_error(['message' => 'Ошибка при отправке письма']);
@@ -801,15 +899,16 @@ function handle_tbank_init()
 	$amount = intval($totals['finalPrice']) * 100;
 
 	$params = [
-		'TerminalKey' => $terminal_key,
-		'Amount'      => $amount,
-		'OrderId'     => $order_id,
-		'Description' => 'Оплата заказа №' . $order_id,
-		'DATA'        => [
+		'TerminalKey'      => $terminal_key,
+		'Amount'           => $amount,
+		'OrderId'          => $order_id,
+		'Description'      => 'Оплата заказа №' . $order_id,
+		'NotificationURL'  => admin_url('admin-ajax.php?action=dornott_tbank_notification'),
+		'DATA'             => [
 			'Email' => $email,
 			'Phone' => $clean_phone,
 		],
-		'Receipt'     => [
+		'Receipt'          => [
 			'Email'    => $email,
 			'Phone'    => $clean_phone,
 			'Taxation' => 'osn',

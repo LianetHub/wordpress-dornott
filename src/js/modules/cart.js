@@ -570,8 +570,13 @@ export class DornottCart {
 
 							this.$form.find('input[name="cart_items"]').val(JSON.stringify(cartDataForEmail));
 
+							// Кастомные письма: фронт + дубль через NotificationURL банка.
 							if (window.formController) {
-								await window.formController.sendForm(this.$form, true);
+								try {
+									await window.formController.sendForm(this.$form, true);
+								} catch (e) {
+									console.error("Order email send failed, bank notification may still deliver", e);
+								}
 							}
 
 							localStorage.removeItem(this.storageKey);

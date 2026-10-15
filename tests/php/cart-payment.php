@@ -104,5 +104,18 @@ test_assert(dornott_is_paid_status('AUTHORIZED') === true, 'AUTHORIZED is paid')
 test_assert(dornott_is_paid_status('REJECTED') === false, 'REJECTED is not paid');
 test_assert(dornott_pending_order_transient_key('12abc!') === 'dornott_order_12abc', 'transient key is sanitized');
 
+$notification = [
+	'TerminalKey' => 'demo',
+	'OrderId' => '42',
+	'Success' => 'true',
+	'Status' => 'CONFIRMED',
+	'PaymentId' => '99',
+	'Amount' => '10000',
+];
+$notification['Token'] = dornott_tbank_sign($notification, 'secret');
+test_assert(dornott_tbank_notification_token_valid($notification, 'secret') === true, 'notification token validates');
+$notification['Token'] = 'bad';
+test_assert(dornott_tbank_notification_token_valid($notification, 'secret') === false, 'bad notification token rejected');
+
 echo "\n{$passed} passed, {$failed} failed\n";
 exit($failed > 0 ? 1 : 0);

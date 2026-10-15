@@ -1182,7 +1182,7 @@ $(function () {
 			if (!isSilent && $form.find("[data-smart-captcha]").length && !formData.get("smart-token")) {
 				this.ensureCaptcha($form);
 				this.toggleCaptchaError($form, true);
-				return;
+				return false;
 			}
 
 			this.toggleCaptchaError($form, false);
@@ -1225,18 +1225,28 @@ $(function () {
 								ym(105964434, "reachGoal", "sendmail");
 							}
 						}
+						return true;
 					} else {
-						console.error("Ошибка логики сервера:", result.data.message);
+						console.error("Ошибка логики сервера:", result.data?.message);
 						this.resetCaptcha($form);
-						this.showErrorPopup();
+						if (!isSilent) {
+							this.showErrorPopup();
+						}
+						return false;
 					}
 				} else {
 					console.error("Ошибка сервера (HTTP статус)");
-					this.showErrorPopup();
+					if (!isSilent) {
+						this.showErrorPopup();
+					}
+					return false;
 				}
 			} catch (error) {
 				console.error("Ошибка сети", error);
-				this.showErrorPopup();
+				if (!isSilent) {
+					this.showErrorPopup();
+				}
+				return false;
 			} finally {
 				$submitBtn.removeClass(this.selectors.loadingClass);
 			}
