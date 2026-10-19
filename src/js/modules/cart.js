@@ -278,6 +278,9 @@ export class DornottCart {
 	validateForm() {
 		let isAllValid = true;
 		this.$form.find("[data-required]").each((_, el) => {
+			if (["city", "address"].includes(el.name) && !this.$form.find('input[name="delivery"]:checked').length) {
+				return;
+			}
 			if (window.formController && !window.formController.validateField($(el))) {
 				isAllValid = false;
 			}
@@ -388,7 +391,7 @@ export class DornottCart {
 	toggleAddressStep() {
 		const deliveryMethod = $('input[name="delivery"]:checked').val();
 		if (this.$addressStep.length) {
-			if (deliveryMethod === "pickup") {
+			if (!deliveryMethod || deliveryMethod === "pickup") {
 				this.$addressStep.hide();
 				if (window.formController) {
 					this.$addressStep.find("." + window.formController.selectors.errorClass).removeClass(window.formController.selectors.errorClass);

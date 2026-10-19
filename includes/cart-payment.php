@@ -81,7 +81,10 @@ function dornott_recalculate_totals($items, $delivery_price = 0)
 function dornott_lookup_delivery_price($slug, $methods)
 {
 	$slug = (string) $slug;
-	if ($slug === '' || !is_array($methods)) {
+	if ($slug === '') {
+		return 0;
+	}
+	if (!is_array($methods)) {
 		return null;
 	}
 
@@ -105,7 +108,7 @@ function dornott_tbank_sign($params, $secret_key)
 		if ($key === 'Token' || $key === 'Receipt' || $key === 'DATA' || is_array($value)) {
 			continue;
 		}
-		$token_params[$key] = (string) $value;
+		$token_params[$key] = is_bool($value) ? ($value ? 'true' : 'false') : (string) $value;
 	}
 
 	$token_params['Password'] = (string) $secret_key;

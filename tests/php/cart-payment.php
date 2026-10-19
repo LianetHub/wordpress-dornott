@@ -54,7 +54,8 @@ $methods = [
 ];
 test_assert(dornott_lookup_delivery_price('cdek', $methods) === 500, 'delivery price is taken from options');
 test_assert(dornott_lookup_delivery_price('unknown', $methods) === null, 'unknown delivery slug is rejected');
-test_assert(dornott_lookup_delivery_price('', $methods) === null, 'empty delivery slug is rejected');
+test_assert(dornott_lookup_delivery_price('', $methods) === 0, 'unselected delivery adds no charge');
+test_assert(dornott_lookup_delivery_price('', null) === 0, 'delivery is optional even without configured methods');
 
 $resolved = dornott_resolve_cart_item_from_product(
 	['id' => 10, 'quantity' => 4, 'price' => 1],
@@ -116,6 +117,12 @@ $notification['Token'] = dornott_tbank_sign($notification, 'secret');
 test_assert(dornott_tbank_notification_token_valid($notification, 'secret') === true, 'notification token validates');
 $notification['Token'] = 'bad';
 test_assert(dornott_tbank_notification_token_valid($notification, 'secret') === false, 'bad notification token rejected');
+
+// Bank JSON contains a boolean, not the string used in the older fixture.
+$notification['Success'] = true;
+$notification['Token'] = hash('sha256', '10000' . '42' . 'secret' . '99' . 'CONFIRMED' . 'true' . 'demo');
+test_assert(dornott_tbank_notification_token_valid($notification, 'secret'), 'real JSON boolean validates against independently calculated token');
+test_assert(dornott_tbank_sign(['Success' => false], 'secret') === hash('sha256', 'secretfalse'), 'false uses bank boolean encoding');
 
 echo "\n{$passed} passed, {$failed} failed\n";
 exit($failed > 0 ? 1 : 0);
