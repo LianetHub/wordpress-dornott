@@ -1,12 +1,13 @@
 import $ from "jquery";
 
+const WIDGET_URL = "https://cdn.jsdelivr.net/npm/@cdek-it/widget@3.13.1/dist/cdek-widget.umd.js";
 let widgetScript;
 function loadWidget() {
 	if (window.CDEKWidget) return Promise.resolve(window.CDEKWidget);
 	if (widgetScript) return widgetScript;
 	widgetScript = new Promise((resolve, reject) => {
 		const script = document.createElement("script");
-		script.src = "https://cdn.jsdelivr.net/npm/@cdek-it/widget@3.13.1/dist/cdek-widget.umd.js";
+		script.src = WIDGET_URL;
 		const timer = setTimeout(() => fail(), 20000);
 		const fail = () => { clearTimeout(timer); script.remove(); widgetScript = null; reject(new Error("Widget unavailable")); };
 		script.onload = () => { clearTimeout(timer); window.CDEKWidget ? resolve(window.CDEKWidget) : fail(); };
@@ -53,14 +54,6 @@ export class CdekPickup {
 		this.modal?.close();
 	}
 
-	releasePreloadLayout() {
-		this.$dialog.removeClass("cdek-dialog--preloading").removeAttr("aria-hidden").prop("inert", false);
-	}
-
-	preparePreloadLayout() {
-		this.$dialog.addClass("cdek-dialog--preloading").attr("aria-hidden", "true").prop("inert", true);
-	}
-
 	setMapBusy(loading) {
 		this.$dialog.find("#cdek-pvz-map").attr("aria-busy", String(loading));
 	}
@@ -79,16 +72,17 @@ export class CdekPickup {
 
 	preload() {
 		if (!this.config.mapsKey || !this.config.servicePath || !this.$dialog.length) return Promise.resolve(false);
-		if (this.widget) return Promise.resolve(true);
-		this.preloadRequested = true;
-		if (!this.session) {
-			// A measurable off-screen container lets Yandex initialize before the modal opens.
-			this.preparePreloadLayout();
+		// Download ahead of time; execute and process offices only after opening the map.
+		// Initializing a hidden map blocks recipient input when thousands of offices arrive.
+		if (!this.widget && !window.CDEKWidget && !document.querySelector("[data-cdek-widget-prefetch]")) {
+			const hint = document.createElement("link");
+			hint.rel = "prefetch";
+			hint.as = "script";
+			hint.href = WIDGET_URL;
+			hint.setAttribute("data-cdek-widget-prefetch", "");
+			document.head.appendChild(hint);
 		}
-		return this.ensureWidget().then(() => true, () => {
-			if (!this.session) this.releasePreloadLayout();
-			return false; // Background failure is retried on the next explicit opening.
-		});
+		return Promise.resolve(true);
 	}
 
 	ensureWidget() {
@@ -96,8 +90,7 @@ export class CdekPickup {
 		if (this.widgetPromise) return this.widgetPromise;
 		this.widgetPromise = (async () => {
 			const Widget = await this.loader();
-			if (!this.preloadRequested && !this.session?.active) return null;
-			if (!this.session?.active) this.preparePreloadLayout();
+			if (!this.session?.active) return null;
 			this.widget = new Widget({
 				root: "cdek-pvz-map", apiKey: this.config.mapsKey, servicePath: this.config.servicePath,
 				defaultLocation: [37.6176, 55.7558], lang: "rus", popup: false, canChoose: true,
@@ -145,7 +138,6 @@ export class CdekPickup {
 		try {
 			if (!this.config.mapsKey || !this.config.servicePath) throw new Error("Widget not configured");
 			if (!this.$dialog.length) throw new Error("Map dialog missing");
-			this.releasePreloadLayout();
 			this.setMapBusy(!this.widgetReady);
 			$button.attr("aria-expanded", "true");
 			let ready;

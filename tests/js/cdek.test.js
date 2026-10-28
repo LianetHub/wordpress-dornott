@@ -36,7 +36,7 @@ function mount(loader, useDefaultDialog = false) {
 	if (!useDefaultDialog) pickup.showDialog = showDialog;
 	return pickup;
 }
-afterEach(() => { vi.useRealTimers(); delete window.CDEKWidget; delete window.Fancybox; });
+afterEach(() => { vi.useRealTimers(); delete window.CDEKWidget; delete window.Fancybox; document.querySelector('[data-cdek-widget-prefetch]')?.remove(); });
 const office = { code: "MSK1", city: "Москва", address: "Улица, 1", country_code: "RU", type: "PVZ" };
 
 describe("CDEK pickup", () => {
@@ -81,20 +81,23 @@ describe("CDEK pickup", () => {
 		const retry = pickup.open(); await vi.advanceTimersByTimeAsync(0); await retry;
 		expect(modal.closed).toBe(false);
 	});
-	it("preinitializes a hidden map without opening a modal or committing an office", async () => {
-		let mounts = 0;
-		const pickup = mount(async () => class {
-			constructor(config) { mounts++; config.onChoose("office", null, office); }
-		});
+	it("prefetches only the SDK file without executing it or loading offices during recipient input", async () => {
+		const loader = vi.fn(async () => class {});
+		const pickup = mount(loader);
 		await pickup.preload(); await pickup.preload();
-		expect(mounts).toBe(1);
+		expect(loader).not.toHaveBeenCalled();
+		expect(pickup.widget).toBeUndefined();
+		const hints = document.head.querySelectorAll('[data-cdek-widget-prefetch]');
+		expect(hints).toHaveLength(1);
+		expect(hints[0].rel).toBe("prefetch");
+		expect(hints[0].as).toBe("script");
+		expect(hints[0].href).toContain("@cdek-it/widget@3.13.1/dist/cdek-widget.umd.js");
 		expect(modal).toBeNull();
-		expect($("#cdek-pickup-dialog").hasClass("cdek-dialog--preloading")).toBe(true);
-		expect($("#cdek-pickup-dialog").attr("aria-hidden")).toBe("true");
+		expect($("#cdek-pickup-dialog").hasClass("cdek-dialog--preloading")).toBe(false);
 		expect($("[name=cdek_pvz_code]").val()).toBe("");
 		expect($("[data-cdek-open]").prop("disabled")).toBe(false);
 	});
-	it("shares pending preinitialization with an immediate map opening", async () => {
+	it("initializes the map once on explicit opening after a resource prefetch", async () => {
 		let resolveLoader, loads = 0, mounts = 0;
 		const pickup = mount(() => { loads++; return new Promise(resolve => { resolveLoader = resolve; }); });
 		const preloading = pickup.preload();
@@ -106,25 +109,26 @@ describe("CDEK pickup", () => {
 		expect($("#cdek-pickup-dialog").hasClass("cdek-dialog--preloading")).toBe(false);
 		expect($("#cdek-pickup-dialog").attr("aria-hidden")).toBeUndefined();
 	});
-	it("silently recovers from a failed preload on explicit opening", async () => {
+	it("can open the map after a resource prefetch failure", async () => {
 		let loads = 0;
-		const pickup = mount(async () => { if (++loads === 1) throw Error("offline"); return class {}; });
+		const pickup = mount(async () => { loads++; return class {}; });
 		await pickup.preload();
+		document.querySelector('[data-cdek-widget-prefetch]')?.dispatchEvent(new Event("error"));
 		expect($("#cart-validation-warning").hasClass("hidden")).toBe(true);
 		await pickup.open();
 		expect(modal.closed).toBe(false);
-		expect(loads).toBe(2);
+		expect(loads).toBe(1);
 	});
-	it("restores measurable background layout if the map is closed before preloading finishes", async () => {
+	it("does not start a prefetched map in the background after cancelling its opening", async () => {
 		let resolveLoader;
 		const pickup = mount(() => new Promise(resolve => { resolveLoader = resolve; }));
 		const preloading = pickup.preload();
 		const opening = pickup.open(); await tick(); modal.close();
-		let backgroundAtMount = false;
-		resolveLoader(class { constructor() { backgroundAtMount = $("#cdek-pickup-dialog").hasClass("cdek-dialog--preloading"); } });
+		let mounts = 0;
+		resolveLoader(class { constructor() { mounts++; } });
 		await Promise.all([preloading, opening]);
-		expect(backgroundAtMount).toBe(true);
-		expect($("#cdek-pickup-dialog").attr("aria-hidden")).toBe("true");
+		expect(mounts).toBe(0);
+		expect($("#cdek-pickup-dialog").hasClass("cdek-dialog--preloading")).toBe(false);
 	});
 	it("closes the current Fancybox after confirmation when show returns no instance", async () => {
 		let options;

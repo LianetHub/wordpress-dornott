@@ -269,7 +269,7 @@ describe("DornottCart", () => {
 		expect($("#checkout-button").prop("disabled")).toBe(false);
 		expect($("#cart-validation-warning").hasClass("hidden")).toBe(true);
 	});
-	it("preloads the delivery map on cart opening only when products are present", async () => {
+	it("prefetches the SDK file only for a nonempty cart, without starting the map", async () => {
 		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
 		window.dornott_ajax = { cdek: { mapsKey: "test-key", servicePath: "/unused" } };
 		window.formController = createFormController();
@@ -278,12 +278,14 @@ describe("DornottCart", () => {
 		cart.cdekPickup.loader = async () => { loads++; return class { constructor() { mounts++; } }; };
 		await cart.preloadDelivery();
 		expect(loads).toBe(0);
+		expect(document.querySelector('[data-cdek-widget-prefetch]')).toBeNull();
 		localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([{ id: 1, quantity: 1 }]));
 		await cart.preloadDelivery(); await cart.preloadDelivery();
-		expect(loads).toBe(1); expect(mounts).toBe(1);
+		expect(loads).toBe(0); expect(mounts).toBe(0);
+		expect(document.querySelectorAll('[data-cdek-widget-prefetch]')).toHaveLength(1);
 		localStorage.removeItem(CART_STORAGE_KEY);
 		await cart.preloadDelivery();
-		expect(loads).toBe(1);
+		expect(loads).toBe(0);
 	});
 	beforeEach(() => {
 		localStorage.clear();

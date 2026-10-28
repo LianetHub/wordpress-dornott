@@ -30,6 +30,7 @@ afterEach(() => {
 	$("form").off(".dornottCart");
 	localStorage.clear();
 	document.body.innerHTML = "";
+	document.querySelector('[data-cdek-widget-prefetch]')?.remove();
 	delete window.formController;
 	delete window.dornott_ajax;
 });

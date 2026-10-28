@@ -609,13 +609,3 @@
 		.cdek-dialog__map { flex: 1; height: auto; min-height: 0; border-radius: 0.75rem; }
 	}
 }
-
-// Initialize the same map off screen with real dimensions, without showing a popup.
-.cdek-dialog.cdek-dialog--preloading {
-	display: block !important;
-	position: fixed;
-	top: 0;
-	left: -10000px;
-	visibility: hidden;
-	pointer-events: none;
-}
