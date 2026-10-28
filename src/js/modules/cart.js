@@ -1,4 +1,5 @@
 import $ from "jquery";
+import { CdekPickup } from "./cdek.js";
 
 export const CART_STORAGE_KEY = "dornott_cart";
 
@@ -76,6 +77,8 @@ export class DornottCart {
 		this.$checkoutBtn = $("#checkout-button");
 		this.$paymentContainer = $("#payment-container");
 		this.$cartTitle = $(".cart__title");
+		this.cdekPickup = this.$form.find("[data-cdek-pickup]").length
+			? new CdekPickup(this.$form, window.dornott_ajax?.cdek) : null;
 
 		this.init();
 	}
@@ -93,6 +96,20 @@ export class DornottCart {
 
 	getData() {
 		return parseCartData(localStorage.getItem(this.storageKey));
+	}
+
+	preloadDelivery() {
+		if (!this.getData().length) return Promise.resolve(false);
+		return this.cdekPickup?.preload() ?? Promise.resolve(false);
+	}
+
+	isDeliverySelected() {
+		return window.formController?.isDeliverySelected(this.$form) ?? false;
+	}
+
+	syncCheckoutAvailability() {
+		const ready = this.isDeliverySelected();
+		this.$checkoutBtn.prop("disabled", !ready);
 	}
 
 	saveData(data) {
@@ -173,6 +190,16 @@ export class DornottCart {
 		$(document).on("change.dornottCart", ".product-card__variations-input", (e) => this.handleVariationChange(e));
 
 		this.$form.on("submit.dornottCart", (e) => this.handleSubmit(e));
+		// The native payment button stays disabled; clicking its area explains what is missing.
+		this.$form.on("click.dornottCart", "[data-cart-checkout]", () => {
+			if (!this.isDeliverySelected()) this.validateForm(true);
+		});
+		this.$form.on("cdek:change.dornottCart", () => {
+			window.formController?.validateDelivery(this.$form);
+			this.syncCheckoutAvailability();
+			if (!this.$form.find("#cart-validation-warning").hasClass("hidden")) this.validateForm();
+		});
+		this.$form.on("checkout:error.dornottCart", (event, message) => window.formController?.showValidationWarning(this.$form, message));
 		this.$form.on("input.dornottCart change.dornottCart", "[data-required]", () => this.validateForm());
 	}
 
@@ -275,24 +302,10 @@ export class DornottCart {
 		}
 	}
 
-	validateForm() {
-		let isAllValid = true;
-		this.$form.find("[data-required]").each((_, el) => {
-			if (["city", "address"].includes(el.name) && !this.$form.find('input[name="delivery"]:checked').length) {
-				return;
-			}
-			if (window.formController && !window.formController.validateField($(el))) {
-				isAllValid = false;
-			}
-		});
-
-		$("#cart-validation-warning").toggleClass("hidden", isAllValid);
-
-		if (window.formController && !window.formController.isCaptchaSolved(this.$form)) {
-			isAllValid = false;
-		}
-
-		return isAllValid;
+	validateForm(showDeliveryError = false) {
+		const valid = window.formController?.validateForm(this.$form, { showDeliveryError }) ?? false;
+		this.syncCheckoutAvailability();
+		return valid;
 	}
 
 	toggleAllCheckboxes(e) {
@@ -355,7 +368,8 @@ export class DornottCart {
 	}
 
 	calculateTotals() {
-		const deliveryPrice = parseInt($('input[name="delivery"]:checked').data("price"), 10) || 0;
+		const $delivery = this.$form.find('input[name="delivery"]:checked');
+		const deliveryPrice = ["cdek", "pickup"].includes($delivery.val()) ? 0 : (parseInt($delivery.data("price"), 10) || 0);
 		return calculateCartTotals(this.getData(), deliveryPrice);
 	}
 
@@ -379,13 +393,14 @@ export class DornottCart {
 		$("#total-qty").text(`${totals.totalQty} шт.`);
 		$("#subtotal-price").text(`${totals.subtotal.toLocaleString()} ₽`);
 		$("#total-discount").text(`${totals.discount.toLocaleString()} ₽`);
-		$("#delivery-price").text(`${totals.deliveryPrice.toLocaleString()} ₽`);
+		$("#delivery-price").text(totals.deliveryPrice === 0 ? "Бесплатно" : `${totals.deliveryPrice.toLocaleString()} ₽`);
 		$("#final-price").text(`${totals.finalPrice.toLocaleString()} ₽`);
 
 		this.$form.find('input[name="delivery_price"]').val(totals.deliveryPrice);
 
 		this.renderItems(data);
 		this.syncButtons(data);
+		this.syncCheckoutAvailability();
 	}
 
 	toggleAddressStep() {
@@ -481,7 +496,7 @@ export class DornottCart {
 
 	async handleSubmit(e) {
 		e.preventDefault();
-		if (this.validateForm()) {
+		if (this.validateForm(true)) {
 			this.$checkoutBtn.addClass("_loading");
 
 			const formData = this.$form.serializeArray().filter((item) => item.name !== "select_all");
@@ -508,6 +523,7 @@ export class DornottCart {
 					this.openPaymentIframe(result.data.paymentUrl, result.data.orderId);
 				} else {
 					console.error("Ошибка инициализации платежа", result.data?.message);
+					window.formController?.showValidationWarning(this.$form, result.data?.message || "Не удалось подготовить оплату. Попробуйте ещё раз.");
 					if (window.formController) {
 						window.formController.resetCaptcha(this.$form);
 					}
@@ -515,6 +531,7 @@ export class DornottCart {
 				}
 			} catch (error) {
 				console.error("Произошла сетевая ошибка:", error);
+				window.formController?.showValidationWarning(this.$form, "Не удалось связаться с сервером. Проверьте соединение и повторите попытку.");
 				this.$checkoutBtn.removeClass("_loading");
 			}
 		}

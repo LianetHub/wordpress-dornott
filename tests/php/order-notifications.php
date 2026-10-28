@@ -3,6 +3,13 @@ ob_start();
 // Isolated bank webhook and mail transport: no network, payments or real mail.
 require_once dirname(__DIR__, 2) . '/includes/cart-payment.php';
 require_once dirname(__DIR__, 2) . '/includes/order-notifications.php';
+require_once dirname(__DIR__, 2) . '/includes/cdek-processing.php';
+
+class TestOrderDatabase {
+    public function prepare($query, $value) { return $query; }
+    public function get_var($query) { return '1'; }
+}
+$wpdb = new TestOrderDatabase();
 
 $orders = [];
 $mail_calls = [];
@@ -18,6 +25,8 @@ function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES,
 function wp_kses_post($value) { return $value; }
 function get_form_recipients() { return 'owner@example.com'; }
 function get_transient($key) { return $GLOBALS['orders'][$key] ?? false; }
+function wp_using_ext_object_cache() { return false; }
+function wp_cache_delete($key, $group) { return true; }
 function set_transient($key, $value, $ttl) { $GLOBALS['orders'][$key] = $value; return true; }
 function status_header($code) { $GLOBALS['status'] = $code; }
 function wp_die($message = '', $title = '', $args = []) {
@@ -42,6 +51,7 @@ function webhook($payload) {
 }
 
 $_ENV['TBANK_SECRET_KEY'] = 'secret';
+$_ENV['TBANK_TERMINAL_KEY'] = 'demo';
 $pending = [
     'payment_id' => '99', 'email' => 'buyer@example.com', 'username' => 'Покупатель',
     'items' => [['name' => 'Товар', 'quantity' => 1, 'price' => 50, 'regular_price' => 50]],

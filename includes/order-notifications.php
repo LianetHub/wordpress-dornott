@@ -33,7 +33,7 @@ function dornott_render_order_email_html($subject, $fields)
 			<?php if ($delivery): ?>
 				<tr>
 					<td style="padding: 5px 0;"><strong>Доставка:</strong></td>
-					<td><?php echo ($delivery === 'cdek') ? 'СДЭК / ТК' : 'Самовывоз'; ?></td>
+					<td><?php echo ($delivery === 'cdek') ? 'СДЭК — пункт выдачи' : 'Самовывоз'; ?></td>
 				</tr>
 			<?php endif; ?>
 			<?php if ($city): ?>
@@ -41,6 +41,9 @@ function dornott_render_order_email_html($subject, $fields)
 					<td style="padding: 5px 0;"><strong>Город:</strong></td>
 					<td><?php echo esc_html($city); ?></td>
 				</tr>
+			<?php endif; ?>
+			<?php if (!empty($fields['pvz_code'])): ?>
+				<tr><td style="padding: 5px 0;"><strong>Код ПВЗ СДЭК:</strong></td><td><?php echo esc_html($fields['pvz_code']); ?></td></tr>
 			<?php endif; ?>
 			<?php if ($address): ?>
 				<tr>
@@ -76,12 +79,12 @@ function dornott_render_order_email_html($subject, $fields)
 						</tr>
 					<?php endforeach; ?>
 
-					<?php if ($delivery_price > 0):
+					<?php if ($delivery_price > 0 || $delivery === 'cdek'):
 						$total_sum += $delivery_price;
 					?>
 						<tr>
 							<td colspan="3" style="padding: 10px; border: 1px solid #ddd; font-style: italic;">Доставка</td>
-							<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo number_format($delivery_price, 0, '.', ' '); ?> ₽</td>
+							<td style="padding: 10px; text-align: right; border: 1px solid #ddd;"><?php echo $delivery_price > 0 ? number_format($delivery_price, 0, '.', ' ') . ' ₽' : 'Бесплатно'; ?></td>
 						</tr>
 					<?php endif; ?>
 				</tbody>
@@ -132,6 +135,7 @@ function dornott_send_paid_order_emails($pending, $order_id)
 		'message_text'   => nl2br(sanitize_textarea_field($pending['message'] ?? '')),
 		'cart_items'     => is_array($pending['items'] ?? null) ? $pending['items'] : [],
 		'delivery_price' => intval($pending['totals']['deliveryPrice'] ?? 0),
+		'pvz_code'       => $pending['cdek']['pvz_code'] ?? '',
 	]);
 
 	$to = get_form_recipients();
@@ -153,11 +157,7 @@ function dornott_send_paid_order_emails($pending, $order_id)
 	}
 	$pending['email_recipients_sent'] = $sent;
 	$pending['emails_sent'] = count(array_diff($recipients, $sent)) === 0;
-	set_transient(
-		dornott_pending_order_transient_key($order_id),
-		$pending,
-		defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400
-	);
+	dornott_store_pending_order($order_id, $pending);
 	return ['ok' => $pending['emails_sent'], 'message' => $pending['emails_sent'] ? 'sent' : 'Ошибка при отправке письма'];
 }
 
@@ -186,13 +186,13 @@ function handle_tbank_notification()
 			wp_die('', '', ['response' => 503]);
 			return;
 		}
-		if ((string) ($pending['payment_id'] ?? '') !== $payment_id || $payment_id === '') {
+		if (!dornott_tbank_payment_matches($payload, $pending, $order_id)) {
 			status_header(403);
 			echo 'PAYMENT_MISMATCH';
 			wp_die('', '', ['response' => 403]);
 			return;
 		}
-		$result = dornott_send_paid_order_emails($pending, $order_id);
+		$result = dornott_complete_paid_order($order_id);
 		if (empty($result['ok'])) {
 			status_header(503);
 			echo 'MAIL_RETRY';

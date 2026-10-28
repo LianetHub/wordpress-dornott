@@ -10,6 +10,12 @@
 	padding: 0 !important;
 }
 
+// Inline checkout forms are not draggable galleries. Preserve the map's own cursor.
+.fancybox__viewport:has(#cart),
+.cdek-dialog-shell .fancybox__viewport {
+	cursor: default !important;
+}
+
 .fancybox__slide {
 	padding: 0;
 	@media (min-width: $md4) {

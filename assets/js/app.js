@@ -159,6 +159,7 @@ $(function () {
 				ready: (fancyboxRef) => {
 					const slide = fancyboxRef.getSlide();
 					const $slide = $(slide.contentEl || slide.el);
+					if (slide.src === "#cart") window.dornottCart?.preloadDelivery();
 
 					if (slide.src === "#policies") {
 						const trigger = slide.triggerEl;
@@ -1157,10 +1158,8 @@ $(function () {
 		}
 
 		bindSubmit($form) {
+			if ($form.attr("id") === "cart-form") return;
 			$form.on("submit", async (e) => {
-				if ($form.attr("id") === "cart-form") {
-					return;
-				}
 				e.preventDefault();
 
 				if (this.validateForm($form)) {
@@ -1302,7 +1301,25 @@ $(function () {
 			$field.toggleClass(this.selectors.errorClass, !isValid);
 		}
 
-		validateForm($form) {
+		isDeliverySelected($form) {
+			const method = $form.find('[name="delivery"]:checked').val();
+			if (method === "cdek") return /^[A-Z0-9_-]{2,30}$/.test($form.find('[name="cdek_pvz_code"]').val() || "");
+			return method === "pickup";
+		}
+
+		validateDelivery($form, showError = false) {
+			const valid = this.isDeliverySelected($form);
+			if (showError || valid) $form.find("[data-cdek-pickup]").toggleClass(this.selectors.errorClass, !valid).attr("aria-invalid", String(!valid));
+			return valid;
+		}
+
+		showValidationWarning($form, message) {
+			const $warning = $form.find("#cart-validation-warning");
+			$warning.find(".cart__warning-text").text(message);
+			$warning.toggleClass("hidden", !message);
+		}
+
+		validateForm($form, { showDeliveryError = false } = {}) {
 			let isAllValid = true;
 			const self = this;
 
@@ -1312,9 +1329,18 @@ $(function () {
 				}
 			});
 
-			if (window.formController && !window.formController.isCaptchaSolved($form)) {
+			const isCart = $form.attr("id") === "cart-form";
+			const messages = [];
+			if (!isAllValid) messages.push("Проверьте данные получателя и согласие на обработку данных.");
+			if (isCart && !this.validateDelivery($form, showDeliveryError)) {
 				isAllValid = false;
+				messages.push("Выберите пункт выдачи СДЭК.");
 			}
+			if (!this.isCaptchaSolved($form)) {
+				isAllValid = false;
+				messages.push("Подтвердите, что вы не робот.");
+			}
+			if (isCart) this.showValidationWarning($form, messages.join(" "));
 
 			return isAllValid;
 		}

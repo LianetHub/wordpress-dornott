@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import $ from "jquery";
+import { readFileSync } from "node:fs";
+import { createFormController } from "./setup.js";
 import {
 	DornottCart,
 	CART_STORAGE_KEY,
@@ -50,7 +52,7 @@ function cartFixture() {
 					<div id="total-discount">0 ₽</div>
 					<div id="delivery-price">0 ₽</div>
 					<div id="final-price">0 ₽</div>
-					<div id="cart-validation-warning" class="hidden"></div>
+					<div id="cart-validation-warning" class="hidden"><div class="cart__warning-text"></div></div>
 					<button type="submit" id="checkout-button">оплатить заказ</button>
 				</form>
 				<div id="payment-container"></div>
@@ -100,6 +102,7 @@ function sampleItem(overrides = {}) {
 
 function mountCart() {
 	document.body.innerHTML = cartFixture();
+	window.formController ||= createFormController();
 	return new DornottCart();
 }
 
@@ -155,6 +158,88 @@ describe("cart helpers", () => {
 });
 
 describe("DornottCart", () => {
+	it("uses the existing common controller for recipient and delivery checks before payment", async () => {
+		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
+		window.formController = createFormController();
+		window.formController.bindSubmit($("#cart-form"));
+		const commonValidation = vi.spyOn(window.formController, "validateForm");
+		const cart = new DornottCart();
+		const bank = vi.fn(); globalThis.fetch = bank;
+		await cart.$form.triggerHandler("submit");
+		expect(commonValidation).toHaveBeenCalledTimes(1);
+		expect(bank).not.toHaveBeenCalled();
+		expect($("#cart-validation-warning .cart__warning-text").text()).toContain("получателя");
+		expect($("#cart-validation-warning .cart__warning-text").text()).toContain("Выберите пункт выдачи");
+		$("[name=username]").val("Иван Иванов"); $("[name=phone]").val("+79991112233"); $("[name=email]").val("buyer@example.com");
+		expect(cart.validateForm(true)).toBe(false);
+		expect($("[data-cdek-pickup]").hasClass("_error")).toBe(true);
+		cart.cdekPickup.choose("office", null, { code: "MSK1", type: "PVZ", country_code: "RU", city: "Москва", address: "Улица, 1" });
+		expect(cart.validateForm(true)).toBe(true);
+		expect($("#cart-validation-warning").hasClass("hidden")).toBe(true);
+	});
+	it("keeps other forms on common field and captcha validation without requiring delivery", () => {
+		document.body.innerHTML = '<form id="contact-form"><input name="username" data-required value="Иван"></form>';
+		const controller = createFormController();
+		const $form = $("#contact-form");
+		expect(controller.validateForm($form)).toBe(true);
+		$form.append('<div data-smart-captcha></div><input type="hidden" name="smart-token" value="">');
+		expect(controller.validateForm($form)).toBe(false);
+		$form.find('[name="smart-token"]').val("solved");
+		expect(controller.validateForm($form)).toBe(true);
+	});
+	it("marks delivery only after a payment attempt and clears it once an office is chosen", async () => {
+		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
+		window.formController = createFormController();
+		window.formController.validateField = () => true;
+		const cart = new DornottCart();
+		cart.saveData([sampleItem({ id: 1 })]);
+		const $delivery = $("[data-cdek-pickup]");
+		$("[name=username]").val("Покупатель").trigger("input");
+		expect($delivery.hasClass("_error")).toBe(false);
+		const bank = vi.fn(); globalThis.fetch = bank;
+		$("[data-cart-checkout]").trigger("click");
+		expect($delivery.hasClass("_error")).toBe(true);
+		expect($delivery.attr("aria-invalid")).toBe("true");
+		expect($("#cart-validation-warning .cart__warning-text").text()).toContain("Выберите пункт выдачи");
+		expect(bank).not.toHaveBeenCalled();
+		cart.cdekPickup.choose("office", null, { code: "MSK1", type: "PVZ", country_code: "RU", city: "Москва", address: "Улица, 1" });
+		expect($delivery.hasClass("_error")).toBe(false);
+		window.formController.validateField = () => false;
+		await cart.handleSubmit($.Event("submit"));
+		expect($delivery.hasClass("_error")).toBe(false);
+		expect(bank).not.toHaveBeenCalled();
+		expect($("#cart-validation-warning .cart__warning-text").text()).toContain("получателя");
+	});
+	it("disables payment and never requests bank Init until a pickup office is selected", async () => {
+		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
+		window.formController = createFormController();
+		window.formController.validateField = () => true;
+		const cart = new DornottCart();
+		cart.saveData([sampleItem({ id: 1 })]);
+		const bank = vi.fn(); globalThis.fetch = bank;
+		expect($("#checkout-button").prop("disabled")).toBe(true);
+		await cart.handleSubmit($.Event("submit"));
+		expect(bank).not.toHaveBeenCalled();
+		cart.cdekPickup.choose("office", null, { code: "MSK1", type: "PVZ", country_code: "RU", city: "Москва", address: "Улица, 1" });
+		expect($("#checkout-button").prop("disabled")).toBe(false);
+		expect($("#cart-validation-warning").hasClass("hidden")).toBe(true);
+	});
+	it("preloads the delivery map on cart opening only when products are present", async () => {
+		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
+		window.dornott_ajax = { cdek: { mapsKey: "test-key", servicePath: "/unused" } };
+		window.formController = createFormController();
+		const cart = new DornottCart();
+		let loads = 0, mounts = 0;
+		cart.cdekPickup.loader = async () => { loads++; return class { constructor() { mounts++; } }; };
+		await cart.preloadDelivery();
+		expect(loads).toBe(0);
+		localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([{ id: 1, quantity: 1 }]));
+		await cart.preloadDelivery(); await cart.preloadDelivery();
+		expect(loads).toBe(1); expect(mounts).toBe(1);
+		localStorage.removeItem(CART_STORAGE_KEY);
+		await cart.preloadDelivery();
+		expect(loads).toBe(1);
+	});
 	beforeEach(() => {
 		localStorage.clear();
 	});
@@ -237,7 +322,7 @@ describe("DornottCart", () => {
 
 		$('input[name="delivery"][value="cdek"]').prop("checked", true).trigger("change");
 		expect(checkedIds()).toEqual(["2"]);
-		expect($("#delivery-price").text()).toContain("500");
+		expect($("#delivery-price").text()).toBe("Бесплатно");
 	});
 
 	it("deletes only checked items in one storage write", () => {
@@ -312,15 +397,17 @@ describe("DornottCart", () => {
 
 	it("includes nonce header when submitting payment", async () => {
 		window.dornott_ajax = { nonce: "abc123", ajax_url: "/wp-admin/admin-ajax.php" };
-		window.formController = {
+		window.formController = Object.assign(createFormController(), {
+			selectors: { errorClass: "_error" },
 			validateField: () => true,
 			isCaptchaSolved: () => true,
 			resetCaptcha: () => {},
-		};
+		});
 
 		const cart = mountCart();
 		cart.saveData([sampleItem({ id: 1 })]);
 		$('input[name="delivery"][value="cdek"]').prop("checked", true);
+		cart.$form.append('<input type="hidden" name="cdek_pvz_code" value="MSK1">');
 
 		const fetchMock = vi.fn().mockResolvedValue({
 			json: async () => ({ success: false, data: { message: "stop" } }),
@@ -333,6 +420,8 @@ describe("DornottCart", () => {
 		expect(fetchMock.mock.calls[0][1].headers["X-WP-Nonce"]).toBe("abc123");
 		const payload = JSON.parse(fetchMock.mock.calls[0][1].body);
 		expect(payload.items).toHaveLength(1);
-		expect(payload.totals.deliveryPrice).toBe(500);
+		expect(payload.totals.deliveryPrice).toBe(0);
+		expect($("#cart-validation-warning").hasClass("hidden")).toBe(false);
+		expect($("#cart-validation-warning .cart__warning-text").text()).toBe("stop");
 	});
 });

@@ -81,9 +81,7 @@ function dornott_recalculate_totals($items, $delivery_price = 0)
 function dornott_lookup_delivery_price($slug, $methods)
 {
 	$slug = (string) $slug;
-	if ($slug === '') {
-		return 0;
-	}
+	if ($slug === '') return null;
 	if (!is_array($methods)) {
 		return null;
 	}
@@ -93,7 +91,7 @@ function dornott_lookup_delivery_price($slug, $methods)
 			continue;
 		}
 		if (($method['slug'] ?? '') === $slug) {
-			return intval($method['price'] ?? 0);
+			return $slug === 'cdek' ? 0 : intval($method['price'] ?? 0);
 		}
 	}
 
@@ -124,7 +122,7 @@ function dornott_tbank_sign($params, $secret_key)
 
 function dornott_is_paid_status($status)
 {
-	return in_array(strtoupper((string) $status), ['CONFIRMED', 'AUTHORIZED'], true);
+	return strtoupper((string) $status) === 'CONFIRMED';
 }
 
 function dornott_pending_order_transient_key($order_id)
@@ -220,28 +218,13 @@ function dornott_resolve_cart_item_from_product($client_item, $product)
 		'price'         => $price,
 		'regular_price' => $regular,
 		'quantity'      => $qty,
+		'shipping'      => function_exists('dornott_cdek_product_shipping') ? dornott_cdek_product_shipping($product) : [],
 	];
 }
 
 function dornott_get_delivery_methods()
 {
-	$methods = [];
-
-	if (!function_exists('have_rows') || !have_rows('delivery', 'option')) {
-		return $methods;
-	}
-
-	while (have_rows('delivery', 'option')) {
-		the_row();
-		$name = (string) get_sub_field('company_name');
-		$methods[] = [
-			'slug'  => function_exists('sanitize_title') ? sanitize_title($name) : strtolower($name),
-			'price' => intval(get_sub_field('company_delivery_price')),
-			'name'  => $name,
-		];
-	}
-
-	return $methods;
+	return [['slug' => 'cdek', 'price' => 0, 'name' => 'СДЭК']];
 }
 
 function dornott_resolve_cart_items($client_items)
@@ -353,7 +336,11 @@ function dornott_verify_tbank_paid($pending, $retries = 5, $delay_ms = 400)
 	$delay_ms = max(0, intval($delay_ms));
 
 	for ($i = 0; $i < $retries; $i++) {
-		if (dornott_is_paid_status(dornott_tbank_get_state($pending['payment_id']))) {
+		$result = dornott_tbank_request('GetState', [
+			'TerminalKey' => $_ENV['TBANK_TERMINAL_KEY'] ?? '', 'PaymentId' => $pending['payment_id'],
+		], $_ENV['TBANK_SECRET_KEY'] ?? '');
+		if ($result['ok'] && dornott_is_paid_status($result['body']['Status'] ?? '')
+			&& dornott_tbank_payment_matches($result['body'], $pending, $pending['order_id'] ?? '')) {
 			return true;
 		}
 		if ($i < $retries - 1 && $delay_ms > 0) {
@@ -362,6 +349,18 @@ function dornott_verify_tbank_paid($pending, $retries = 5, $delay_ms = 400)
 	}
 
 	return false;
+}
+
+function dornott_tbank_payment_matches($payload, $pending, $order_id)
+{
+	$totals = dornott_recalculate_totals($pending['items'] ?? [], $pending['totals']['deliveryPrice'] ?? 0);
+	$expected = (int) ($pending['amount'] ?? ($totals['finalPrice'] * 100));
+	return in_array($payload['Success'] ?? false, [true, 'true'], true)
+		&& (string) ($payload['OrderId'] ?? '') === (string) $order_id
+		&& (string) ($payload['PaymentId'] ?? '') === (string) ($pending['payment_id'] ?? '')
+		&& (string) ($payload['PaymentId'] ?? '') !== ''
+		&& (string) ($payload['TerminalKey'] ?? '') === (string) ($pending['terminal_key'] ?? ($_ENV['TBANK_TERMINAL_KEY'] ?? ''))
+		&& $expected > 0 && is_numeric($payload['Amount'] ?? null) && (float) $payload['Amount'] === (float) $expected;
 }
 
 function dornott_tbank_parse_notification()

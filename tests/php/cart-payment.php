@@ -52,10 +52,10 @@ $methods = [
 	['slug' => 'cdek', 'price' => 500],
 	['slug' => 'pickup', 'price' => 0],
 ];
-test_assert(dornott_lookup_delivery_price('cdek', $methods) === 500, 'delivery price is taken from options');
+test_assert(dornott_lookup_delivery_price('cdek', $methods) === 0, 'CDEK is free despite old paid options');
 test_assert(dornott_lookup_delivery_price('unknown', $methods) === null, 'unknown delivery slug is rejected');
-test_assert(dornott_lookup_delivery_price('', $methods) === 0, 'unselected delivery adds no charge');
-test_assert(dornott_lookup_delivery_price('', null) === 0, 'delivery is optional even without configured methods');
+test_assert(dornott_lookup_delivery_price('', $methods) === null, 'delivery must be selected');
+test_assert(dornott_lookup_delivery_price('', null) === null, 'missing method is rejected without options');
 
 $resolved = dornott_resolve_cart_item_from_product(
 	['id' => 10, 'quantity' => 4, 'price' => 1],
@@ -101,7 +101,7 @@ $expected = hash('sha256', '10000' . 'test' . '1' . 'secret' . 'demo');
 test_assert($signed === $expected, 'tbank token concatenates sorted scalar params plus password');
 
 test_assert(dornott_is_paid_status('CONFIRMED') === true, 'CONFIRMED is paid');
-test_assert(dornott_is_paid_status('AUTHORIZED') === true, 'AUTHORIZED is paid');
+test_assert(dornott_is_paid_status('AUTHORIZED') === false, 'AUTHORIZED hold is not captured payment');
 test_assert(dornott_is_paid_status('REJECTED') === false, 'REJECTED is not paid');
 test_assert(dornott_pending_order_transient_key('12abc!') === 'dornott_order_12abc', 'transient key is sanitized');
 
