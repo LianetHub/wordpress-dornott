@@ -109,7 +109,14 @@ check($payload['number'] === 'ORDER-42' && $payload['shipment_point'] === 'MTSHC
 check($payload['delivery_recipient_cost']['value'] === 0 && $payload['recipient']['name'] === 'Иван Иванов', 'recipient owes no delivery charge');
 check(!isset($payload['intake_date']) && !isset($payload['to_location']), 'PVZ shipment does not request a courier or substitute a street address');
 $payload_with_note = dornott_cdek_order_payload($order, 'ORDER-42', dornott_cdek_config());
-check(strpos($payload_with_note['comment'], 'обувных коробок') !== false && strpos($payload_with_note['comment'], 'проверить') !== false, 'waybill carries the client packaging reference and human-review instruction');
+check($payload_with_note['comment'] === 'Заказ оплачен. Доставка за счёт отправителя.', 'waybill without a customer comment contains only payment and delivery information');
+$order_with_note = $order;
+$order_with_note['message'] = "  Позвоните перед выдачей.\nПолучатель будет после 18:00.  ";
+$payload_with_note = dornott_cdek_order_payload($order_with_note, 'ORDER-42', $config);
+check($payload_with_note['comment'] === "Заказ оплачен. Доставка за счёт отправителя. Комментарий клиента: Позвоните перед выдачей.\nПолучатель будет после 18:00.", 'customer checkout comment reaches the waybill with a clear label');
+$order_with_note['message'] = " \n\t ";
+check(dornott_cdek_order_payload($order_with_note, 'ORDER-42', $config)['comment'] === $payload['comment'], 'blank customer comment does not add an empty label');
+check(!array_key_exists('package_comment', require dirname(__DIR__, 2) . '/includes/cdek-settings.php'), 'settings no longer contain the mock packaging comment');
 
 // The real published widget requests page=1,size=1 to discover total count,
 // then fetches 500-point pages. Its proxy must preserve that contract.

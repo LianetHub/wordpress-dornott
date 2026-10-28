@@ -115,13 +115,16 @@ function dornott_cdek_prepare_checkout($info, $items, $client = null, $config = 
 
 function dornott_cdek_order_payload($order, $order_id, $config)
 {
+    $comment = 'Заказ оплачен. Доставка за счёт отправителя.';
+    $customer_comment = trim((string) ($order['message'] ?? ''));
+    if ($customer_comment !== '') $comment .= ' Комментарий клиента: ' . $customer_comment;
     return [
         'type' => 1, 'number' => (string) $order_id, 'tariff_code' => (int) $order['cdek']['tariff_code'],
         'shipment_point' => $order['cdek']['shipment_point'], 'delivery_point' => $order['cdek']['pvz_code'],
         'delivery_recipient_cost' => ['value' => 0],
         'sender' => ['name' => $config['sender_name'], 'phones' => [['number' => $config['sender_phone']]]],
         'recipient' => ['name' => $order['username'], 'phones' => [['number' => dornott_normalize_phone($order['phone'])]], 'email' => $order['email']],
-        'comment' => trim('Заказ оплачен. Доставка за счёт отправителя. ' . ($config['package_comment'] ?? 'Проверить упаковку перед сдачей в СДЭК.')),
+        'comment' => $comment,
         'packages' => $order['cdek']['packages'],
     ];
 }

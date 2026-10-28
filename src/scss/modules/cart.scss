@@ -389,7 +389,10 @@
 				grid-column: span 12;
 			}
 			&--small {
-				grid-column: span 4;
+				grid-column: span 12;
+				@media (min-width: $md4) {
+					grid-column: span 4;
+				}
 			}
 			&--medium {
 				grid-column: span 8;

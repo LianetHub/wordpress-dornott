@@ -27,6 +27,7 @@ test_assert(dornott_clamp_qty('12') === 12, 'qty string is parsed');
 
 test_assert(dornott_normalize_phone('+7 (900) 111-22-33') === '+79001112233', 'phone keeps +7');
 test_assert(dornott_normalize_phone('8 900 111-22-33') === '+79001112233', 'phone 8xxx becomes +7');
+test_assert(dornott_normalize_phone('+81 3 1234 5678') === '+81312345678', 'international +8 country code is preserved');
 
 $order_info = [
 	['name' => 'email', 'value' => 'a@b.c'],

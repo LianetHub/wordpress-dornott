@@ -200,7 +200,8 @@ export class DornottCart {
 			if (!this.$form.find("#cart-validation-warning").hasClass("hidden")) this.validateForm();
 		});
 		this.$form.on("checkout:error.dornottCart", (event, message) => window.formController?.showValidationWarning(this.$form, message));
-		this.$form.on("input.dornottCart change.dornottCart", "[data-required]", () => this.validateForm());
+		// The shared controller clears a field's error while typing; recheck the form after editing.
+		this.$form.on("change.dornottCart", "[data-required], [data-validate]", () => this.validateForm());
 	}
 
 	readProductFromCard($card, $btn) {

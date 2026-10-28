@@ -36,8 +36,14 @@
                     <div class="order__step">
                         <div class="order__caption">Получатель:</div>
                         <div class="order__fields">
-                            <label class="order__field form__field order__field--large">
-                                <input type="text" name="username" data-required class="form__control" placeholder="Ваше имя">
+                            <label class="order__field form__field order__field--small">
+                                <input type="text" name="last_name" data-required maxlength="100" autocomplete="family-name" aria-label="Фамилия" class="form__control" placeholder="Фамилия">
+                            </label>
+                            <label class="order__field form__field order__field--small">
+                                <input type="text" name="first_name" data-required maxlength="100" autocomplete="given-name" aria-label="Имя" class="form__control" placeholder="Имя">
+                            </label>
+                            <label class="order__field form__field order__field--small">
+                                <input type="text" name="middle_name" data-validate maxlength="100" autocomplete="additional-name" aria-label="Отчество" class="form__control" placeholder="Отчество">
                             </label>
                             <label class="order__field form__field">
                                 <input type="tel" name="phone" data-required class="form__control" placeholder="Телефон">

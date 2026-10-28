@@ -1,5 +1,19 @@
 <?php
 
+function dornott_checkout_recipient_name($order_info)
+{
+	$parts = [];
+	foreach (['last_name', 'first_name', 'middle_name'] as $field) {
+		$value = preg_replace('/\s+/u', ' ', sanitize_text_field(dornott_order_info_value($order_info, $field)));
+		if ($value === null) return '';
+		$value = trim($value);
+		if ($field === 'middle_name' && $value === '') continue;
+		if ($value === '' || preg_match('/\p{N}/u', $value)) return '';
+		$parts[] = $value;
+	}
+	return implode(' ', $parts);
+}
+
 function dornott_create_tbank_payment($payload)
 {
 	if (!is_array($payload) || !$payload) {
@@ -21,15 +35,22 @@ function dornott_create_tbank_payment($payload)
 	if ($delivery_price === null) {
 		return ['ok' => false, 'data' => ['message' => 'Выберите способ доставки']];
 	}
+	$name = dornott_checkout_recipient_name($order_info);
+	if ($name === '') {
+		return ['ok' => false, 'data' => ['message' => 'Укажите фамилию и имя получателя без цифр. Отчество — при наличии.']];
+	}
+	$raw_phone = dornott_order_info_value($order_info, 'phone');
+	$clean_phone = dornott_normalize_phone($raw_phone);
+	if (!preg_match('/^\+\d+$/D', $clean_phone)) {
+		return ['ok' => false, 'data' => ['message' => 'Укажите телефон получателя.']];
+	}
+	$email = trim(dornott_order_info_value($order_info, 'email'));
+	if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/uD', $email)) {
+		return ['ok' => false, 'data' => ['message' => 'Укажите email получателя в формате name@example.ru.']];
+	}
 	$shipping = null;
 	if ($delivery_slug === 'cdek') {
 		if (!dornott_cdek_ready()) return ['ok' => false, 'data' => ['message' => 'Доставка СДЭК пока не настроена. Свяжитесь с нами.']];
-		$name = trim(dornott_order_info_value($order_info, 'username'));
-		$phone = dornott_normalize_phone(dornott_order_info_value($order_info, 'phone'));
-		$email_input = dornott_order_info_value($order_info, 'email');
-		if ($name === '' || !preg_match('/^\+7\d{10}$/D', $phone) || !is_email($email_input)) {
-			return ['ok' => false, 'data' => ['message' => 'Укажите имя, российский телефон и email получателя.']];
-		}
 		$shipping = dornott_cdek_prepare_checkout($order_info, $resolved['items']);
 		if (!$shipping['ok']) return ['ok' => false, 'data' => ['message' => $shipping['message']]];
 		$delivery_price = 0;
@@ -46,9 +67,6 @@ function dornott_create_tbank_payment($payload)
 		return ['ok' => false, 'data' => ['message' => 'Платежный сервис недоступен']];
 	}
 
-	$email = sanitize_email(dornott_order_info_value($order_info, 'email'));
-	$raw_phone = dornott_order_info_value($order_info, 'phone');
-	$clean_phone = dornott_normalize_phone($raw_phone);
 	$order_id = bin2hex(random_bytes(12));
 	$amount = intval($totals['finalPrice']) * 100;
 
@@ -88,7 +106,7 @@ function dornott_create_tbank_payment($payload)
 		'payment_id'  => $payment_id,
 		'items'       => $resolved['items'],
 		'totals'      => $totals,
-		'username'    => sanitize_text_field(dornott_order_info_value($order_info, 'username')),
+		'username'    => $name,
 		'phone'       => sanitize_text_field($raw_phone),
 		'email'       => $email,
 		'city'        => $shipping ? $shipping['city'] : '',

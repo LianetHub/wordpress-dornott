@@ -12,7 +12,7 @@ export function createFormController() {
 	const Controller = new Function("$", "window", "document", `return (${source.slice(start, end).trim()});`)($, window, document);
 	class UnboundController extends Controller { init() {} }
 	// jsdom has no layout; these form controls represent the opened checkout in the browser.
-	document.querySelectorAll("[data-required]").forEach(el => { el.getClientRects = () => [{}]; });
+	document.querySelectorAll("[data-required], [data-validate]").forEach(el => { el.getClientRects = () => [{}]; });
 	return new UnboundController();
 }
 

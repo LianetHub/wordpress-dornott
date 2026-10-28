@@ -48,21 +48,62 @@ function api_queue() {
 $_ENV = array_merge($_ENV, ['CDEK_CLIENT_ID' => 'id', 'CDEK_CLIENT_SECRET' => 'secret', 'CDEK_SENDER_NAME' => 'Sender', 'CDEK_SENDER_PHONE' => '+79001112233', 'YANDEX_MAPS_API_KEY' => 'maps-public', 'TBANK_TERMINAL_KEY' => 'terminal', 'TBANK_SECRET_KEY' => 'bank-secret']);
 $payload = ['items' => [['id' => 1, 'quantity' => 2, 'price' => 1, 'shipping' => ['weight' => 1]]], 'totals' => ['finalPrice' => 1], 'order_info' => [
     ['name' => 'delivery', 'value' => 'cdek'], ['name' => 'delivery_price', 'value' => '500'], ['name' => 'cdek_pvz_code', 'value' => 'MSK1'],
-    ['name' => 'username', 'value' => 'Иван Иванов'], ['name' => 'phone', 'value' => '8 (900) 111-22-33'], ['name' => 'email', 'value' => 'buyer@example.com'], ['name' => 'address', 'value' => 'Fake'],
+    ['name' => 'last_name', 'value' => 'Иванов'], ['name' => 'first_name', 'value' => 'Иван'], ['name' => 'middle_name', 'value' => 'Иванович'],
+    ['name' => 'phone', 'value' => '8 (900) 111-22-33'], ['name' => 'email', 'value' => 'buyer@example.com'], ['name' => 'address', 'value' => 'Fake'],
 ]];
 check(function_exists('dornott_create_tbank_payment'), 'checkout business flow is available');
+check(function_exists('dornott_checkout_recipient_name'), 'recipient full name is assembled and validated on the server');
 if ($failed) exit(1);
+foreach ([
+    ['Иванов', 'Иван', 'Иванович', 'Иванов Иван Иванович'],
+    ['Салтыков-Щедрин', 'Михаил', '', 'Салтыков-Щедрин Михаил'],
+    ['О’Нил', '李', '', 'О’Нил 李'],
+    ['  Иванов  ', '  Иван   Пётр  ', '', 'Иванов Иван Пётр'],
+    ['Иванов (тест)', 'И.', '', 'Иванов (тест) И.'],
+    ['', 'Иван', '', ''], ['Иванов', 'Иван123', '', ''], ['Иванов', 'Иван', 'Иванович2', ''],
+] as $case) {
+    $info = [['name' => 'last_name', 'value' => $case[0]], ['name' => 'first_name', 'value' => $case[1]], ['name' => 'middle_name', 'value' => $case[2]]];
+    check(dornott_checkout_recipient_name($info) === $case[3], 'recipient name normalization and validation: ' . json_encode($case));
+}
 api_queue(); $result = dornott_create_tbank_payment($payload);
 check($result['ok'], 'valid CDEK checkout produces a payment URL');
 $bank = $bank_calls[0]; $order_id = $result['data']['orderId']; $pending = $orders[dornott_pending_order_transient_key($order_id)];
+check($pending['username'] === 'Иванов Иван Иванович'
+    && dornott_cdek_order_payload($pending, $order_id, dornott_cdek_config())['recipient']['name'] === 'Иванов Иван Иванович',
+    'three name fields reach the saved order and CDEK without the legacy username field');
 check($bank['Amount'] === 250000 && count($bank['Receipt']['Items']) === 1 && $bank['Receipt']['Items'][0]['Amount'] === 250000, 'bank amount and receipt contain only catalog-priced goods, no delivery');
 check($bank['PayType'] === 'O' && $pending['amount'] === 250000, 'one-stage payment and expected captured amount are persisted');
 check($pending['address'] === 'Реальный ПВЗ' && count($pending['cdek']['packages']) === 2 && $pending['cdek']['packages'][0]['weight'] === 400, 'authoritative PVZ and server packaging saved before exposing payment URL');
 api_queue(); $second = dornott_create_tbank_payment($payload);
 check($second['data']['orderId'] !== $order_id, 'same-second checkouts have distinct identifiers');
+foreach ([
+    ['+7 (960) 344-57-11', 'johnbalotello@gmail.com', '+79603445711'],
+    ['+1 (202) 555-0123', 'buyer+test@example.museum', '+12025550123'],
+    ['+33 1 23 45 67 89', 'buyer@example.fr', '+33123456789'],
+    ['+81 3 1234 5678', 'buyer@example.jp', '+81312345678'],
+] as $case) {
+    $contact_payload = $payload;
+    foreach ($contact_payload['order_info'] as &$entry) {
+        if ($entry['name'] === 'phone') $entry['value'] = $case[0];
+        if ($entry['name'] === 'email') $entry['value'] = $case[1];
+    }
+    unset($entry);
+    api_queue(); $contact_result = dornott_create_tbank_payment($contact_payload);
+    $contact_order = $contact_result['ok'] ? $orders[dornott_pending_order_transient_key($contact_result['data']['orderId'])] : [];
+    $contact_bank = end($bank_calls);
+    $contact_cdek = $contact_order ? dornott_cdek_order_payload($contact_order, $contact_result['data']['orderId'], dornott_cdek_config()) : [];
+    check($contact_result['ok'] && $contact_bank['DATA']['Phone'] === $case[2] && $contact_cdek['recipient']['phones'][0]['number'] === $case[2] && $contact_order['email'] === $case[1], 'filled recipient contacts reach payment and CDEK: ' . $case[0]);
+}
 $bank_calls = []; $captcha_ok = false;
 check(!dornott_create_tbank_payment($payload)['ok'] && !$bank_calls, 'invalid captcha never reaches bank');
 $captcha_ok = true;
+foreach (['last_name' => '', 'first_name' => 'Иван123', 'middle_name' => 'Иванович2', 'phone' => '+ () -', 'email' => 'broken-address'] as $field => $value) {
+    $bad = $payload;
+    foreach ($bad['order_info'] as &$entry) { if ($entry['name'] === $field) $entry['value'] = $value; }
+    unset($entry);
+    $http = [];
+    check(!dornott_create_tbank_payment($bad)['ok'] && !$bank_calls, 'invalid recipient field blocks bank Init and delivery API: ' . $field);
+}
 $missing_measurement = true;
 api_queue();
 $fallback_checkout = dornott_create_tbank_payment($payload);

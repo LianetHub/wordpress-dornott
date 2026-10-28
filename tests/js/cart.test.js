@@ -158,6 +158,29 @@ describe("cart helpers", () => {
 });
 
 describe("DornottCart", () => {
+	it.each([
+		["last_name", "Салтыков-Щедрин", true], ["first_name", "Анна-Мария", true],
+		["last_name", "О’Нил", true], ["first_name", "李", true],
+		["middle_name", "", true], ["middle_name", "Сергеевна", true],
+		["last_name", "", false], ["first_name", "Иван123", false],
+		["last_name", "Иванов (тест)", true], ["first_name", "И.", true],
+		["middle_name", "Иванович2", false],
+	])("validates recipient part %s through the common field validator", (name, value, valid) => {
+		document.body.innerHTML = `<form id="cart-form"><label class="form__field"><input name="${name}" data-required></label></form>`;
+		const controller = createFormController();
+		const $field = $("input").val(value);
+		expect(controller.validateField($field)).toBe(valid);
+	});
+	it.each([
+		["tel", "+7 (960) 344-57-11", true], ["tel", "+1 (202) 555-0123", true],
+		["tel", "+33 1 23 45 67 89", true], ["tel", "+354 555 1234", true], ["tel", "", false], ["tel", "+ () -", false],
+		["email", "johnbalotello@gmail.com", true], ["email", "buyer+test@example.museum", true],
+		["email", "", false], ["email", "broken-address", false],
+	])("validates checkout %s without a country or domain restriction", (type, value, valid) => {
+		document.body.innerHTML = `<form id="cart-form"><label class="form__field"><input type="${type}" data-required></label></form>`;
+		const controller = createFormController();
+		expect(controller.validateField($("input").val(value))).toBe(valid);
+	});
 	it("uses the existing common controller for recipient and delivery checks before payment", async () => {
 		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
 		window.formController = createFormController();
@@ -170,12 +193,18 @@ describe("DornottCart", () => {
 		expect(bank).not.toHaveBeenCalled();
 		expect($("#cart-validation-warning .cart__warning-text").text()).toContain("получателя");
 		expect($("#cart-validation-warning .cart__warning-text").text()).toContain("Выберите пункт выдачи");
-		$("[name=username]").val("Иван Иванов"); $("[name=phone]").val("+79991112233"); $("[name=email]").val("buyer@example.com");
+		$("[name=last_name]").val("Иванов"); $("[name=first_name]").val("Иван"); $("[name=phone]").val("+79991112233"); $("[name=email]").val("buyer@example.com");
 		expect(cart.validateForm(true)).toBe(false);
 		expect($("[data-cdek-pickup]").hasClass("_error")).toBe(true);
 		cart.cdekPickup.choose("office", null, { code: "MSK1", type: "PVZ", country_code: "RU", city: "Москва", address: "Улица, 1" });
 		expect(cart.validateForm(true)).toBe(true);
 		expect($("#cart-validation-warning").hasClass("hidden")).toBe(true);
+		$("[name=middle_name]").val("Иван123").trigger("input");
+		expect(cart.validateForm(true)).toBe(false);
+		expect($("[name=middle_name]").hasClass("_error")).toBe(true);
+		expect($("#cart-validation-warning").hasClass("hidden")).toBe(false);
+		$("[name=middle_name]").val("").trigger("input");
+		expect(cart.validateForm(true)).toBe(true);
 	});
 	it("keeps other forms on common field and captcha validation without requiring delivery", () => {
 		document.body.innerHTML = '<form id="contact-form"><input name="username" data-required value="Иван"></form>';
@@ -187,6 +216,22 @@ describe("DornottCart", () => {
 		$form.find('[name="smart-token"]').val("solved");
 		expect(controller.validateForm($form)).toBe(true);
 	});
+	it("does not revalidate the whole checkout on each keystroke after an error", () => {
+		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
+		window.formController = createFormController();
+		const cart = new DornottCart();
+		cart.validateForm(true);
+		const validation = vi.spyOn(window.formController, "validateForm");
+		const network = vi.fn(); globalThis.fetch = network;
+		const $name = $("[name=first_name]");
+		for (const value of ["И", "Ив", "Ива", "Иван"]) $name.val(value).trigger("input");
+		expect($name.val()).toBe("Иван");
+		expect(validation).not.toHaveBeenCalled();
+		expect(network).not.toHaveBeenCalled();
+		$name.trigger("change");
+		expect(validation).toHaveBeenCalledTimes(1);
+		expect($name.hasClass("_error")).toBe(false);
+	});
 	it("marks delivery only after a payment attempt and clears it once an office is chosen", async () => {
 		document.body.innerHTML = readFileSync("templates/_cart.php", "utf8").replace(/<\?php[\s\S]*?\?>/g, "");
 		window.formController = createFormController();
@@ -194,7 +239,7 @@ describe("DornottCart", () => {
 		const cart = new DornottCart();
 		cart.saveData([sampleItem({ id: 1 })]);
 		const $delivery = $("[data-cdek-pickup]");
-		$("[name=username]").val("Покупатель").trigger("input");
+		$("[name=first_name]").val("Покупатель").trigger("input");
 		expect($delivery.hasClass("_error")).toBe(false);
 		const bank = vi.fn(); globalThis.fetch = bank;
 		$("[data-cart-checkout]").trigger("click");

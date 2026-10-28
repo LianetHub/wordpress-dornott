@@ -11,7 +11,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 function mount(loader, useDefaultDialog = false) {
 	document.body.innerHTML = template.replace(/<\?php[\s\S]*?\?>/g, "");
 	window.formController = createFormController();
-	$("[name=username]").val("Иван Иванов"); $("[name=phone]").val("+79991112233"); $("[name=email]").val("buyer@example.com");
+	$("[name=last_name]").val("Иванов"); $("[name=first_name]").val("Иван"); $("[name=phone]").val("+79991112233"); $("[name=email]").val("buyer@example.com");
 	modal = null;
 	// Only the external window manager is substituted; the actual template and controller run.
 	const showDialog = options => {
@@ -184,7 +184,7 @@ describe("CDEK pickup", () => {
 		let options;
 		const pickup = mount(async () => class { constructor(config) { options = config; } });
 		pickup.choose("office", null, office);
-		$("[name=username]").val("Покупатель");
+		$("[name=first_name]").val("Покупатель");
 		$("[name=message]").val("Комментарий");
 		await pickup.open();
 		expect(modal.options.closeExisting).toBe(false);
@@ -193,7 +193,7 @@ describe("CDEK pickup", () => {
 		// A late callback from a dismissed window cannot silently replace the address.
 		options.onChoose("office", null, { ...office, code: "MSK2" });
 		expect($("[name=cdek_pvz_code]").val()).toBe("MSK1");
-		expect($("[name=username]").val()).toBe("Покупатель");
+		expect($("[name=first_name]").val()).toBe("Покупатель");
 		expect($("[name=message]").val()).toBe("Комментарий");
 		expect($("[data-cdek-edit]").prop("disabled")).toBe(false);
 	});

@@ -211,12 +211,11 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "Comfortaa";
-  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
-  font-weight: 100 900;
-  font-stretch: 75% 125%;
-  font-style: normal;
+  font-family: "PTSans";
   font-display: swap;
+  src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
@@ -228,11 +227,12 @@ input[type=number] {
 }
 
 @font-face {
-  font-family: "PTSans";
-  font-display: swap;
-  src: url("../fonts/PTSans-Regular.woff2") format("woff2"), url("../fonts/PTSans-Regular.woff") format("woff");
-  font-weight: 400;
+  font-family: "Comfortaa";
+  src: url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2 supports variations"), url("../fonts/Comfortaa-VariableFont_wght.woff2") format("woff2-variations"), url("../fonts/Comfortaa-VariableFont_wght.woff") format("woff");
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
   font-style: normal;
+  font-display: swap;
 }
 
 .header__menu .menu__link::before,
@@ -5300,8 +5300,8 @@ body.no-preloader .preloader {
   }
 
   .order__field--small {
-    -ms-grid-column-span: 4;
-    grid-column: span 4;
+    -ms-grid-column-span: 12;
+    grid-column: span 12;
   }
 
   .order__field--medium {
@@ -5390,6 +5390,13 @@ body.no-preloader .preloader {
     gap: 2.28rem;
     -ms-grid-columns: (1fr)[2];
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 575.98px) and (min-width: 767.98px) {
+  .order__field--small {
+    -ms-grid-column-span: 4;
+    grid-column: span 4;
   }
 }
 

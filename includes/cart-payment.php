@@ -24,7 +24,7 @@ function dornott_clamp_qty($qty)
 function dornott_normalize_phone($raw_phone)
 {
 	$clean_phone = '+' . preg_replace('/[^0-9]/', '', (string) $raw_phone);
-	if (strpos($clean_phone, '+8') === 0) {
+	if (strlen($clean_phone) === 12 && strpos($clean_phone, '+8') === 0 && strpos(ltrim((string) $raw_phone), '+') !== 0) {
 		$clean_phone = '+7' . substr($clean_phone, 2);
 	}
 	return $clean_phone;
